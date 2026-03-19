@@ -14,7 +14,7 @@
 
                             <TextBlock Text="{TemplateBinding Property=Content }"
                                        VerticalAlignment="Center"
-                                       Margin="20,0,0,0"/>
+                                       Margin="15,0,15,0"/>
 
                         </Grid>
                     </ControlTemplate>

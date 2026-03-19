@@ -4,7 +4,8 @@
              xmlns:local="clr-namespace:Telecom_ThesisProject"
              xmlns:vm="clr-namespace:Telecom_ThesisProject.MVVM.ViewModel"
              xmlns:view="clr-namespace:Telecom_ThesisProject.MVVM.View"
-             StartupUri="MainWindow.xaml">
+             xmlns:utils="clr-namespace:Telecom_ThesisProject.Utilities"
+             StartupUri="MVVM/View/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -12,10 +13,20 @@
                 <ResourceDictionary Source="/Themes/TextBoxTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
+            <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
             <DataTemplate DataType="{x:Type vm:HomeViewModel}">
                 <view:Home/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+                <view:Login/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ClientViewModel}">
+                <view:Clients/>
+            </DataTemplate>
+            
             <!--<DataTemplate DataType="{x:Type vm:SettingsVM}">
                 <view:Settings/>
             </DataTemplate>
@@ -47,7 +58,6 @@
             <DataTemplate DataType="{x:Type vm:RequestVM}">
                 <view:Requests/>
             </DataTemplate>-->
-
         </ResourceDictionary>
     </Application.Resources>
 </Application>
