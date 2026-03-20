@@ -16,17 +16,21 @@
             <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
             <DataTemplate DataType="{x:Type vm:HomeViewModel}">
-                <view:Home/>
+                <view:HomeView/>
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vm:LoginViewModel}">
-                <view:Login/>
+                <view:LoginView/>
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vm:ClientViewModel}">
-                <view:Clients/>
+                <view:ClientsView/>
             </DataTemplate>
-            
+
+            <DataTemplate DataType="{x:Type vm:ClientAddEditViewModel}">
+                <view:ClientAddEditView/>
+            </DataTemplate>
+
             <!--<DataTemplate DataType="{x:Type vm:SettingsVM}">
                 <view:Settings/>
             </DataTemplate>

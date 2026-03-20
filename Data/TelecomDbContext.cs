@@ -11,12 +11,12 @@ public partial class TelecomDbContext : DbContext
 {
     public TelecomDbContext()
     {
+        Database.EnsureCreated();
     }
 
     public TelecomDbContext(DbContextOptions<TelecomDbContext> options)
         : base(options)
     {
-        Database.EnsureCreated();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

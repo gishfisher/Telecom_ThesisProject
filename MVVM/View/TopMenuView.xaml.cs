@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Telecom_ThesisProject.MVVM.View
 {
     /// <summary>
-    /// Логика взаимодействия для Client.xaml
+    /// Логика взаимодействия для TopMenuView.xaml
     /// </summary>
-    public partial class Clients : UserControl
+    public partial class TopMenuView : UserControl
     {
-        public Clients()
+        public TopMenuView()
         {
             InitializeComponent();
         }

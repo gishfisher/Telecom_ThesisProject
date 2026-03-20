@@ -18,9 +18,9 @@ namespace Telecom_ThesisProject.MVVM.View
     /// <summary>
     /// Логика взаимодействия для Login.xaml
     /// </summary>
-    public partial class Login : UserControl
+    public partial class LoginView : UserControl
     {
-        public Login()
+        public LoginView()
         {
             InitializeComponent();
         }

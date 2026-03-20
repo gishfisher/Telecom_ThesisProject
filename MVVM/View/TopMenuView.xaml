@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="Telecom_ThesisProject.MVVM.View.TopMenuView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="950">
+
+    <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Visibility="{Binding IsAuthenticated, 
+                 Converter={StaticResource BoolToVisibilityConverter}}">
+
+        <RadioButton Content="Home"
+             Height="50" 
+             Foreground="#FFFFFF"
+             FontSize="14pt"
+             Style="{StaticResource MenuButtonTheme}"
+             IsChecked="True"
+             Command="{Binding HomeViewCommand}"/>
+
+        <RadioButton Content="Clients" 
+             Height="50" 
+             Foreground="#FFFFFF"
+             FontSize="14pt"
+             Style="{StaticResource MenuButtonTheme}"
+             Command="{Binding ClientViewCommand}"/>
+
+        <RadioButton Content="Requests" 
+             Height="50" 
+             Foreground="#FFFFFF"
+             FontSize="14pt"
+             Style="{StaticResource MenuButtonTheme}"
+             Command="{Binding RequestsViewCommand}"/>
+
+        <RadioButton Content="Employees" 
+             Height="50" 
+             Foreground="#FFFFFF"
+             FontSize="14pt"
+             Style="{StaticResource MenuButtonTheme}"
+             Command="{Binding EmployeesViewCommand}"
+             Visibility="{Binding CanSeeAdminMenu, 
+                Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+        <RadioButton Content="Tariffs" 
+             Height="50" 
+             Foreground="#FFFFFF"
+             FontSize="14pt"
+             Style="{StaticResource MenuButtonTheme}"
+             Command="{Binding TariffsViewCommand}"/>
+
+        <RadioButton Content="Services" 
+             Height="50" 
+             Foreground="#FFFFFF"
+             FontSize="14pt"
+             Style="{StaticResource MenuButtonTheme}"
+             Command="{Binding ServicesViewCommand}"/>
+
+        <RadioButton Content="Connections" 
+             Height="50" 
+             Foreground="#FFFFFF"
+             FontSize="14pt"
+             Style="{StaticResource MenuButtonTheme}"
+             Command="{Binding ConnectionsViewCommand}"/>
+
+        <RadioButton Content="Network Devices" 
+             Height="50" 
+             Foreground="#FFFFFF"
+             FontSize="14pt"
+             Style="{StaticResource MenuButtonTheme}"
+             Command="{Binding NetworkDevicesViewCommand}"
+             Visibility="{Binding CanSeeNetworkMenu, 
+                Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+        <RadioButton Content="Logout" 
+             Height="50" 
+             Foreground="#FFFFFF"
+             FontSize="14pt"
+             HorizontalAlignment="Right"
+             Style="{StaticResource MenuButtonTheme}"
+             Command="{Binding LogoutCommand}"/>
+
+    </DockPanel>
+</UserControl>
