@@ -11,9 +11,11 @@ public partial class DevicePort
 
     public int PortNumber { get; set; }
 
+    public string? PortName { get; set; }
+
     public bool? IsUplink { get; set; }
 
-    public virtual ICollection<Connection> Connections { get; set; } = new List<Connection>();
+    public virtual Connection? Connection { get; set; }
 
     public virtual NetworkDevice Device { get; set; } = null!;
 }

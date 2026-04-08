@@ -25,12 +25,13 @@ namespace Telecom.Utilities
 
         public static bool IsAuthenticated => CurrentUser != null;
         public static string? CurrentRole => CurrentUser?.Role?.Name;
+        public static bool CanSeeNetworkMenu => IsAdmin || IsSysAdmin;
+        public static bool CanSeeAdminMenu => IsAdmin == true;
+
         public static bool IsAdmin => CurrentRole == "Administrator";
         public static bool IsManager => CurrentRole == "Manager";
         public static bool IsSysAdmin => CurrentRole == "SysAdmin";
-        public static bool CanSeeNetworkMenu => IsAdmin || IsSysAdmin;
-        public static bool CanSeeAdminMenu => IsAdmin == true;
-        
+
         public static void Login(User user)
         {
             CurrentUser = user;

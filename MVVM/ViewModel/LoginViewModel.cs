@@ -38,7 +38,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public LoginViewModel()
         {
             _authService = new AuthService();
-            LoginCommand = new RelayCommand(o => ExecuteLogin(o));
+            LoginCommand = new RelayCommand(
+                o => ExecuteLogin(o));
         }
 
         private void ExecuteLogin(object parameter)

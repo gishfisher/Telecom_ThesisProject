@@ -30,14 +30,14 @@
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding RequestsViewCommand}"/>
+             Command="{Binding RequestViewCommand}"/>
 
         <RadioButton Content="Employees" 
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding EmployeesViewCommand}"
+             Command="{Binding EmployeeViewCommand}"
              Visibility="{Binding CanSeeAdminMenu, 
                 Converter={StaticResource BoolToVisibilityConverter}}"/>
 
@@ -46,14 +46,14 @@
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding TariffsViewCommand}"/>
+             Command="{Binding TariffViewCommand}"/>
 
         <RadioButton Content="Services" 
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding ServicesViewCommand}"/>
+             Command="{Binding ServiceViewCommand}"/>
 
         <RadioButton Content="Connections" 
              Height="50" 

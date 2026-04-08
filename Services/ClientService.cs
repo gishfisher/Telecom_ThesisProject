@@ -1,50 +1,75 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Telecom_ThesisProject.Data;
 using Telecom_ThesisProject.MVVM.Model;
-using TelecomCompany.ApplicationData.Crypt;
 
-namespace Shumakov_Telecom.Services
+namespace Telecom_ThesisProject.Services
 {
-    internal class ClientService
+    class ClientService
     {
-        private TelecomDbContext _db = new TelecomDbContext();
-
-        public bool AddClient(Client client)
+        public void AddClient(Client client)
         {
-            if (client == null) return false;
+            ArgumentNullException.ThrowIfNull(client);
+            DetachNavigations(client);
 
-            _db.Clients.Add(client);
-            _db.SaveChanges();
-
-            return true;
+            using (var db = new TelecomDbContext())
+            {
+                db.Clients.Add(client);
+                db.SaveChanges();
+            }
         }
 
-        public bool EditClient(Client client)
+        public void EditClient(Client client)
         {
-            if (client == null) return false;
+            ArgumentNullException.ThrowIfNull(client);
 
-            _db.SaveChanges();
+            using (var db = new TelecomDbContext())
+            {
+                var existing = db.Clients
+                    .FirstOrDefault(c => c.Id == client.Id) ?? throw new Exception("Клиент не найден");
 
-            return true;
+                existing.FirstName = client.FirstName;
+                existing.LastName = client.LastName;
+                existing.MiddleName = client.MiddleName;
+                existing.ContractNumber = client.ContractNumber;
+                existing.AddressId = client.AddressId;
+                existing.Balance = client.Balance;
+
+                db.SaveChanges();
+            }
         }
 
-        public bool RemoveClient(Client client)
+        public void RemoveClient(Client client)
         {
-            if (client == null) return false;
+            ArgumentNullException.ThrowIfNull(client);
 
-            _db.Clients.Remove(client);
-            _db.SaveChanges();
+            using (var db = new TelecomDbContext())
+            {
+                var existing = db.Clients
+                    .FirstOrDefault(c => c.Id == client.Id) ?? throw new Exception("Клиент не найден");
 
-            return true;
+                db.Clients.Remove(existing);
+                db.SaveChanges();
+            }
         }
 
         public List<Client> GetAll()
         {
-            return _db.Clients.ToList();
+            using (var db = new TelecomDbContext())
+            {
+                return db.Clients
+                    .Include(c => c.Address)
+                    .ThenInclude(a => a.Street)
+                    .ThenInclude(s => s.City)
+                    .ToList();
+            }
+        }
+
+        private static void DetachNavigations(Client client)
+        {
+            client.Address = null!;
         }
     }
 }

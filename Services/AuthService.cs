@@ -18,12 +18,10 @@ namespace Telecom_ThesisProject.Services
         {
             string hashedPassword = MD5Hasher.HashPassword(password);
 
-            using (var db = new TelecomDbContext())
-            {
-                return db.Users
-                    .Include(e => e.Role).Include(e => e.Employee)
-                    .FirstOrDefault(e => e.Login == login && e.PasswordHash == hashedPassword);
-            }
+            using var db = new TelecomDbContext();
+            return db.Users
+                .Include(e => e.Role).Include(e => e.Employee)
+                .FirstOrDefault(e => e.Login == login && e.PasswordHash == hashedPassword);
         }
     }
 }

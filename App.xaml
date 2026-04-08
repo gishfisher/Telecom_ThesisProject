@@ -5,7 +5,7 @@
              xmlns:vm="clr-namespace:Telecom_ThesisProject.MVVM.ViewModel"
              xmlns:view="clr-namespace:Telecom_ThesisProject.MVVM.View"
              xmlns:utils="clr-namespace:Telecom_ThesisProject.Utilities"
-             StartupUri="MVVM/View/MainWindow.xaml">
+             StartupUri="Windows/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -31,37 +31,50 @@
                 <view:ClientAddEditView/>
             </DataTemplate>
 
-            <!--<DataTemplate DataType="{x:Type vm:SettingsVM}">
-                <view:Settings/>
+            <DataTemplate  DataType="{x:Type vm:EmployeeViewModel}">
+                <view:EmployeesView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:ServiceVM}">
-                <view:Services/>
+            <DataTemplate DataType="{x:Type vm:EmployeeAddEditViewModel}">
+                <view:EmployeeAddEditView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:TariffVM}">
-                <view:Tariffs/>
+            <DataTemplate DataType="{x:Type vm:RequestViewModel}">
+                <view:RequestsView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:ClientsVM}">
-                <view:Clients/>
+            <DataTemplate DataType="{x:Type vm:RequestAddEditViewModel}">
+                <view:RequestAddEditView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:EmployeeVM}">
-                <view:Employees/>
+            <DataTemplate DataType="{x:Type vm:ServiceViewModel}">
+                <view:ServicesView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:NetworkDeviceVM}">
-                <view:NetworkDevices/>
+            <DataTemplate DataType="{x:Type vm:ServiceAddEditViewModel}">
+                <view:ServiceAddEditView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:ConnectionVM}">
-                <view:Connections/>
+            <DataTemplate DataType="{x:Type vm:TariffViewModel}">
+                <view:TariffsView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:RequestVM}">
-                <view:Requests/>
-            </DataTemplate>-->
+            <DataTemplate DataType="{x:Type vm:TariffAddEditViewModel}">
+                <view:TariffAddEditView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:NetworkDeviceViewModel}">
+                <view:NetworkDevicesView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:NetworkDeviceAddEditViewModel}">
+                <view:NetworkDeviceAddEditView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ConnectionsViewModel}">
+                <view:ConnectionsView/>
+            </DataTemplate>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

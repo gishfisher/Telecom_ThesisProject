@@ -9,19 +9,33 @@ public partial class NetworkDevice
 
     public string Name { get; set; } = null!;
 
+    public int DeviceTypeId { get; set; }
+
+    public string? Vendor { get; set; }
+
+    public string? Model { get; set; }
+
+    public string? SerialNumber { get; set; }
+
     public string IpAddress { get; set; } = null!;
 
-    public string? DeviceType { get; set; }
+    public string? SnmpCommunity { get; set; }
 
-    public string? Location { get; set; }
-
-    public string? LastUpTime { get; set; }
+    public int MountingPointId { get; set; }
 
     public int? ParentDeviceId { get; set; }
 
+    public bool? IsMonitored { get; set; }
+
+    public DateOnly? InstallationDate { get; set; }
+
     public virtual ICollection<DevicePort> DevicePorts { get; set; } = new List<DevicePort>();
 
+    public virtual DeviceType DeviceType { get; set; } = null!;
+
     public virtual ICollection<NetworkDevice> InverseParentDevice { get; set; } = new List<NetworkDevice>();
+
+    public virtual MountingPoint MountingPoint { get; set; } = null!;
 
     public virtual NetworkDevice? ParentDevice { get; set; }
 

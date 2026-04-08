@@ -13,13 +13,17 @@ public partial class Connection
 
     public int TariffId { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
-
     public bool? IsActive { get; set; }
+
+    public long? LastInOctets { get; set; }
+
+    public DateTime? LastCheckTime { get; set; }
 
     public virtual Client Client { get; set; } = null!;
 
     public virtual DevicePort Port { get; set; } = null!;
 
     public virtual Tariff Tariff { get; set; } = null!;
+
+    public virtual ICollection<TrafficBillingLog> TrafficBillingLogs { get; set; } = new List<TrafficBillingLog>();
 }

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Telecom_ThesisProject.MVVM.View.ClientsView"
+<UserControl x:Class="Telecom_ThesisProject.MVVM.View.ClientsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -36,15 +36,21 @@
         </StackPanel>
 
         <DataGrid ItemsSource="{Binding Clients}"
-                  SelectedItem="{Binding SelectedClient}"
+                  SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
                   AutoGenerateColumns="False"
                   Grid.Row="2" 
                   IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
-                <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}"/>
-                <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
+                <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="2*"/>
+                <DataGridTextColumn Header="Договор" Binding="{Binding ContractNumber}" Width="*"/>
+                <DataGridTextColumn Header="Баланс" Binding="{Binding Balance, StringFormat={}{0:N2}}" Width="*"/>
             </DataGrid.Columns>
+
+            <DataGrid.InputBindings>
+                <MouseBinding Gesture="LeftDoubleClick"
+                              Command="{Binding EditCommand}" />
+            </DataGrid.InputBindings>
         </DataGrid>
 
     </Grid>

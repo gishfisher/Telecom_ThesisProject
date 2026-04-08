@@ -1,0 +1,111 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Telecom.Utilities;
+using Telecom_ThesisProject.Core;
+using Telecom_ThesisProject.MVVM.Model;
+using Telecom_ThesisProject.Services;
+using Telecom_ThesisProject.Utilities.Interfaces;
+
+namespace Telecom_ThesisProject.MVVM.ViewModel;
+
+class NetworkDeviceViewModel : ObservableObject
+{
+    private readonly NetworkDeviceService _networkDeviceService;
+    private readonly IMessageService _messageService = new MessageService();
+
+    public ObservableCollection<NetworkDevice> Devices { get; }
+
+    private string _searchText = string.Empty;
+    public string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            _searchText = value;
+            OnPropertyChanged();
+            FilterDevices();
+        }
+    }
+
+    private NetworkDevice? _selectedDevice;
+    public NetworkDevice? SelectedDevice
+    {
+        get => _selectedDevice;
+        set { _selectedDevice = value; OnPropertyChanged(); }
+    }
+
+    public RelayCommand AddCommand { get; }
+    public RelayCommand EditCommand { get; }
+    public RelayCommand DeleteCommand { get; }
+
+    public Action<NetworkDevice?> Navigate { get; set; }
+
+    public NetworkDeviceViewModel()
+    {
+        Devices = new ObservableCollection<NetworkDevice>();
+        _networkDeviceService = new NetworkDeviceService();
+
+        LoadDevices();
+        FilterDevices();
+
+        AddCommand = new RelayCommand(
+            _ => Navigate(null),
+            _ => CurrentSession.CanSeeNetworkMenu);
+
+        EditCommand = new RelayCommand(
+            _ => Navigate(SelectedDevice),
+            _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
+
+        DeleteCommand = new RelayCommand(
+            _ => DeleteDevice(),
+            _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
+    }
+
+    private void LoadDevices()
+    {
+        var list = _networkDeviceService.GetAll();
+        Devices.Clear();
+        foreach (var d in list)
+            Devices.Add(d);
+        OnPropertyChanged(nameof(Devices));
+    }
+
+    private void FilterDevices()
+    {
+        var search = SearchText?.Trim() ?? string.Empty;
+        var all = _networkDeviceService.GetAll();
+        var filtered = string.IsNullOrEmpty(search)
+            ? all
+            : all.Where(d =>
+                (d.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (d.IpAddress?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
+
+        Devices.Clear();
+        foreach (var d in filtered)
+            Devices.Add(d);
+    }
+
+    private void DeleteDevice()
+    {
+        if (SelectedDevice == null) return;
+        try
+        {
+            _networkDeviceService.RemoveDevice(SelectedDevice);
+        }
+        catch (Exception ex)
+        {
+            _messageService.Show("Невозможно удалить устройство: " + ex.Message);
+            return;
+        }
+
+        LoadDevices();
+        FilterDevices();
+    }
+
+    public void Refresh()
+    {
+        LoadDevices();
+        FilterDevices();
+    }
+}

@@ -18,4 +18,7 @@ public partial class Employee
     public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
 
     public virtual User User { get; set; } = null!;
+
+    public string GetFullName =>
+        string.Join(" ", new[] { LastName, FirstName, MiddleName }.Where(s => !string.IsNullOrWhiteSpace(s))).Trim();
 }

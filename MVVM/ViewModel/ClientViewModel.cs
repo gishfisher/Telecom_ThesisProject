@@ -1,12 +1,14 @@
-﻿using Shumakov_Telecom.Services;
+using Telecom_ThesisProject.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using Telecom.Utilities;
 using Telecom_ThesisProject.Core;
+using Telecom_ThesisProject.Data;
 using Telecom_ThesisProject.MVVM.Model;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel
@@ -17,7 +19,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         public ObservableCollection<Client> Clients { get; set; }
 
-        private string _searchText;
+        private string _searchText = string.Empty;
         public string SearchText
         {
             get => _searchText;
@@ -29,8 +31,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             }
         }
 
-        private Client _selectedClient;
-        public Client SelectedClient
+        private Client? _selectedClient = null;
+        public Client? SelectedClient
         {
             get => _selectedClient;
             set { _selectedClient = value; OnPropertyChanged(); }
@@ -44,16 +46,20 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         public ClientViewModel()
         {
+            Clients = new ObservableCollection<Client>();
+
             _clientService = new ClientService();
 
             LoadClients();
 
+            FilterClients();
+
             AddCommand = new RelayCommand(
-                o => Navigate?.Invoke(null!),
+                o => Navigate.Invoke(null),
                 o => !CurrentSession.IsSysAdmin);
 
             EditCommand = new RelayCommand(
-                o => Navigate?.Invoke(SelectedClient),
+                o => Navigate.Invoke(SelectedClient),
                 o => SelectedClient != null && !CurrentSession.IsSysAdmin);
 
             DeleteCommand = new RelayCommand(
@@ -63,29 +69,41 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         private void LoadClients()
         {
-            Clients = new ObservableCollection<Client>(_clientService.GetAll());
-            OnPropertyChanged(nameof(Clients));
-        }
+            var clients = _clientService.GetAll();
 
-        public void Refresh()
-        {
-            LoadClients();
+            Clients.Clear();
+            foreach (var client in clients)
+                Clients.Add(client);
+
+            OnPropertyChanged(nameof(Clients));
         }
 
         private void FilterClients()
         {
-            var filtered = _clientService.GetAll()
-                .Where(x => x.FullName.ToLower()
-                .Contains(SearchText?.ToLower() ?? ""));
+            var search = SearchText?.Trim() ?? string.Empty;
+            var all = _clientService.GetAll();
+            var filtered = string.IsNullOrEmpty(search)
+                ? all
+                : all.Where(x =>
+                    (x.FullName?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.ContractNumber?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
 
-            Clients = new ObservableCollection<Client>(filtered);
-            OnPropertyChanged(nameof(Clients));
+            Clients.Clear();
+            foreach (var c in filtered)
+                Clients.Add(c);
         }
 
         private void DeleteClient()
         {
+            if (SelectedClient == null) return;
             _clientService.RemoveClient(SelectedClient);
             LoadClients();
+            FilterClients();
+        }
+        public void Refresh()
+        {
+            LoadClients();
+            FilterClients();
         }
     }
 }
