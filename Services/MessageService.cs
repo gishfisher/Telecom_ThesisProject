@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telecom_ThesisProject.MVVM.View;
+﻿using System.Windows;
 using Telecom_ThesisProject.Utilities.Interfaces;
 
 namespace Telecom_ThesisProject.Services
@@ -12,8 +7,13 @@ namespace Telecom_ThesisProject.Services
     {
         public void Show(string message)
         {
-            var window = new CustomMessageBoxView(message);
-            window.ShowDialog();
+            MessageBox.Show(message, "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public bool Confirm(string message)
+        {
+            var result = MessageBox.Show(message, "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            return result == MessageBoxResult.Yes;
         }
     }
 }

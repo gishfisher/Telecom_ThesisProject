@@ -26,9 +26,6 @@
                       SelectedValuePath="Id"
                       SelectedValue="{Binding Client.AddressId, Mode=TwoWay}"/>
 
-            <Label Content="Баланс"/>
-            <TextBox Text="{Binding Client.Balance, UpdateSourceTrigger=PropertyChanged, StringFormat=F2}"/>
-
             <Button Content="Сохранить"
                 Command="{Binding SaveCommand}" Margin="0,12,0,0"/>
 

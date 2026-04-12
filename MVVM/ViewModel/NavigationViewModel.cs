@@ -30,6 +30,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public TariffViewModel TariffViewModel { get; }
         public NetworkDeviceViewModel NetworkDeviceViewModel { get; }
         public ConnectionsViewModel ConnectionsViewModel { get; }
+        public AddressTreeViewModel AddressTreeViewModel { get; }
 
         //  Commands
         public RelayCommand HomeViewCommand { get; }
@@ -41,6 +42,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public RelayCommand TariffViewCommand { get; }
         public RelayCommand NetworkDevicesViewCommand { get; }
         public RelayCommand ConnectionsViewCommand { get; }
+        public RelayCommand AddressTreeViewCommand { get; }
 
         public NavigationViewModel()
         {
@@ -53,6 +55,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             RequestViewModel = new RequestViewModel();
             NetworkDeviceViewModel = new NetworkDeviceViewModel();
             ConnectionsViewModel = new ConnectionsViewModel();
+            AddressTreeViewModel = new AddressTreeViewModel();
 
             // Views
             // Clients
@@ -110,9 +113,9 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             };
 
             // Services
-           ServiceViewCommand = new RelayCommand(
-               o => CurrentView = ServiceViewModel,
-               o => IsAuthenticated);
+            ServiceViewCommand = new RelayCommand(
+                o => CurrentView = ServiceViewModel,
+                o => IsAuthenticated);
 
             ServiceViewModel.Navigate = service =>
             {
@@ -150,7 +153,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 o => CurrentView = NetworkDeviceViewModel,
                 o => IsAuthenticated && CurrentSession.CanSeeNetworkMenu);
 
-            NetworkDeviceViewModel.Navigate = device =>
+            NetworkDeviceViewModel.NavigateEditDevice = device =>
             {
                 var vm = new NetworkDeviceAddEditViewModel(device)
                 {
@@ -163,9 +166,20 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 CurrentView = vm;
             };
 
+            NetworkDeviceViewModel.NavigateDeviceDetails = device =>
+            {
+                var vm = new NetworkDeviceDetailsViewModel(device)
+                {
+                    GoBack = () => CurrentView = NetworkDeviceViewModel
+                };
+                CurrentView = vm;
+            };
+
             ConnectionsViewCommand = new RelayCommand(
                 o => CurrentView = ConnectionsViewModel,
                 o => IsAuthenticated);
+
+            
 
             // Core
             LoginViewModel.OnLoginSuccess = user =>

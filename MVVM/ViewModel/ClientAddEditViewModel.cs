@@ -127,8 +127,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 FirstName = client.FirstName,
                 MiddleName = client.MiddleName,
                 ContractNumber = client.ContractNumber,
-                AddressId = client.AddressId,
-                Balance = client.Balance,
+                AddressId = client.AddressId
             };
         }
     }

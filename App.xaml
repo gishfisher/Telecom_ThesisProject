@@ -74,7 +74,39 @@
             <DataTemplate DataType="{x:Type vm:ConnectionsViewModel}">
                 <view:ConnectionsView/>
             </DataTemplate>
-            
+
+            <DataTemplate DataType="{x:Type vm:AddressTreeViewModel}">
+                <view:AddressTreeView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:CityAddEditViewModel}">
+                <view:CityAddEditView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:StreetAddEditViewModel}">
+                <view:StreetAddEditView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:AddressAddEditViewModel}">
+                <view:AddressAddEditView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:AddressDetailsViewModel}">
+                <view:AddressDetailsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:NetworkDeviceDetailsViewModel}">
+                <view:NetworkDeviceDetailsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:MountingPointAddEditViewModel}">
+                <view:MountingPointAddEditView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:BindDeviceViewModel}">
+                <view:BindDeviceView/>
+            </DataTemplate>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

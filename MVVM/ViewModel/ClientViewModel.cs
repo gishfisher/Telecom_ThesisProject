@@ -85,7 +85,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             var filtered = string.IsNullOrEmpty(search)
                 ? all
                 : all.Where(x =>
-                    (x.FullName?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (x.GetFullName?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (x.ContractNumber?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
 
             Clients.Clear();

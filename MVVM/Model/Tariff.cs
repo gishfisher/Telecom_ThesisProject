@@ -9,8 +9,6 @@ public partial class Tariff
 
     public string Name { get; set; } = null!;
 
-    public decimal PricePerGb { get; set; }
-
     public decimal? MonthlyFee { get; set; }
 
     public virtual ICollection<Connection> Connections { get; set; } = new List<Connection>();

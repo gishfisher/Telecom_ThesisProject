@@ -36,17 +36,17 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         }
     }
 
-    public DateTime? InstallDateUi
-    {
-        get => Device.InstallationDate.HasValue
-            ? Device.InstallationDate.Value.ToDateTime(TimeOnly.MinValue)
-            : null;
-        set
-        {
-            Device.InstallationDate = value.HasValue ? DateOnly.FromDateTime(value.Value) : null;
-            OnPropertyChanged();
-        }
-    }
+    //public DateTime? InstallDateUi
+    //{
+    //    get => Device.InstallationDate.HasValue
+    //        ? Device.InstallationDate.Value.ToDateTime(TimeOnly.MinValue)
+    //        : null;
+    //    set
+    //    {
+    //        Device.InstallationDate = value.HasValue ? DateOnly.FromDateTime(value.Value) : null;
+    //        OnPropertyChanged();
+    //    }
+    //}
 
     //public string LabInfoText { get; }
 
@@ -99,7 +99,7 @@ class NetworkDeviceAddEditViewModel : ObservableObject
 
         _selectedParent = ParentCandidates.FirstOrDefault(p => p.Id == Device.ParentDeviceId);
         OnPropertyChanged(nameof(SelectedParent));
-        OnPropertyChanged(nameof(InstallDateUi));
+        //OnPropertyChanged(nameof(InstallDateUi));
 
         SaveCommand = new RelayCommand(_ => Save());
         CancelCommand = new RelayCommand(_ => GoBack?.Invoke());
@@ -163,9 +163,6 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         if (Device.DeviceTypeId <= 0)
             errors.AppendLine("Выберите тип устройства.");
 
-        if (Device.MountingPointId <= 0)
-            errors.AppendLine("Выберите точку монтажа.");
-
         if (errors.Length > 0)
         {
             ErrorMessage = errors.ToString().Trim();
@@ -193,9 +190,6 @@ class NetworkDeviceAddEditViewModel : ObservableObject
             Id = d.Id,
             Name = d.Name,
             DeviceTypeId = d.DeviceTypeId,
-            Vendor = d.Vendor,
-            Model = d.Model,
-            SerialNumber = d.SerialNumber,
             IpAddress = d.IpAddress,
             SnmpCommunity = d.SnmpCommunity,
             MountingPointId = d.MountingPointId,

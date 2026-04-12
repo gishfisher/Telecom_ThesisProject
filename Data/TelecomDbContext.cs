@@ -53,6 +53,8 @@ public partial class TelecomDbContext : DbContext
 
     public virtual DbSet<RequestStatus> RequestStatuses { get; set; }
 
+    public virtual DbSet<RequestsType> RequestsTypes { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Service> Services { get; set; }
@@ -60,8 +62,6 @@ public partial class TelecomDbContext : DbContext
     public virtual DbSet<Street> Streets { get; set; }
 
     public virtual DbSet<Tariff> Tariffs { get; set; }
-
-    public virtual DbSet<TrafficBillingLog> TrafficBillingLogs { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -95,9 +95,6 @@ public partial class TelecomDbContext : DbContext
 
             entity.HasIndex(e => e.ContractNumber, "UQ__Clients__C51D43DA678D900C").IsUnique();
 
-            entity.Property(e => e.Balance)
-                .HasDefaultValue(0m)
-                .HasColumnType("numeric(18, 2)");
             entity.Property(e => e.ContractNumber).HasMaxLength(50);
             entity.Property(e => e.FirstName).HasMaxLength(50);
             entity.Property(e => e.LastName).HasMaxLength(50);
@@ -116,8 +113,6 @@ public partial class TelecomDbContext : DbContext
             entity.HasIndex(e => e.PortId, "UQ__Connecti__D859BF8E92C3E6DD").IsUnique();
 
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.LastCheckTime).HasColumnType("datetime");
-            entity.Property(e => e.LastInOctets).HasDefaultValue(0L);
 
             entity.HasOne(d => d.Client).WithMany(p => p.Connections)
                 .HasForeignKey(d => d.ClientId)
@@ -138,7 +133,6 @@ public partial class TelecomDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__DevicePo__3214EC07298AA9FF");
 
-            entity.Property(e => e.IsUplink).HasDefaultValue(false);
             entity.Property(e => e.PortName).HasMaxLength(50);
 
             entity.HasOne(d => d.Device).WithMany(p => p.DevicePorts)
@@ -165,7 +159,7 @@ public partial class TelecomDbContext : DbContext
 
             entity.HasOne(d => d.User).WithOne(p => p.Employee)
                 .HasForeignKey<Employee>(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Employees__UserI__71D1E811");
         });
 
@@ -173,7 +167,6 @@ public partial class TelecomDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__Mounting__3214EC07201906A7");
 
-            entity.Property(e => e.HasPowerBackup).HasDefaultValue(false);
             entity.Property(e => e.LocationDescription).HasMaxLength(255);
 
             entity.HasOne(d => d.Address).WithMany(p => p.MountingPoints)
@@ -203,13 +196,10 @@ public partial class TelecomDbContext : DbContext
             entity.Property(e => e.InstallationDate).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.IpAddress).HasMaxLength(45);
             entity.Property(e => e.IsMonitored).HasDefaultValue(true);
-            entity.Property(e => e.Model).HasMaxLength(100);
             entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.SerialNumber).HasMaxLength(100);
             entity.Property(e => e.SnmpCommunity)
                 .HasMaxLength(50)
                 .HasDefaultValue("public");
-            entity.Property(e => e.Vendor).HasMaxLength(50);
 
             entity.HasOne(d => d.DeviceType).WithMany(p => p.NetworkDevices)
                 .HasForeignKey(d => d.DeviceTypeId)
@@ -218,6 +208,7 @@ public partial class TelecomDbContext : DbContext
 
             entity.HasOne(d => d.MountingPoint).WithMany(p => p.NetworkDevices)
                 .HasForeignKey(d => d.MountingPointId)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__NetworkDe__Mount__60A75C0F");
 
             entity.HasOne(d => d.ParentDevice).WithMany(p => p.InverseParentDevice)
@@ -233,10 +224,10 @@ public partial class TelecomDbContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Description).HasMaxLength(300);
-            entity.Property(e => e.Title).HasMaxLength(100);
 
             entity.HasOne(d => d.Client).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.ClientId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Requests__Client__0C85DE4D");
 
             entity.HasOne(d => d.Device).WithMany(p => p.Requests)
@@ -250,6 +241,11 @@ public partial class TelecomDbContext : DbContext
             entity.HasOne(d => d.Status).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.StatusId)
                 .HasConstraintName("FK__Requests__Status__0B91BA14");
+
+            entity.HasOne(d => d.Type).WithMany(p => p.Requests)
+                .HasForeignKey(d => d.TypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Requests_RequestsTypes");
         });
 
         modelBuilder.Entity<RequestStatus>(entity =>
@@ -259,6 +255,11 @@ public partial class TelecomDbContext : DbContext
             entity.HasIndex(e => e.Name, "UQ__RequestS__737584F607E5D735").IsUnique();
 
             entity.Property(e => e.Name).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<RequestsType>(entity =>
+        {
+            entity.Property(e => e.Name).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -296,9 +297,6 @@ public partial class TelecomDbContext : DbContext
                 .HasDefaultValue(0m)
                 .HasColumnType("numeric(18, 2)");
             entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.PricePerGb)
-                .HasColumnType("numeric(18, 2)")
-                .HasColumnName("PricePerGB");
 
             entity.HasMany(d => d.Services).WithMany(p => p.Tariffs)
                 .UsingEntity<Dictionary<string, object>>(
@@ -316,20 +314,6 @@ public partial class TelecomDbContext : DbContext
                         j.HasKey("TariffId", "ServiceId");
                         j.ToTable("TariffServices");
                     });
-        });
-
-        modelBuilder.Entity<TrafficBillingLog>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__TrafficB__3214EC079ECACE61");
-
-            entity.Property(e => e.CostCharged).HasColumnType("numeric(18, 4)");
-            entity.Property(e => e.Timestamp)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-
-            entity.HasOne(d => d.Connection).WithMany(p => p.TrafficBillingLogs)
-                .HasForeignKey(d => d.ConnectionId)
-                .HasConstraintName("FK__TrafficBi__Conne__04E4BC85");
         });
 
         modelBuilder.Entity<User>(entity =>

@@ -42,7 +42,7 @@
                 <DataGridTextColumn Header="Родитель" Binding="{Binding ParentDevice.Name}" Width="120"/>
             </DataGrid.Columns>
             <DataGrid.InputBindings>
-                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding EditCommand}"/>
+                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding OpenDeviceDetailsCommand}"/>
             </DataGrid.InputBindings>
         </DataGrid>
     </Grid>

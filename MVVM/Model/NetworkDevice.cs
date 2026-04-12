@@ -11,17 +11,11 @@ public partial class NetworkDevice
 
     public int DeviceTypeId { get; set; }
 
-    public string? Vendor { get; set; }
-
-    public string? Model { get; set; }
-
-    public string? SerialNumber { get; set; }
-
     public string IpAddress { get; set; } = null!;
 
     public string? SnmpCommunity { get; set; }
 
-    public int MountingPointId { get; set; }
+    public int? MountingPointId { get; set; }
 
     public int? ParentDeviceId { get; set; }
 
@@ -35,7 +29,7 @@ public partial class NetworkDevice
 
     public virtual ICollection<NetworkDevice> InverseParentDevice { get; set; } = new List<NetworkDevice>();
 
-    public virtual MountingPoint MountingPoint { get; set; } = null!;
+    public virtual MountingPoint? MountingPoint { get; set; }
 
     public virtual NetworkDevice? ParentDevice { get; set; }
 

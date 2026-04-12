@@ -116,11 +116,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(Request.Title))
-                errors.AppendLine("Наименование заявки обязательно.");
-            else if (Request.Title.Length > 100)
-                errors.AppendLine("Наименование не должно превышать 100 символов.");
-
             if (Request.ClientId == null && Request.Client == null)
                 errors.AppendLine("Укажите клиента.");
 
@@ -158,7 +153,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             return new Request
             {
                 Id = request.Id,
-                Title = request.Title,
                 Description = request.Description,
                 CreatedAt = request.CreatedAt,
                 StatusId = request.StatusId,

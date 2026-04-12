@@ -113,8 +113,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             else if (Tariff.Name.Length > 100)
                 errors.AppendLine("Наименование тарифа не должно превышать 100 символов.");
 
-            if (Tariff.PricePerGb < 0)
-                errors.AppendLine("Цена за ГБ не может быть отрицательной.");
+            //if (Tariff.PricePerGb < 0)
+            //    errors.AppendLine("Цена за ГБ не может быть отрицательной.");
 
             if (Tariff.MonthlyFee.HasValue && Tariff.MonthlyFee.Value < 0)
                 errors.AppendLine("Абонентская плата не может быть отрицательной.");
@@ -132,14 +132,13 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         private static Tariff CreateEditableTariff(Tariff? tariff)
         {
             if (tariff == null)
-                return new Tariff { MonthlyFee = 0m, PricePerGb = 0m };
+                return new Tariff { MonthlyFee = 0m };
 
             var editable = new Tariff
             {
                 Id = tariff.Id,
                 Name = tariff.Name,
-                PricePerGb = tariff.PricePerGb,
-                MonthlyFee = tariff.MonthlyFee ?? 0m,
+                MonthlyFee = tariff.MonthlyFee ?? 0m
             };
 
             foreach (var service in tariff.Services)

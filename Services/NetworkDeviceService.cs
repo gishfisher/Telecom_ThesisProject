@@ -33,9 +33,6 @@ class NetworkDeviceService
 
             existing.Name = device.Name;
             existing.DeviceTypeId = device.DeviceTypeId;
-            existing.Vendor = device.Vendor;
-            existing.Model = device.Model;
-            existing.SerialNumber = device.SerialNumber;
             existing.IpAddress = device.IpAddress;
             existing.SnmpCommunity = device.SnmpCommunity;
             existing.MountingPointId = device.MountingPointId;

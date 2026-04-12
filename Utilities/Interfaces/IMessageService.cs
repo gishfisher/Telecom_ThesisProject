@@ -9,5 +9,6 @@ namespace Telecom_ThesisProject.Utilities.Interfaces
     interface IMessageService
     {
         void Show(string message);
+        bool Confirm(string message);
     }
 }

@@ -35,7 +35,6 @@ namespace Telecom_ThesisProject.Services
                 var existingRequest = db.Requests
                     .FirstOrDefault(r => r.Id == request.Id) ?? throw new Exception("Заявка не найдена");
 
-                existingRequest.Title = request.Title;
                 existingRequest.Description = request.Description;
                 existingRequest.ClientId = request.ClientId;
                 existingRequest.EmployeeId = request.EmployeeId;

@@ -40,7 +40,6 @@ namespace Telecom_ThesisProject.Services
                     .FirstOrDefault(t => t.Id == tariff.Id) ?? throw new Exception("Тариф не найден");
 
                 existingTariff.Name = tariff.Name;
-                existingTariff.PricePerGb = tariff.PricePerGb;
                 existingTariff.MonthlyFee = tariff.MonthlyFee;
 
                 existingTariff.Services.Clear();

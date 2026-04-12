@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace Telecom_ThesisProject.Core
 {
-    class RelayCommand : ICommand
+    public class RelayCommand : ICommand
     {
         private readonly Action<object?> _execute;
         private readonly Func<object?, bool>? _canExecute;
@@ -32,6 +32,11 @@ namespace Telecom_ThesisProject.Core
         public void Execute(object? parameter)
         {
             _execute(parameter);
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 }

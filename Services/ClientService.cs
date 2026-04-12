@@ -35,7 +35,6 @@ namespace Telecom_ThesisProject.Services
                 existing.MiddleName = client.MiddleName;
                 existing.ContractNumber = client.ContractNumber;
                 existing.AddressId = client.AddressId;
-                existing.Balance = client.Balance;
 
                 db.SaveChanges();
             }

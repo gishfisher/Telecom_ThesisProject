@@ -55,14 +55,21 @@
              Style="{StaticResource MenuButtonTheme}"
              Command="{Binding ServiceViewCommand}"/>
 
-        <RadioButton Content="Connections" 
-             Height="50" 
+        <RadioButton Content="Connections"
+             Height="50"
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
              Command="{Binding ConnectionsViewCommand}"/>
 
-        <RadioButton Content="Network Devices" 
+        <RadioButton Content="Addresses"
+             Height="50"
+             Foreground="#FFFFFF"
+             FontSize="14pt"
+             Style="{StaticResource MenuButtonTheme}"
+             Command="{Binding AddressTreeViewCommand}"/>
+
+        <RadioButton Content="Network Devices"
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"

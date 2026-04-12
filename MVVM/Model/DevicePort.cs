@@ -9,11 +9,9 @@ public partial class DevicePort
 
     public int DeviceId { get; set; }
 
-    public int PortNumber { get; set; }
-
     public string? PortName { get; set; }
 
-    public bool? IsUplink { get; set; }
+    public bool IsUplink { get; set; }
 
     public virtual Connection? Connection { get; set; }
 

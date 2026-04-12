@@ -38,8 +38,11 @@ class NetworkDeviceViewModel : ObservableObject
     public RelayCommand AddCommand { get; }
     public RelayCommand EditCommand { get; }
     public RelayCommand DeleteCommand { get; }
+    public RelayCommand OpenDeviceDetailsCommand { get; }
 
-    public Action<NetworkDevice?> Navigate { get; set; }
+    public Action<NetworkDevice?> NavigateEditDevice { get; set; }
+    public Action<NetworkDevice?> NavigateDeviceDetails { get; set; }
+    public Action GoBack { get; set; }
 
     public NetworkDeviceViewModel()
     {
@@ -50,16 +53,22 @@ class NetworkDeviceViewModel : ObservableObject
         FilterDevices();
 
         AddCommand = new RelayCommand(
-            _ => Navigate(null),
+            _ => NavigateEditDevice(null),
             _ => CurrentSession.CanSeeNetworkMenu);
 
         EditCommand = new RelayCommand(
-            _ => Navigate(SelectedDevice),
+            _ => NavigateEditDevice(SelectedDevice),
             _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
 
         DeleteCommand = new RelayCommand(
             _ => DeleteDevice(),
             _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
+
+        OpenDeviceDetailsCommand = new RelayCommand(_ =>
+        {
+            if (SelectedDevice != null)
+                NavigateDeviceDetails?.Invoke(SelectedDevice);
+        }, _ => SelectedDevice != null);
     }
 
     private void LoadDevices()
