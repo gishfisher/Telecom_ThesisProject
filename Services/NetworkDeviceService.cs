@@ -84,15 +84,13 @@ class NetworkDeviceService
 
     public List<NetworkDevice> GetAllDevices()
     {
-        using (var db = new TelecomDbContext())
-        {
-            return db.NetworkDevices
-                .Include(d => d.DeviceType)
-                .Include(d => d.MountingPoint)
-                .Include(d => d.ParentDevice)
-                .OrderBy(d => d.Name)
-                .ToList();
-        }
+        using var ctx = new TelecomDbContext();
+        return ctx.NetworkDevices
+            .AsNoTracking()
+            .Include(d => d.DeviceType)
+            .Include(d => d.ParentDevice)
+            .OrderBy(d => d.Name)
+            .ToList();
     }
 
     public List<DeviceType> GetDeviceTypes()

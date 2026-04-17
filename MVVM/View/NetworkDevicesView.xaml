@@ -11,7 +11,7 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="35"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -21,15 +21,27 @@
                Padding="5"
                Grid.Row="0"/>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Button Content="Добавить" Command="{Binding AddCommand}" Margin="0,0,8,0"/>
-                <Button Content="Редактировать" Command="{Binding EditCommand}" Margin="0,0,8,0"/>
-                <Button Content="Удалить" Command="{Binding DeleteCommand}" Margin="0,0,8,0"/>
-                <TextBox Width="220" VerticalContentAlignment="Center"
-                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                 ToolTip="Поиск по имени или IP"/>
-            </StackPanel>
+            <ui:Card Grid.Row="1" >
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Content="Добавить устройство" Icon="{ui:SymbolIcon Add24}" Command="{Binding AddCommand}" Margin="0,0,5,0"/>
 
+                    <Separator Margin="5,2"/>
+
+                    <ui:Button Icon="{ui:SymbolIcon Edit24}" Command="{Binding EditCommand}" 
+                               Appearance="Transparent" Margin="5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeleteCommand}" 
+                               Appearance="Transparent" Margin="0,0,5,0"/>
+
+                    <Separator Margin="5,2"/>
+                    
+                    <ui:TextBox PlaceholderText="Поиск по имени или IP" 
+                                Icon="{ui:SymbolIcon Search24}" Width="300" Margin="5,0"
+                                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Поиск по имени или IP"/>
+                    </StackPanel>
+            </ui:Card>
+            
+            
             <ui:DataGrid Grid.Row="2"
               ItemsSource="{Binding Devices}"
               SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"

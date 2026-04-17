@@ -64,7 +64,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             // === Clients ===
 
             ClientViewCommand = new RelayCommand(
-                o => CurrentView = ClientViewModel,
+                o => { ClientViewModel.Refresh(); CurrentView = ClientViewModel; },
                 o => IsAuthenticated);
 
             ClientViewModel.Navigate = client =>
@@ -83,7 +83,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             // === Employees + Users ===
 
             EmployeeViewCommand = new RelayCommand(
-                o => CurrentView = EmployeeViewModel,
+                o => { EmployeeViewModel.Refresh(); CurrentView = EmployeeViewModel; },
                 o => IsAuthenticated);
 
             EmployeeViewModel.Navigate = emp =>
@@ -102,7 +102,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             // === Requests ===
 
             RequestViewCommand = new RelayCommand(
-                o => CurrentView = RequestViewModel,
+                o => { RequestViewModel.Refresh(); CurrentView = RequestViewModel; },
                 o => IsAuthenticated);
 
             RequestViewModel.Navigate = req =>
@@ -121,7 +121,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             // === Services ===
 
             ServiceViewCommand = new RelayCommand(
-                o => CurrentView = ServiceViewModel,
+                o => { ServiceViewModel.Refresh(); CurrentView = ServiceViewModel; },
                 o => IsAuthenticated);
 
             ServiceViewModel.Navigate = service =>
@@ -140,7 +140,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             // === Tariffs ===
 
             TariffViewCommand = new RelayCommand(
-                o => CurrentView = TariffViewModel,
+                o => { TariffViewModel.Refresh(); CurrentView = TariffViewModel; },
                 o => IsAuthenticated);
 
             TariffViewModel.Navigate = tariff =>
@@ -159,7 +159,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             //=== Network Devices ===
 
             NetworkDevicesViewCommand = new RelayCommand(
-                o => CurrentView = NetworkDeviceViewModel,
+                o => { NetworkDeviceViewModel.Refresh(); CurrentView = NetworkDeviceViewModel; },
                 o => IsAuthenticated && CurrentSession.CanSeeNetworkMenu);
 
             NetworkDeviceViewModel.NavigateEditDevice = device =>
@@ -197,7 +197,11 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
                 detailsVm = new NetworkDeviceDetailsViewModel(device)
                 {
-                    GoBack = () => CurrentView = NetworkDeviceViewModel,
+                    GoBack = () =>
+                    {
+                        NetworkDeviceViewModel.Refresh();
+                        CurrentView = NetworkDeviceViewModel;
+                    },
 
                     NavigateEditDevice = device =>
                     {
@@ -235,7 +239,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             // === Address Tree ===
 
             AddressTreeViewCommand = new RelayCommand(
-                o => CurrentView = AddressTreeViewModel,
+                o => { AddressTreeViewModel.Refresh(); CurrentView = AddressTreeViewModel; },
                 o => IsAuthenticated);
 
             AddressTreeViewModel.NavigateAddCity = node =>
@@ -320,7 +324,11 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             {
                 var vm = new AddressDetailsViewModel(node.Address)
                 {
-                    GoBack = () => CurrentView = AddressTreeViewModel
+                    GoBack = () => 
+                    {
+                        AddressTreeViewModel.Refresh();
+                        CurrentView = AddressTreeViewModel;
+                    }
                 };
                 var addressId = node.Address.Id;
                 vm.NavigateAddEditMountingPoint = mp =>
@@ -342,7 +350,12 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
                     currentDetails = new NetworkDeviceDetailsViewModel(device)
                     {
-                        GoBack = () => CurrentView = vm,
+                        GoBack = () => 
+                        { 
+                            vm.Refresh(); 
+                            CurrentView = vm; 
+                        },
+
                         NavigateEditDevice = device =>
                         {
                             editVm = new NetworkDeviceAddEditViewModel(device)
@@ -375,7 +388,11 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 {
                     var editVm = new NetworkDeviceAddEditViewModel(device)
                     {
-                        GoBack = () => CurrentView = vm
+                        GoBack = () => 
+                        { 
+                            vm.Refresh(); 
+                            CurrentView = vm; 
+                        }
                     };
                     CurrentView = editVm;
                 };

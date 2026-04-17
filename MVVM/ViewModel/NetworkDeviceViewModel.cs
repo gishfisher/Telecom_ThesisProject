@@ -50,25 +50,11 @@ class NetworkDeviceViewModel : ObservableObject
         _networkDeviceService = new NetworkDeviceService();
 
         LoadDevices();
-        FilterDevices();
 
-        AddCommand = new RelayCommand(
-            _ => NavigateEditDevice(null),
-            _ => CurrentSession.CanSeeNetworkMenu);
-
-        EditCommand = new RelayCommand(
-            _ => NavigateEditDevice(SelectedDevice),
-            _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
-
-        DeleteCommand = new RelayCommand(
-            _ => DeleteDevice(),
-            _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
-
-        OpenDeviceDetailsCommand = new RelayCommand(_ =>
-        {
-            if (SelectedDevice != null)
-                NavigateDeviceDetails?.Invoke(SelectedDevice);
-        }, _ => SelectedDevice != null);
+        AddCommand = new RelayCommand(_ => NavigateEditDevice(null), _ => CurrentSession.CanSeeNetworkMenu);
+        EditCommand = new RelayCommand(_ => NavigateEditDevice(SelectedDevice), _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
+        DeleteCommand = new RelayCommand(_ => DeleteDevice(), _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
+        OpenDeviceDetailsCommand = new RelayCommand(_ => NavigateDeviceDetails?.Invoke(SelectedDevice), _ => SelectedDevice != null);
     }
 
     private void LoadDevices()
@@ -93,6 +79,7 @@ class NetworkDeviceViewModel : ObservableObject
         Devices.Clear();
         foreach (var d in filtered)
             Devices.Add(d);
+        OnPropertyChanged(nameof(Devices));
     }
 
     private void DeleteDevice()
@@ -108,8 +95,7 @@ class NetworkDeviceViewModel : ObservableObject
             return;
         }
 
-        LoadDevices();
-        FilterDevices();
+        Refresh();
     }
 
     public void Refresh()

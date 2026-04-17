@@ -6,5 +6,8 @@ public interface INetworkDevicePoller
 {
     NetworkDevicePollResult PollSnmp(NetworkDevice device);
 
+    NetworkDevicePollResult PollPing(NetworkDevice device);
+
     bool TryProbeSshPort(string ipAddress, out string message);
+
 }

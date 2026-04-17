@@ -5,7 +5,7 @@ public class NetworkDevicePollResult
     public bool Success { get; init; }
     public string Message { get; init; } = "";
 
-    public static NetworkDevicePollResult Ok(string sysName, string sysDescr)
+    public static NetworkDevicePollResult SnmpOk(string sysName, string sysDescr)
     {
         var shortDescr = sysDescr.Length > 200 ? sysDescr[..200] + "…" : sysDescr;
         return new NetworkDevicePollResult
@@ -15,6 +15,12 @@ public class NetworkDevicePollResult
         };
     }
 
-    public static NetworkDevicePollResult Fail(string error) =>
+    public static NetworkDevicePollResult SnmpFail(string error) =>
         new() { Success = false, Message = $"SNMP: ошибка — {error}" };
+
+    public static NetworkDevicePollResult PingOk(string pingMessage) =>
+        new() { Success = true, Message = $"ICMP: OK. {pingMessage}" };
+
+    public static NetworkDevicePollResult PingFail(string error) => 
+        new() { Success = false, Message = $"ICMP: ошибка — {error}" };
 }

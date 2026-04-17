@@ -89,7 +89,7 @@
             <Expander Header="Проверка связи">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="Ping (ICMP)" Margin="0,0,10,0" Padding="10,5"/>
+                        <Button Content="Ping (ICMP)" Command="{Binding PingCommand}" Margin="0,0,10,0" Padding="10,5"/>
                         <Button Content="Опрос SNMP (sysName, sysDescr)" Command="{Binding PollSnmpCommand}" Margin="0,0,8,0" Padding="10,5"/>
                         <Button Content="Проверить TCP порт SSH (без авторизации)" Command="{Binding ProbeSshCommand}" Padding="10,5"/>
                     </StackPanel>

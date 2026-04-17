@@ -103,30 +103,31 @@ class NetworkDeviceAddEditViewModel : ObservableObject
 
     #region RelayCommands
 
-        public RelayCommand SaveCommand { get; }
-        public RelayCommand CancelCommand { get; }
-        public RelayCommand PollSnmpCommand { get; }
-        public RelayCommand ProbeSshCommand { get; }
-        public RelayCommand ClearParentCommand { get; }
-        public RelayCommand ManageSnmpProfilesCommand { get; }
-        public RelayCommand AddSnmpProfileCommand { get; }
+    public RelayCommand SaveCommand { get; }
+    public RelayCommand CancelCommand { get; }
+    public RelayCommand PollSnmpCommand { get; }
+    public RelayCommand ProbeSshCommand { get; }
+    public RelayCommand ClearParentCommand { get; }
+    public RelayCommand ManageSnmpProfilesCommand { get; }
+    public RelayCommand AddSnmpProfileCommand { get; }
+    public RelayCommand PingCommand { get; }
 
     #endregion
-    
+
     public string DeviceTitle => Device.Id == 0 ? "Добавление устройства" : $"Редактирование устройства «{Device.Name}»";
     public Action? GoBack { get; set; }
     public Action<SnmpProfile> NavigateAddEditSnmpProfile { get; set; }
 
-    public NetworkDeviceAddEditViewModel(NetworkDevice? selected)
+    public NetworkDeviceAddEditViewModel(NetworkDevice? device)
     {
         _messageService = new MessageService();
         _networkDeviceService = new NetworkDeviceService();
         _addressService = new AddressService();
         _poller = new SnmpNetworkDevicePoller();
 
-        var sourceDevice = selected;
-        if (selected?.Id > 0)
-            sourceDevice = _networkDeviceService.GetDeviceById(selected.Id) ?? selected;
+        var sourceDevice = device;
+        if (device?.Id > 0)
+            sourceDevice = _networkDeviceService.GetDeviceById(device.Id) ?? device;
 
         Device = CreateEditableDevice(sourceDevice);
 
@@ -152,6 +153,7 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         ClearParentCommand = new RelayCommand(_ => { SelectedParent = null; });
         ManageSnmpProfilesCommand = new RelayCommand(_ => NavigateAddEditSnmpProfile?.Invoke(SelectedSnmpProfile!));
         AddSnmpProfileCommand = new RelayCommand(_ => NavigateAddEditSnmpProfile?.Invoke(SelectedSnmpProfile = null!));
+        PingCommand = new RelayCommand(_ => PollPing());
     }
 
     private void Save()
@@ -215,12 +217,22 @@ class NetworkDeviceAddEditViewModel : ObservableObject
     {
         var r = _poller.PollSnmp(Device);
         LastPollResult = r.Message;
+        OnPropertyChanged(nameof(LastPollResult));
     }
 
     private void ProbeSsh()
     {
         _poller.TryProbeSshPort(Device.IpAddress, out var msg);
         LastPollResult = string.IsNullOrEmpty(LastPollResult) ? msg : LastPollResult + "\n\n" + msg;
+        OnPropertyChanged(nameof(LastPollResult));
+    }
+
+    // === ICMP PING ===
+
+    private void PollPing()
+    {
+        var r = _poller.PollPing(Device);
+        LastPollResult = r.Message;
         OnPropertyChanged(nameof(LastPollResult));
     }
 

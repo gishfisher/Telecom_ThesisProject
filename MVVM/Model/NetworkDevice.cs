@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Telecom_ThesisProject.Core;
 
 namespace Telecom_ThesisProject.MVVM.Model;
 
-public partial class NetworkDevice
+public partial class NetworkDevice : ObservableObject
 {
     public int Id { get; set; }
 

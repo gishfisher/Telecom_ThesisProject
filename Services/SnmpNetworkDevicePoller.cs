@@ -21,17 +21,17 @@ public class SnmpNetworkDevicePoller : INetworkDevicePoller
     public NetworkDevicePollResult PollSnmp(NetworkDevice device)
     {
         if (string.IsNullOrWhiteSpace(device.IpAddress))
-            return NetworkDevicePollResult.Fail("Не указан IP адрес.");
+            return NetworkDevicePollResult.SnmpFail("Не указан IP адрес.");
 
         if (!IPAddress.TryParse(device.IpAddress.Trim(), out var ip))
-            return NetworkDevicePollResult.Fail("Некорректный IP адрес.");
+            return NetworkDevicePollResult.SnmpFail("Некорректный IP адрес.");
 
-        //var communityText = string.IsNullOrWhiteSpace(device.SnmpCommunity)
-        //    ? "public"
-        //    : device.SnmpCommunity.Trim();
+        var communityText = string.IsNullOrWhiteSpace(device.SnmpProfile?.Community)
+            ? "public"
+            : device.SnmpProfile?.Community.Trim();
 
         var endpoint = new IPEndPoint(ip, _options.SnmpPort);
-        var community = new OctetString("public");
+        var community = new OctetString(communityText!);
         var variables = new List<Variable>
         {
             new(new ObjectIdentifier(_options.SysNameOid)),
@@ -43,11 +43,11 @@ public class SnmpNetworkDevicePoller : INetworkDevicePoller
             var response = Messenger.Get(VersionCode.V2, endpoint, community, variables, _options.SnmpTimeoutMs);
             var sysName = GetString(response, _options.SysNameOid);
             var sysDescr = GetString(response, _options.SysDescrOid);
-            return NetworkDevicePollResult.Ok(sysName, sysDescr);
+            return NetworkDevicePollResult.SnmpOk(sysName, sysDescr);
         }
         catch (Exception ex)
         {
-            return NetworkDevicePollResult.Fail(ex.Message);
+            return NetworkDevicePollResult.SnmpFail(ex.Message);
         }
     }
 
@@ -88,6 +88,29 @@ public class SnmpNetworkDevicePoller : INetworkDevicePoller
         {
             message = $"SSH: {ex.Message}";
             return false;
+        }
+    }
+
+    public NetworkDevicePollResult PollPing(NetworkDevice device)
+    {
+        if (string.IsNullOrWhiteSpace(device.IpAddress) || !IPAddress.TryParse(device.IpAddress.Trim(), out var ip))
+            return NetworkDevicePollResult.PingFail("Некорректный IP адрес.");
+
+        try
+        {
+            using (var pingSender = new System.Net.NetworkInformation.Ping())
+            {
+                var reply = pingSender.Send(ip, 1000);
+
+                if (reply.Status == System.Net.NetworkInformation.IPStatus.Success)
+                    return NetworkDevicePollResult.PingOk($"{reply.RoundtripTime} ms");
+                else
+                    return NetworkDevicePollResult.PingFail($"{reply.Status}");
+            }
+        }
+        catch (Exception ex)
+        {
+            return NetworkDevicePollResult.PingFail($"Ошибка при попытке пинга: {ex.Message}");
         }
     }
 }
