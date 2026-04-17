@@ -8,14 +8,11 @@ public class AddressNodeViewModel : ObservableObject
 {
     private readonly Address _address;
 
-    public int Id => _address.Id;
+    public int? Id => _address.Id;
     public string HouseNumber => _address.HouseNumber;
-    public string? Apartment => _address.Apartment;
     public Address Address => _address;
 
-    public string DisplayText => string.IsNullOrWhiteSpace(Apartment)
-        ? $"д. {HouseNumber}"
-        : $"д. {HouseNumber}, кв. {Apartment}";
+    public string DisplayText => $"д. {HouseNumber}";
 
     public Action? OpenDetails { get; set; }
     public RelayCommand DetailsCommand { get; }

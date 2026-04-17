@@ -73,7 +73,7 @@ class NetworkDeviceViewModel : ObservableObject
 
     private void LoadDevices()
     {
-        var list = _networkDeviceService.GetAll();
+        var list = _networkDeviceService.GetAllDevices();
         Devices.Clear();
         foreach (var d in list)
             Devices.Add(d);
@@ -83,7 +83,7 @@ class NetworkDeviceViewModel : ObservableObject
     private void FilterDevices()
     {
         var search = SearchText?.Trim() ?? string.Empty;
-        var all = _networkDeviceService.GetAll();
+        var all = _networkDeviceService.GetAllDevices();
         var filtered = string.IsNullOrEmpty(search)
             ? all
             : all.Where(d =>

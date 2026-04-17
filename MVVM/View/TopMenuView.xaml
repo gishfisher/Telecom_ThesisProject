@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="950">
 
@@ -40,6 +41,22 @@
              Command="{Binding EmployeeViewCommand}"
              Visibility="{Binding CanSeeAdminMenu, 
                 Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+        <!--<ui:DropDownButton Content="Tariffs" Icon="{ui:SymbolIcon Tag24}">
+            <ui:DropDownButton.Flyout>
+                <ContextMenu>
+                    <ui:MenuItem Header="Tariffs" 
+                         FontSize="14"
+                         Icon="{ui:SymbolIcon Tag24}"
+                         Command="{Binding TariffViewCommand}" />
+
+                    <ui:MenuItem Header="Services" 
+                         FontSize="14"
+                         Icon="{ui:SymbolIcon Apps24}"
+                         Command="{Binding ServiceViewCommand}" />
+                </ContextMenu>
+            </ui:DropDownButton.Flyout>
+        </ui:DropDownButton>-->
 
         <RadioButton Content="Tariffs" 
              Height="50" 

@@ -4,12 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
-             xmlns:vm="clr-namespace:Telecom_ThesisProject.MVVM.ViewModel"
+             xmlns:vm="clr-namespace:Telecom_ThesisProject.MVVM.ViewModel" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800"
-             Background="White">
+             d:DesignHeight="450" d:DesignWidth="800">
 
-    <UserControl.Resources>
+    <!--<UserControl.Resources>
         <DrawingImage x:Key="FolderIcon" x:Shared="False">
             <DrawingImage.Drawing>
                 <DrawingGroup>
@@ -39,13 +40,15 @@
         </HierarchicalDataTemplate>
 
         <DataTemplate DataType="{x:Type vm:AddressNodeViewModel}">
-            <StackPanel Orientation="Horizontal" Margin="2">
-                <Image Source="{StaticResource CheckIcon}" Width="14" Height="14" Margin="0,0,6,0"/>
+            <StackPanel Orientation="Horizontal" 
+                        Margin="2" 
+                        Background="Transparent">
+                <StackPanel.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick" 
+                                  Command="{Binding DetailsCommand}"/>
+                </StackPanel.InputBindings>
+                <Image Source="{StaticResource CheckIcon}" Width="15" Height="15" Margin="0,0,5,0"/>
                 <TextBlock Text="{Binding DisplayText}" FontSize="12" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <Button Content="Подробнее"
-                        Command="{Binding DetailsCommand}"
-                        Padding="6,2"
-                        FontSize="10"/>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
@@ -95,5 +98,89 @@
                 </Style>
             </TreeView.ItemContainerStyle>
         </TreeView>
-    </Grid>
+    </Grid>-->
+    <UserControl.Resources>
+        <!--<DrawingImage x:Key="FolderIcon" x:Shared="False">
+            <DrawingImage.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="#F59E0B" Geometry="M2 6a2 2 0 012-2h5l2 2h9a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="CheckIcon" x:Shared="False">
+            <DrawingImage.Drawing>
+                <GeometryDrawing Brush="#10B981" Geometry="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </DrawingImage.Drawing>
+        </DrawingImage>-->
+
+        <HierarchicalDataTemplate DataType="{x:Type vm:CityNodeViewModel}" ItemsSource="{Binding Streets}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2">
+                <ui:SymbolIcon Symbol="City24" Margin="0,0,8,0"/>
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="Medium"/>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate DataType="{x:Type vm:StreetNodeViewModel}" ItemsSource="{Binding Addresses}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2">
+                <ui:SymbolIcon Symbol="Location12" Margin="0,0,8,0"/>
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:AddressNodeViewModel}">
+            <StackPanel Orientation="Horizontal" Background="Transparent" 
+                        HorizontalAlignment="Stretch" Margin="0,2">
+                <StackPanel.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DetailsCommand}"/>
+                </StackPanel.InputBindings>
+                <ui:SymbolIcon Symbol="Home24" Margin="0,0,8,0"/>
+                <TextBlock Text="{Binding DisplayText}" VerticalAlignment="Center"/>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Border Margin="10" Padding="10" CornerRadius="10" Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Адреса"
+                       FontSize="14pt"
+                       Foreground="#111827"
+                       Padding="5"
+                       Grid.Row="0"/>
+
+            <ui:Card Grid.Row="1">
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Icon="{ui:SymbolIcon Add24}" Content="Город" Command="{Binding AddCityCommand}" Appearance="Secondary" Margin="5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon Location12}" Content="Улица" Command="{Binding AddStreetCommand}" Appearance="Secondary" Margin="0,0,5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon HomeAdd24}" Content="Дом" Command="{Binding AddAddressCommand}" Appearance="Secondary" Margin="0,0,5,0"/>
+
+                    <Separator Margin="5,2"/>
+
+                    <ui:Button Icon="{ui:SymbolIcon Edit24}" Command="{Binding EditCommand}" Appearance="Transparent" Margin="5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeleteCommand}" Appearance="Transparent" Margin="0,0,5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding RefreshCommand}" Appearance="Transparent" Margin="0,0,5,0"/>
+                </StackPanel>
+            </ui:Card>
+
+            <ui:Card Grid.Row="2" Padding="0" VerticalAlignment="Top">
+                <TreeView ItemsSource="{Binding Cities}"
+                  BorderThickness="0"
+                  Background="Transparent"
+                  SelectedItemChanged="TreeView_SelectedItemChanged">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                            <!--<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>-->
+                            <Setter Property="Padding" Value="8,4"/>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
+            </ui:Card>
+        </Grid>
+    </Border>
 </UserControl>

@@ -11,16 +11,14 @@ namespace TelecomCompany.ApplicationData.Crypt
     {
         public static string HashPassword(string password)
         {
-            MD5 md5 = MD5.Create();
+            if (password == null) throw new ArgumentNullException(nameof(password));
+            using var md5 = MD5.Create();
+            byte[] bytes = Encoding.UTF8.GetBytes(password);
+            byte[] hash = md5.ComputeHash(bytes);
 
-            byte[] b = Encoding.ASCII.GetBytes(password);
-            byte[] hash = md5.ComputeHash(b);
-
-            StringBuilder sb = new StringBuilder();
-            foreach (var a in hash)
-                sb.Append(a.ToString("X2"));
-
-            return Convert.ToString(sb);
+            var sb = new StringBuilder(hash.Length * 2);
+            foreach (var b in hash) sb.Append(b.ToString("X2"));
+            return sb.ToString();
         }
     }
 }

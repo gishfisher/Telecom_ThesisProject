@@ -7,13 +7,15 @@ public partial class Connection
 {
     public int Id { get; set; }
 
+    public string StaticIp { get; set; } = null!;
+
     public int ClientId { get; set; }
 
     public int PortId { get; set; }
 
     public int TariffId { get; set; }
 
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
     public virtual Client Client { get; set; } = null!;
 

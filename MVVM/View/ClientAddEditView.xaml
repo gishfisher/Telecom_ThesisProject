@@ -22,7 +22,7 @@
 
             <Label Content="Адрес"/>
             <ComboBox ItemsSource="{Binding Addresses}"
-                      DisplayMemberPath="DisplayLine"
+                      DisplayMemberPath="GetFullAddress"
                       SelectedValuePath="Id"
                       SelectedValue="{Binding Client.AddressId, Mode=TwoWay}"/>
 

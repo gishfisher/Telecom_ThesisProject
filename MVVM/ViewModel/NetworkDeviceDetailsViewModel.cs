@@ -1,9 +1,14 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Renci.SshNet;
 using Renci.SshNet.Common;
+using Renci.SshNet.Messages.Transport; 
+using Renci.SshNet.Security;
+using Renci.SshNet.Security.Cryptography;
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Cryptography;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.Data;
 using Telecom_ThesisProject.MVVM.Model;
@@ -12,8 +17,6 @@ using Telecom_ThesisProject.Utilities;
 using Telecom_ThesisProject.Utilities.Interfaces;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel;
-
-
 
 public class NetworkDeviceDetailsViewModel : ObservableObject
 {
@@ -25,7 +28,6 @@ public class NetworkDeviceDetailsViewModel : ObservableObject
 
     public NetworkDevice Device { get; }
 
-    //public ObservableCollection<PortRowViewModel> Ports { get; } = new();
     public ObservableCollection<Client> ClientsList { get; } = new();
     public ObservableCollection<NetworkDevice> ParentDevices { get; } = new();
 
@@ -41,7 +43,6 @@ public class NetworkDeviceDetailsViewModel : ObservableObject
     public RelayCommand SaveCommand { get; }
     public RelayCommand RefreshPortsCommand { get; }
     public RelayCommand OpenSshCommand { get; }
-    public RelayCommand RebootCommand { get; }
 
     public Action? GoBack { get; set; }
     public Action<NetworkDevice>? NavigateEditDevice { get; set; }
@@ -61,7 +62,6 @@ public class NetworkDeviceDetailsViewModel : ObservableObject
         SaveCommand = new RelayCommand(_ => SaveConfig());
         RefreshPortsCommand = new RelayCommand(_ => LoadPorts());
         OpenSshCommand = new RelayCommand(_ => OpenSsh());
-        RebootCommand = new RelayCommand(_ => RebootDevice());
 
         LoadData();
     }
@@ -79,15 +79,15 @@ public class NetworkDeviceDetailsViewModel : ObservableObject
         if (device == null) return;
 
         //Ports.Clear();
-        foreach (var port in device.DevicePorts)
-        {
-            db.Entry(port).State = EntityState.Detached;
-            if (port.Connection?.Client != null)
-                db.Entry(port.Connection.Client).State = EntityState.Detached;
-            //var row = new PortRowViewModel(port);
-            //row.SelectedClient = port.Connection?.Client;
-            //Ports.Add(row);
-        }
+        //foreach (var port in device.DevicePorts)
+        //{
+        //    db.Entry(port).State = EntityState.Detached;
+        //    if (port.Connection?.Client != null)
+        //        db.Entry(port.Connection.Client).State = EntityState.Detached;
+        //    var row = new PortRowViewModel(port);
+        //    row.SelectedClient = port.Connection?.Client;
+        //    Ports.Add(row);
+        //}
 
         var clients = _clientService.GetAll();
         ClientsList.Clear();
@@ -109,17 +109,13 @@ public class NetworkDeviceDetailsViewModel : ObservableObject
     {
         try
         {
-            using var db = new TelecomDbContext();
-            var existing = db.NetworkDevices.FirstOrDefault(d => d.Id == Device.Id);
-            if (existing == null)
-            {
-                _messageService.Show("Устройство не найдено.");
-                return;
-            }
-
-            existing.SnmpCommunity = Device.SnmpCommunity;
-            existing.ParentDeviceId = SelectedParentDevice?.Id;
-            db.SaveChanges();
+            //using var db = new TelecomDbContext();
+            //var existing = db.NetworkDevices.FirstOrDefault(d => d.Id == Device.Id);
+            //if (existing == null)
+            //{
+            //    _messageService.Show("Устройство не найдено.");
+            //    return;
+            //}
 
             //foreach (var row in Ports)
             //{
@@ -146,9 +142,6 @@ public class NetworkDeviceDetailsViewModel : ObservableObject
             //        }
             //    }
             //}
-            db.SaveChanges();
-
-            _messageService.Show("Конфигурация сохранена.");
         }
         catch (Exception ex)
         {
@@ -160,38 +153,18 @@ public class NetworkDeviceDetailsViewModel : ObservableObject
     {
         try
         {
-            var keyboardAuth = new KeyboardInteractiveAuthenticationMethod("admin");
-            var passwordAuth = new PasswordAuthenticationMethod("admin", "admin");
+            string sshCommand = $"ssh admin@{Device.IpAddress} -p {_lab.SshPort}";
 
-            var connectionInfo = new ConnectionInfo(Device.IpAddress, _lab.SshPort, "admin", passwordAuth, keyboardAuth)
+            Process.Start(new ProcessStartInfo
             {
-                Timeout = TimeSpan.FromSeconds(10)
-            };
-
-            using var client = new SshClient(connectionInfo);
-            client.Connect();
-
-            if (client.IsConnected)
-            {
-                _messageService.Show($"SSH подключено к {Device.IpAddress}");
-                client.Disconnect();
-            }
-        }
-        catch (SshConnectionException ex)
-        {
-            _messageService.Show($"SSH ошибка подключения: {ex.Message}\n\nВозможно, устройство не поддерживает текущие алгоритмы обмена ключами.");
+                FileName = "cmd.exe",
+                Arguments = $"/k echo Подключение к {Device.IpAddress} && {sshCommand}",
+                UseShellExecute = true
+            });
         }
         catch (Exception ex)
         {
-            _messageService.Show($"SSH ошибка: {ex.Message}");
-        }
-    }
-
-    private void RebootDevice()
-    {
-        if (_messageService.Confirm($"Перезагрузить устройство {Device.Name} ({Device.IpAddress})?"))
-        {
-            _messageService.Show($"Команда перезагрузки отправлена на {Device.IpAddress}");
+            _messageService.Show($"Ошибка запуска CMD: {ex.Message}");
         }
     }
 

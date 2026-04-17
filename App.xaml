@@ -5,12 +5,17 @@
              xmlns:vm="clr-namespace:Telecom_ThesisProject.MVVM.ViewModel"
              xmlns:view="clr-namespace:Telecom_ThesisProject.MVVM.View"
              xmlns:utils="clr-namespace:Telecom_ThesisProject.Utilities"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              StartupUri="Windows/MainWindow.xaml">
+             <!--xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"-->
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Themes/MenuButtonTheme.xaml"/>
-                <ResourceDictionary Source="/Themes/TextBoxTheme.xaml"/>
+                <ui:ThemesDictionary Theme="Light" />
+                <ui:ControlsDictionary />
+                <!--<materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
 
             <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
@@ -63,14 +68,6 @@
                 <view:TariffAddEditView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:NetworkDeviceViewModel}">
-                <view:NetworkDevicesView/>
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type vm:NetworkDeviceAddEditViewModel}">
-                <view:NetworkDeviceAddEditView/>
-            </DataTemplate>
-
             <DataTemplate DataType="{x:Type vm:ConnectionsViewModel}">
                 <view:ConnectionsView/>
             </DataTemplate>
@@ -95,6 +92,14 @@
                 <view:AddressDetailsView/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type vm:NetworkDeviceViewModel}">
+                <view:NetworkDevicesView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:NetworkDeviceAddEditViewModel}">
+                <view:NetworkDeviceAddEditView/>
+            </DataTemplate>
+
             <DataTemplate DataType="{x:Type vm:NetworkDeviceDetailsViewModel}">
                 <view:NetworkDeviceDetailsView/>
             </DataTemplate>
@@ -105,6 +110,10 @@
 
             <DataTemplate DataType="{x:Type vm:BindDeviceViewModel}">
                 <view:BindDeviceView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:SnmpProfileViewModel}">
+                <view:SnmpProfileView/>
             </DataTemplate>
 
         </ResourceDictionary>

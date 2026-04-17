@@ -14,6 +14,8 @@ public class AddressAddEditViewModel : ObservableObject
     private readonly AddressService _addressService;
     private readonly IMessageService _messageService;
 
+    #region Properties
+
     private string _houseNumber = string.Empty;
     public string HouseNumber
     {
@@ -28,14 +30,19 @@ public class AddressAddEditViewModel : ObservableObject
         set { _apartment = value; OnPropertyChanged(); }
     }
 
-    private int _selectedStreetId;
-    public int SelectedStreetId
+    private int? _selectedStreetId;
+    public int? SelectedStreetId
     {
         get => _selectedStreetId;
         set { _selectedStreetId = value; OnPropertyChanged(); }
     }
 
-    public ObservableCollection<Street> Streets { get; } = new();
+    public int _selectedCityId;
+    public int SelectedCityId
+    {
+        get => _selectedCityId;
+        set { _selectedCityId = value; OnPropertyChanged(); }
+    }
 
     private string _errorMessage = string.Empty;
     public string ErrorMessage
@@ -44,10 +51,14 @@ public class AddressAddEditViewModel : ObservableObject
         set { _errorMessage = value; OnPropertyChanged(); }
     }
 
-    public string Title => IsEdit ? "Редактирование дома" : "Добавление дома";
-
     public bool IsEdit { get; }
     public int? AddressId { get; }
+
+    #endregion
+
+    public ObservableCollection<Street> Streets { get; } = new();
+
+    public string Title => IsEdit ? "Редактирование дома" : "Добавление дома";
 
     public RelayCommand SaveCommand { get; }
     public RelayCommand CancelCommand { get; }
@@ -62,11 +73,12 @@ public class AddressAddEditViewModel : ObservableObject
         IsEdit = node != null;
         AddressId = node?.Id;
         HouseNumber = node?.HouseNumber ?? string.Empty;
-        Apartment = node?.Apartment;
 
         if (IsEdit && node != null)
         {
-            var cities = _addressService.GetCitiesForCombo();
+            SelectedCityId = node.Address.Street.CityId;
+
+            var cities = _addressService.GetCitiesForCombo().Where(s => s.Id == SelectedCityId).ToList();
             foreach (var city in cities)
             {
                 var streets = _addressService.GetStreetsByCityId(city.Id);
@@ -78,11 +90,16 @@ public class AddressAddEditViewModel : ObservableObject
         {
             if (parentStreet != null)
             {
-                var city = _addressService.GetCitiesForCombo().FirstOrDefault();
-                if (city != null)
+                SelectedCityId = parentStreet.Street.CityId;
+
+                var cities = _addressService.GetCitiesForCombo().Where(s => s.Id == SelectedCityId).ToList();
+                if (cities != null)
                 {
-                    var streets = _addressService.GetStreetsByCityId(city.Id);
-                    foreach (var s in streets) Streets.Add(s);
+                    foreach (var city in cities)
+                    {
+                        var streets = _addressService.GetStreetsByCityId(city.Id);
+                        foreach (var s in streets) Streets.Add(s);
+                    }
                     SelectedStreetId = parentStreet.Id;
                 }
             }
@@ -108,7 +125,6 @@ public class AddressAddEditViewModel : ObservableObject
                 {
                     Id = AddressId.Value,
                     HouseNumber = HouseNumber.Trim(),
-                    Apartment = Apartment?.Trim(),
                     StreetId = SelectedStreetId
                 };
                 _addressService.EditAddress(address);
@@ -118,7 +134,6 @@ public class AddressAddEditViewModel : ObservableObject
                 var address = new Address
                 {
                     HouseNumber = HouseNumber.Trim(),
-                    Apartment = Apartment?.Trim(),
                     StreetId = SelectedStreetId
                 };
                 _addressService.AddAddress(address);
@@ -146,6 +161,9 @@ public class AddressAddEditViewModel : ObservableObject
 
         if (SelectedStreetId <= 0)
             errors.AppendLine("Выберите улицу.");
+
+        if (SelectedCityId <= 0)
+            errors.AppendLine("Выберите город.");
 
         if (errors.Length > 0)
         {

@@ -99,7 +99,8 @@ public class MountingPointAddEditViewModel : ObservableObject
                 {
                     AddressId = AddressId,
                     PointTypeId = SelectedPointTypeId,
-                    LocationDescription = LocationDescription?.Trim()
+                    LocationDescription = LocationDescription?.Trim(),
+                    MountingDate = DateOnly.FromDateTime(DateTime.Today)
                 };
                 _addressService.AddMountingPoint(mp);
             }

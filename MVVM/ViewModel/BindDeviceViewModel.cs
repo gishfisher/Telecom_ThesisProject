@@ -108,6 +108,13 @@ public class BindDeviceViewModel : ObservableObject
                 return;
             }
             device.MountingPointId = SelectedMountingPointId;
+
+            if (device.MountingPointId.HasValue && !device.InstallationDate.HasValue)
+                if (device.MountingPointId.HasValue && !device.InstallationDate.HasValue)
+                    device.InstallationDate = DateOnly.FromDateTime(DateTime.Today);
+                else if (!device.MountingPointId.HasValue)
+                    device.InstallationDate = null;
+
             db.SaveChanges();
             GoBack?.Invoke();
         }

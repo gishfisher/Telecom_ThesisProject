@@ -11,11 +11,17 @@ public partial class MountingPoint
 
     public int PointTypeId { get; set; }
 
+    public int? SpotTypeId { get; set; }
+
     public string? LocationDescription { get; set; }
+
+    public DateOnly? MountingDate { get; set; }
 
     public virtual Address Address { get; set; } = null!;
 
     public virtual ICollection<NetworkDevice> NetworkDevices { get; set; } = new List<NetworkDevice>();
 
     public virtual MountingPointType PointType { get; set; } = null!;
+
+    public virtual MountingSpotType? SpotType { get; set; }
 }

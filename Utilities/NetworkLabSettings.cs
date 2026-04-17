@@ -17,8 +17,6 @@ public static class NetworkLabSettings
         if (!section.Exists())
             return o;
 
-        o.Description = section["Description"] ?? o.Description;
-        o.TopologyNote = section["TopologyNote"] ?? o.TopologyNote;
         o.ManagementNetworkCidr = section["ManagementNetworkCidr"] ?? o.ManagementNetworkCidr;
 
         if (int.TryParse(section["SnmpPort"], out var sp)) o.SnmpPort = sp;

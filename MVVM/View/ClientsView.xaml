@@ -42,9 +42,8 @@
                   IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="2*"/>
+                <DataGridTextColumn Header="ФИО" Binding="{Binding GetFullName}" Width="2*"/>
                 <DataGridTextColumn Header="Договор" Binding="{Binding ContractNumber}" Width="*"/>
-                <DataGridTextColumn Header="Баланс" Binding="{Binding Balance, StringFormat={}{0:N2}}" Width="*"/>
             </DataGrid.Columns>
 
             <DataGrid.InputBindings>

@@ -9,19 +9,7 @@ namespace Telecom_ThesisProject.Services
 {
     class AddressService
     {
-        public List<Address> GetAllWithLocation()
-        {
-            using (var db = new TelecomDbContext())
-            {
-                return db.Addresses
-                    .Include(a => a.Street)
-                    .ThenInclude(s => s.City)
-                    .OrderBy(a => a.Id)
-                    .ToList();
-            }
-        }
-
-        // Cities
+        // === Cities ===
         public List<City> GetAllCities()
         {
             using (var db = new TelecomDbContext())
@@ -71,7 +59,17 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
-        // Street
+        // === Getters ===
+
+        public List<City> GetCitiesForCombo()
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Cities.OrderBy(c => c.Name).ToList();
+            }
+        }
+
+        // === Streets ===
         public void AddStreet(Street street)
         {
             ArgumentNullException.ThrowIfNull(street);
@@ -110,7 +108,17 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
-        //Address
+        // === Getters ===
+
+        public List<Street> GetStreetsByCityId(int cityId)
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Streets.Where(s => s.CityId == cityId).OrderBy(s => s.Name).ToList();
+            }
+        }
+
+        // === Addreses ===
         public void AddAddress(Address address)
         {
             ArgumentNullException.ThrowIfNull(address);
@@ -129,7 +137,6 @@ namespace Telecom_ThesisProject.Services
                 var existing = db.Addresses.FirstOrDefault(a => a.Id == address.Id)
                     ?? throw new Exception("Адрес не найден");
                 existing.HouseNumber = address.HouseNumber;
-                existing.Apartment = address.Apartment;
                 existing.StreetId = address.StreetId;
                 db.SaveChanges();
             }
@@ -141,43 +148,40 @@ namespace Telecom_ThesisProject.Services
             using (var db = new TelecomDbContext())
             {
                 var existing = db.Addresses
-                    .Include(a => a.Clients)
                     .FirstOrDefault(a => a.Id == address.Id)
                     ?? throw new Exception("Адрес не найден");
+
+                bool hasClients = db.Clients.Any(c => c.AddressId == existing.Id);
+                if (hasClients)
+                    throw new InvalidOperationException("Есть клиенты, привязанные к адресу.");
 
                 db.Addresses.Remove(existing);
                 db.SaveChanges();
             }
         }
 
-        public List<City> GetCitiesForCombo()
+        // === Getters ===
+        public List<Address> GetAllWithLocation()
         {
             using (var db = new TelecomDbContext())
             {
-                return db.Cities.OrderBy(c => c.Name).ToList();
+                return db.Addresses
+                    .Include(a => a.Street)
+                    .ThenInclude(s => s.City)
+                    .OrderBy(a => a.Id)
+                    .ToList();
             }
         }
 
-        public List<Street> GetStreetsByCityId(int cityId)
-        {
-            using (var db = new TelecomDbContext())
-            {
-                return db.Streets.Where(s => s.CityId == cityId).OrderBy(s => s.Name).ToList();
-            }
-        }
-
-        //Mounting Point
-        public List<MountingPointType> GetMountingPointTypes()
-        {
-            using (var db = new TelecomDbContext())
-            {
-                return db.MountingPointTypes.OrderBy(t => t.Name).ToList();
-            }
-        }
+        // === Mounting Point ===
 
         public void AddMountingPoint(MountingPoint mp)
         {
             ArgumentNullException.ThrowIfNull(mp);
+
+            if (!mp.MountingDate.HasValue)
+                mp.MountingDate = DateOnly.FromDateTime(DateTime.Today);
+
             using (var db = new TelecomDbContext())
             {
                 db.MountingPoints.Add(mp);
@@ -226,73 +230,34 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
-        //NetworkDevice
-        public List<DeviceType> GetDeviceTypes()
+        // === Getters ===
+
+        public List<MountingPointType> GetMountingPointTypes()
         {
             using (var db = new TelecomDbContext())
             {
-                return db.DeviceTypes.OrderBy(t => t.TypeName).ToList();
+                return db.MountingPointTypes.OrderBy(t => t.Name).ToList();
             }
         }
 
-        public List<NetworkDevice> GetDevicesForParent(int? excludeDeviceId)
+        public List<MountingPoint> GetMountingPointsById()
         {
             using (var db = new TelecomDbContext())
             {
-                var q = db.NetworkDevices.AsQueryable();
-                if (excludeDeviceId.HasValue && excludeDeviceId.Value > 0)
-                    q = q.Where(d => d.Id != excludeDeviceId.Value);
-                return q.OrderBy(d => d.Name).ToList();
+                return db.MountingPoints.OrderBy(t => t.Id).ToList();
             }
         }
 
-        public void AddNetworkDevice(NetworkDevice device)
+        public List<MountingPoint> GetMountingPointsWithAddress()
         {
-            ArgumentNullException.ThrowIfNull(device);
             using (var db = new TelecomDbContext())
             {
-                db.NetworkDevices.Add(device);
-                db.SaveChanges();
-            }
-        }
-
-        public void EditNetworkDevice(NetworkDevice device)
-        {
-            ArgumentNullException.ThrowIfNull(device);
-            using (var db = new TelecomDbContext())
-            {
-                var existing = db.NetworkDevices.FirstOrDefault(d => d.Id == device.Id)
-                    ?? throw new Exception("Устройство не найдено");
-                existing.Name = device.Name;
-                existing.DeviceTypeId = device.DeviceTypeId;
-                existing.IpAddress = device.IpAddress;
-                existing.SnmpCommunity = device.SnmpCommunity;
-                existing.MountingPointId = device.MountingPointId;
-                existing.ParentDeviceId = device.ParentDeviceId;
-                existing.IsMonitored = device.IsMonitored;
-                existing.InstallationDate = device.InstallationDate;
-                db.SaveChanges();
-            }
-        }
-
-        public void RemoveNetworkDevice(NetworkDevice device)
-        {
-            ArgumentNullException.ThrowIfNull(device);
-            using (var db = new TelecomDbContext())
-            {
-                var existing = db.NetworkDevices
-                    .Include(d => d.DevicePorts)
-                        .ThenInclude(p => p.Connection)
-                    .FirstOrDefault(d => d.Id == device.Id)
-                    ?? throw new Exception("Устройство не найдено");
-
-                var children = db.NetworkDevices.Where(d => d.ParentDeviceId == existing.Id).ToList();
-                foreach (var child in children)
-                    child.ParentDeviceId = null;
-                db.SaveChanges();
-
-                db.NetworkDevices.Remove(existing);
-                db.SaveChanges();
+                return db.MountingPoints
+                    .Include(mp => mp.Address)
+                        .ThenInclude(a => a.Street)
+                            .ThenInclude(s => s.City)
+                    .OrderBy(mp => mp.Id)
+                    .ToList();
             }
         }
     }

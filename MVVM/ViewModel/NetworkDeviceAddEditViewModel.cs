@@ -13,18 +13,23 @@ namespace Telecom_ThesisProject.MVVM.ViewModel;
 class NetworkDeviceAddEditViewModel : ObservableObject
 {
     private readonly NetworkDeviceService _networkDeviceService;
-    private readonly NetworkLabOptions _lab;
+    private readonly AddressService _addressService;
     private readonly INetworkDevicePoller _poller;
     private readonly IMessageService _messageService;
 
+    #region Obsevable collections for dropdowns
+
+        public ObservableCollection<DeviceType> DeviceTypes { get; }
+        public ObservableCollection<SnmpProfile> SnmpProfiles { get; } 
+        public ObservableCollection<MountingPoint> MountingPoints { get; }
+        public ObservableCollection<NetworkDevice> ParentCandidates { get; }
+
+    #endregion
+
+    #region Properties
     public NetworkDevice Device { get; }
 
-    public ObservableCollection<DeviceType> DeviceTypes { get; }
-    public ObservableCollection<MountingPoint> MountingPoints { get; }
-    public ObservableCollection<NetworkDevice> ParentCandidates { get; }
-
     private NetworkDevice? _selectedParent;
-
     public NetworkDevice? SelectedParent
     {
         get => _selectedParent;
@@ -36,20 +41,32 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         }
     }
 
-    //public DateTime? InstallDateUi
-    //{
-    //    get => Device.InstallationDate.HasValue
-    //        ? Device.InstallationDate.Value.ToDateTime(TimeOnly.MinValue)
-    //        : null;
-    //    set
-    //    {
-    //        Device.InstallationDate = value.HasValue ? DateOnly.FromDateTime(value.Value) : null;
-    //        OnPropertyChanged();
-    //    }
-    //}
+    public SnmpProfile? _selectedSnmpProfile;
+    public SnmpProfile? SelectedSnmpProfile
+    {
+        get => _selectedSnmpProfile;
+        set
+        {
+            _selectedSnmpProfile = value;
+            Device.SnmpProfileId = value?.Id;
+            OnPropertyChanged();
+        }
+    }
 
-    //public string LabInfoText { get; }
+    private MountingPoint? _selectedMountingPoint;
+    public MountingPoint? SelectedMountingPoint
+    {
+        get => _selectedMountingPoint;
+        set
+        {
+            _selectedMountingPoint = value;
+            Device.MountingPointId = value?.Id;
+            UpdateInstallDateAndMountingPoint();
+            OnPropertyChanged();
+        }
+    }
 
+    private string _lastPollResult = "";
     public string LastPollResult
     {
         get => _lastPollResult;
@@ -60,15 +77,16 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         }
     }
 
-    private string _lastPollResult = "";
-
-    public RelayCommand SaveCommand { get; }
-    public RelayCommand CancelCommand { get; }
-    public RelayCommand PollSnmpCommand { get; }
-    public RelayCommand ProbeSshCommand { get; }
-    public RelayCommand ClearParentCommand { get; }
-
-    public Action? GoBack { get; set; }
+    private string _installDateAndMountingPoint;
+    public string InstallDateAndMountingPoint
+    {
+        get => _installDateAndMountingPoint;
+        set
+        {
+            _installDateAndMountingPoint = value;
+            OnPropertyChanged();
+        }
+    }
 
     private string _errorMessage = string.Empty;
     public string ErrorMessage
@@ -81,44 +99,59 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         }
     }
 
+    #endregion
+
+    #region RelayCommands
+
+        public RelayCommand SaveCommand { get; }
+        public RelayCommand CancelCommand { get; }
+        public RelayCommand PollSnmpCommand { get; }
+        public RelayCommand ProbeSshCommand { get; }
+        public RelayCommand ClearParentCommand { get; }
+        public RelayCommand ManageSnmpProfilesCommand { get; }
+        public RelayCommand AddSnmpProfileCommand { get; }
+
+    #endregion
+    
+    public string DeviceTitle => Device.Id == 0 ? "Добавление устройства" : $"Редактирование устройства «{Device.Name}»";
+    public Action? GoBack { get; set; }
+    public Action<SnmpProfile> NavigateAddEditSnmpProfile { get; set; }
+
     public NetworkDeviceAddEditViewModel(NetworkDevice? selected)
     {
         _messageService = new MessageService();
         _networkDeviceService = new NetworkDeviceService();
+        _addressService = new AddressService();
         _poller = new SnmpNetworkDevicePoller();
-        _lab = NetworkLabSettings.Load();
 
-        //LabInfoText =
-        //    $"{_lab.Description}\n{_lab.TopologyNote}\nУправляющая сеть (Cloud0 / lab): {_lab.ManagementNetworkCidr}";
+        var sourceDevice = selected;
+        if (selected?.Id > 0)
+            sourceDevice = _networkDeviceService.GetDeviceById(selected.Id) ?? selected;
 
-        Device = CreateEditableDevice(selected);
+        Device = CreateEditableDevice(sourceDevice);
 
         DeviceTypes = new ObservableCollection<DeviceType>(_networkDeviceService.GetDeviceTypes());
+        SnmpProfiles = new ObservableCollection<SnmpProfile>(_networkDeviceService.GetSnmpProfiles());
         MountingPoints = new ObservableCollection<MountingPoint>(_networkDeviceService.GetMountingPointsWithAddress());
-        ParentCandidates = new ObservableCollection<NetworkDevice>(_networkDeviceService.GetParentCandidates(selected?.Id));
+        ParentCandidates = new ObservableCollection<NetworkDevice>(_networkDeviceService.GetParentCandidates(sourceDevice?.Id));
 
         _selectedParent = ParentCandidates.FirstOrDefault(p => p.Id == Device.ParentDeviceId);
         OnPropertyChanged(nameof(SelectedParent));
-        //OnPropertyChanged(nameof(InstallDateUi));
+
+        _selectedSnmpProfile = SnmpProfiles.FirstOrDefault(p => p.Id == Device.SnmpProfileId);
+        OnPropertyChanged(nameof(SelectedSnmpProfile));
+
+        SelectedMountingPoint = MountingPoints.FirstOrDefault(mp => mp.Id == Device.MountingPointId);
+
+        UpdateInstallDateAndMountingPoint();
 
         SaveCommand = new RelayCommand(_ => Save());
         CancelCommand = new RelayCommand(_ => GoBack?.Invoke());
         PollSnmpCommand = new RelayCommand(_ => PollSnmp());
         ProbeSshCommand = new RelayCommand(_ => ProbeSsh());
         ClearParentCommand = new RelayCommand(_ => { SelectedParent = null; });
-    }
-
-    private void PollSnmp()
-    {
-        var r = _poller.PollSnmp(Device);
-        LastPollResult = r.Message;
-    }
-
-    private void ProbeSsh()
-    {
-        _poller.TryProbeSshPort(Device.IpAddress, out var msg);
-        LastPollResult = string.IsNullOrEmpty(LastPollResult) ? msg : LastPollResult + "\n\n" + msg;
-        OnPropertyChanged(nameof(LastPollResult));
+        ManageSnmpProfilesCommand = new RelayCommand(_ => NavigateAddEditSnmpProfile?.Invoke(SelectedSnmpProfile!));
+        AddSnmpProfileCommand = new RelayCommand(_ => NavigateAddEditSnmpProfile?.Invoke(SelectedSnmpProfile = null!));
     }
 
     private void Save()
@@ -131,10 +164,14 @@ class NetworkDeviceAddEditViewModel : ObservableObject
 
         try
         {
+            UpdateInstallDateAndMountingPoint();
+
             if (Device.Id == 0)
                 _networkDeviceService.AddDevice(Device);
             else
                 _networkDeviceService.EditDevice(Device);
+
+            UpdateInstallDateAndMountingPoint();
 
             GoBack?.Invoke();
         }
@@ -143,6 +180,8 @@ class NetworkDeviceAddEditViewModel : ObservableObject
             _messageService.Show(ex.Message);
         }
     }
+
+    // === Validation ===
 
     private bool Validate()
     {
@@ -157,9 +196,6 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         else if (Device.IpAddress.Length > 45)
             errors.AppendLine("IP слишком длинный.");
 
-        if (!string.IsNullOrWhiteSpace(Device.SnmpCommunity) && Device.SnmpCommunity.Length > 50)
-            errors.AppendLine("SNMP community не длиннее 50 символов.");
-
         if (Device.DeviceTypeId <= 0)
             errors.AppendLine("Выберите тип устройства.");
 
@@ -173,29 +209,76 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         return true;
     }
 
-    private static NetworkDevice CreateEditableDevice(NetworkDevice? d)
+    // === SNMP/SSH POLL ===
+
+    private void PollSnmp()
     {
-        if (d == null)
+        var r = _poller.PollSnmp(Device);
+        LastPollResult = r.Message;
+    }
+
+    private void ProbeSsh()
+    {
+        _poller.TryProbeSshPort(Device.IpAddress, out var msg);
+        LastPollResult = string.IsNullOrEmpty(LastPollResult) ? msg : LastPollResult + "\n\n" + msg;
+        OnPropertyChanged(nameof(LastPollResult));
+    }
+
+    // === Utils ===
+
+    // Called after adding/editing SNMP profile in the separate view to update the list of profiles in the dropdown
+    public void Refresh()
+    {
+        LoadSnmpProfiles();
+    }
+
+    // Load SNMP Profiles to update the list after adding/editing a profile in the separate view
+    private void LoadSnmpProfiles()
+    {
+        var list = _networkDeviceService.GetSnmpProfiles();
+        SnmpProfiles.Clear();
+        foreach (var d in list)
+            SnmpProfiles.Add(d);
+        OnPropertyChanged(nameof(SnmpProfiles));
+    }
+
+    // Create a copy of the device to edit, so that changes are not applied to the original until saving
+    private static NetworkDevice CreateEditableDevice(NetworkDevice? device)
+    {
+        if (device == null)
         {
             return new NetworkDevice
             {
                 IsMonitored = true,
-                SnmpCommunity = "public",
-                InstallationDate = DateOnly.FromDateTime(DateTime.Today)
+                InstallationDate = null
             };
         }
 
         return new NetworkDevice
         {
-            Id = d.Id,
-            Name = d.Name,
-            DeviceTypeId = d.DeviceTypeId,
-            IpAddress = d.IpAddress,
-            SnmpCommunity = d.SnmpCommunity,
-            MountingPointId = d.MountingPointId,
-            ParentDeviceId = d.ParentDeviceId,
-            IsMonitored = d.IsMonitored,
-            InstallationDate = d.InstallationDate,
+            Id = device.Id,
+            Name = device.Name,
+            DeviceTypeId = device.DeviceTypeId,
+            IpAddress = device.IpAddress,
+            MountingPointId = device.MountingPointId,
+            ParentDeviceId = device.ParentDeviceId,
+            SnmpProfileId = device.SnmpProfileId,
+            IsMonitored = device.IsMonitored,
+            InstallationDate = device.InstallationDate,
         };
+    }
+
+    // Update the display string for installation date and mounting point based on current device data
+    private void UpdateInstallDateAndMountingPoint()
+    {
+        var datePart = Device.InstallationDate.HasValue
+            ? $"Дата установки: {Device.InstallationDate.Value.ToString("dd.MM.yyyy")}"
+            : "Дата установки: —";
+
+        var mpPart = SelectedMountingPoint != null
+            ? $", Точка крепления: {SelectedMountingPoint.Address?.GetFullAddress ?? "—"}"
+            : "";
+
+        InstallDateAndMountingPoint = datePart + mpPart;
     }
 }

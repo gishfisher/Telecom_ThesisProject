@@ -10,6 +10,11 @@ namespace Telecom_ThesisProject.Services
             MessageBox.Show(message, "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        public void ShowError(string message)
+        {
+            MessageBox.Show(message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }   
+
         public bool Confirm(string message)
         {
             var result = MessageBox.Show(message, "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);

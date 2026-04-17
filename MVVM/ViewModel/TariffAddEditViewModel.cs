@@ -113,9 +113,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             else if (Tariff.Name.Length > 100)
                 errors.AppendLine("Наименование тарифа не должно превышать 100 символов.");
 
-            //if (Tariff.PricePerGb < 0)
-            //    errors.AppendLine("Цена за ГБ не может быть отрицательной.");
-
             if (Tariff.MonthlyFee.HasValue && Tariff.MonthlyFee.Value < 0)
                 errors.AppendLine("Абонентская плата не может быть отрицательной.");
 

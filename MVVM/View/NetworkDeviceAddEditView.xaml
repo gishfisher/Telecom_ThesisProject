@@ -3,41 +3,65 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
              d:DesignHeight="620" d:DesignWidth="720">
+
+    <Border Margin="10" Background="White" CornerRadius="10">
+        
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="16">
-            <TextBlock Text="Среда лаборатории" FontWeight="DemiBold" FontSize="13" Margin="0,0,0,4"/>
-            <!--<TextBlock Text="{Binding LabInfoText}" TextWrapping="Wrap" Foreground="#475569" Margin="0,0,0,12"/>-->
+            <TextBlock Text="{Binding DeviceTitle}" FontSize="14pt" Margin="0,0,0,4"/>
 
             <Label Content="Имя устройства"/>
-            <TextBox Text="{Binding Device.Name, UpdateSourceTrigger=PropertyChanged}"/>
+            <ui:TextBox PlaceholderText="Введите имя устройства" Text="{Binding Device.Name, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Label Content="IP-Адрес" Margin="0,8,0,0"/>
-            <TextBox Text="{Binding Device.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Content="IP-Адрес" Margin="0,10,0,0"/>
+            <ui:TextBox PlaceholderText="Введите IP-адрес" Text="{Binding Device.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Label Content="SNMP community (v2c)" Margin="0,8,0,0"/>
-            <TextBox Text="{Binding Device.SnmpCommunity, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Content="SNMP Профиль" Margin="0,10,0,0"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox ItemsSource="{Binding SnmpProfiles}"
+                          DisplayMemberPath="SnmpProfileString"
+                          SelectedItem="{Binding SelectedSnmpProfile, Mode=TwoWay}"/>
+                <ui:HyperlinkButton Foreground="Black" Margin="10,5,0,0" Padding="5"
+                    Command="{Binding AddSnmpProfileCommand}" Grid.Column="1">
+                    <ui:HyperlinkButton.Icon>
+                        <ui:SymbolIcon Symbol="Add24" Foreground="Green" />
+                    </ui:HyperlinkButton.Icon>
+                    <TextBlock>
+                        <Underline>Добавить SNMP профиль</Underline>
+                    </TextBlock>
+                </ui:HyperlinkButton>
+            </Grid>
 
-            <Label Content="Тип устройства" Margin="0,8,0,0"/>
+            <ui:HyperlinkButton Icon="{ui:SymbolIcon Settings24}" Margin="10,5,0,0" Padding="5"
+                                Command="{Binding ManageSnmpProfilesCommand}" Grid.Column="1">
+                <TextBlock>
+                    <Underline>Управление SNMP профилями</Underline>
+                </TextBlock>
+            </ui:HyperlinkButton>
+            
+            <CheckBox Content="Участвует в мониторинге (SNMP)" IsChecked="{Binding Device.IsMonitored}" Margin="0,12,0,0"/>
+
+            <Label Content="Тип устройства" Margin="0,5,0,0"/>
             <ComboBox ItemsSource="{Binding DeviceTypes}"
                       DisplayMemberPath="TypeName"
                       SelectedValuePath="Id"
-                      SelectedValue="{Binding Device.DeviceTypeId, Mode=TwoWay}"/>
+                      SelectedValue="{Binding Device.DeviceTypeId, Mode=TwoWay}"
+                      Padding="5"/>
 
-            <!--<Label Content="Точка монтажа" Margin="0,8,0,0"/>
-            <ComboBox ItemsSource="{Binding MountingPoints}"
-                      DisplayMemberPath="DisplayLabel"
-                      SelectedValuePath="Id"
-                      SelectedValue="{Binding Device.MountingPointId, Mode=TwoWay}"/>-->
-
-            <Label Content="Родительское устройство" Margin="0,8,0,0"/>
+            <Label Content="Родительское устройство" Margin="0,10,0,0"/>
             <StackPanel Orientation="Horizontal">
                 <ComboBox Width="400"
                           ItemsSource="{Binding ParentCandidates}"
                           DisplayMemberPath="Name"
                           SelectedItem="{Binding SelectedParent, Mode=TwoWay}"/>
-                <Button Content="Сбросить" Margin="8,0,0,0" Padding="8,4"
+                <Button Content="Сбросить" Margin="10,0,0,0" Padding="10,5"
                         Command="{Binding ClearParentCommand}"/>
             </StackPanel>
 
@@ -48,26 +72,36 @@
                 <TextBox Text="{Binding Device.SerialNumber}" Width="200"/>
             </StackPanel>-->
 
-            <CheckBox Content="Участвует в мониторинге (SNMP)" IsChecked="{Binding Device.IsMonitored}" Margin="0,12,0,0"/>
+            <Label Content="Дата и место установки" Margin="0,10,0,0"/>
+            <TextBlock Text="{Binding InstallDateAndMountingPoint, Mode=TwoWay}"/>
 
-            <!--<Label Content="Дата установки" Margin="0,8,0,0"/>-->
-            <!--<DatePicker SelectedDate="{Binding InstallDateUi, Mode=TwoWay}" Width="200" HorizontalAlignment="Left"/>-->
+            <ui:HyperlinkButton Icon="{ui:SymbolIcon MoreCircle32}"
+                                Command="{Binding}" 
+                                Grid.Column="1"
+                                Margin="10,5,0,0" Padding="5">
+                <TextBlock>
+                    <Underline>Подробнее о точке монтажа</Underline>
+                </TextBlock>
+            </ui:HyperlinkButton>
 
-            <Separator Margin="0,16,0,12"/>
+            <Separator Margin="0,10,0,5"/>
 
-            <TextBlock Text="Проверка связи" FontWeight="DemiBold" Margin="0,0,0,8"/>
-            <StackPanel Orientation="Horizontal">
-                <Button Content="Ping (ICMP)" Margin="0,0,8,0" Padding="10,5"/>
-                <Button Content="Опрос SNMP (sysName, sysDescr)" Command="{Binding PollSnmpCommand}" Margin="0,0,8,0" Padding="10,5"/>
-                <Button Content="Проверить TCP порт SSH (без авторизации)" Command="{Binding ProbeSshCommand}" Padding="10,5"/>
-            </StackPanel>
-            <TextBox Text="{Binding LastPollResult}" IsReadOnly="True" TextWrapping="Wrap" MinHeight="80" Margin="0,8,0,0"
-                     AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-
-            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                <Button Content="Сохранить" Command="{Binding SaveCommand}" Padding="12,6" Margin="0,0,8,0"/>
-                <Button Content="Назад" Command="{Binding CancelCommand}" Padding="12,6"/>
-            </StackPanel>
+            <Expander Header="Проверка связи">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Ping (ICMP)" Margin="0,0,10,0" Padding="10,5"/>
+                        <Button Content="Опрос SNMP (sysName, sysDescr)" Command="{Binding PollSnmpCommand}" Margin="0,0,8,0" Padding="10,5"/>
+                        <Button Content="Проверить TCP порт SSH (без авторизации)" Command="{Binding ProbeSshCommand}" Padding="10,5"/>
+                    </StackPanel>
+                    <TextBox Text="{Binding LastPollResult}" IsReadOnly="True" TextWrapping="Wrap" MinHeight="80" Margin="0,8,0,0"
+                             AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                </StackPanel>
+            </Expander>
+                    <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                        <Button Content="Сохранить" Command="{Binding SaveCommand}" Padding="10" Margin="0,0,10,0"/>
+                        <Button Content="Назад" Command="{Binding CancelCommand}" Padding="10"/>
+                    </StackPanel>
         </StackPanel>
     </ScrollViewer>
+    </Border>
 </UserControl>

@@ -71,6 +71,8 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // === Helpers ===
+
         private static void DetachNavigations(Request request)
         {
             request.Client = null;

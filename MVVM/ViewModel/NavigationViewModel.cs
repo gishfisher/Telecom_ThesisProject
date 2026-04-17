@@ -31,6 +31,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public NetworkDeviceViewModel NetworkDeviceViewModel { get; }
         public ConnectionsViewModel ConnectionsViewModel { get; }
         public AddressTreeViewModel AddressTreeViewModel { get; }
+        public SnmpProfileViewModel SnmpProfilesViewModel { get; }
 
         //  Commands
         public RelayCommand HomeViewCommand { get; }
@@ -43,6 +44,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public RelayCommand NetworkDevicesViewCommand { get; }
         public RelayCommand ConnectionsViewCommand { get; }
         public RelayCommand AddressTreeViewCommand { get; }
+        public RelayCommand SnmpProfilesViewCommand { get; }
 
         public NavigationViewModel()
         {
@@ -57,8 +59,10 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             ConnectionsViewModel = new ConnectionsViewModel();
             AddressTreeViewModel = new AddressTreeViewModel();
 
-            // Views
-            // Clients
+            // === Views ===
+
+            // === Clients ===
+
             ClientViewCommand = new RelayCommand(
                 o => CurrentView = ClientViewModel,
                 o => IsAuthenticated);
@@ -76,7 +80,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 CurrentView = vm;
             };
 
-            // Employees + Users
+            // === Employees + Users ===
+
             EmployeeViewCommand = new RelayCommand(
                 o => CurrentView = EmployeeViewModel,
                 o => IsAuthenticated);
@@ -94,7 +99,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 CurrentView = vm;
             };
 
-            // Requests
+            // === Requests ===
+
             RequestViewCommand = new RelayCommand(
                 o => CurrentView = RequestViewModel,
                 o => IsAuthenticated);
@@ -112,7 +118,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 CurrentView = vm;
             };
 
-            // Services
+            // === Services ===
+
             ServiceViewCommand = new RelayCommand(
                 o => CurrentView = ServiceViewModel,
                 o => IsAuthenticated);
@@ -130,7 +137,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 CurrentView = vm;
             };
 
-            // Tariffs
+            // === Tariffs ===
+
             TariffViewCommand = new RelayCommand(
                 o => CurrentView = TariffViewModel,
                 o => IsAuthenticated);
@@ -148,40 +156,246 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 CurrentView = vm;
             };
 
-            //Network Devices
+            //=== Network Devices ===
+
             NetworkDevicesViewCommand = new RelayCommand(
                 o => CurrentView = NetworkDeviceViewModel,
                 o => IsAuthenticated && CurrentSession.CanSeeNetworkMenu);
 
             NetworkDeviceViewModel.NavigateEditDevice = device =>
             {
-                var vm = new NetworkDeviceAddEditViewModel(device)
+                NetworkDeviceAddEditViewModel? editVm = null;
+
+                editVm = new NetworkDeviceAddEditViewModel(device)
                 {
                     GoBack = () =>
                     {
                         NetworkDeviceViewModel.Refresh();
                         CurrentView = NetworkDeviceViewModel;
+                    },
+
+                    NavigateAddEditSnmpProfile = profile =>
+                    {
+                        var snmpVm = new SnmpProfileViewModel(profile)
+                        {
+                            GoBack = () =>
+                            {
+                                editVm!.Refresh();
+                                CurrentView = editVm;
+                            }
+                        };
+                        CurrentView = snmpVm;
                     }
                 };
-                CurrentView = vm;
+                CurrentView = editVm;
             };
 
             NetworkDeviceViewModel.NavigateDeviceDetails = device =>
             {
-                var vm = new NetworkDeviceDetailsViewModel(device)
+                NetworkDeviceDetailsViewModel? detailsVm = null;
+                NetworkDeviceAddEditViewModel? editVm = null;
+
+                detailsVm = new NetworkDeviceDetailsViewModel(device)
                 {
-                    GoBack = () => CurrentView = NetworkDeviceViewModel
+                    GoBack = () => CurrentView = NetworkDeviceViewModel,
+
+                    NavigateEditDevice = device =>
+                    {
+                        editVm = new NetworkDeviceAddEditViewModel(device)
+                        {
+                            GoBack = () =>
+                            {
+                                detailsVm!.Refresh();
+                                CurrentView = detailsVm;
+                            },
+
+                            NavigateAddEditSnmpProfile = profile =>
+                            {
+                                var snmpVm = new SnmpProfileViewModel(profile)
+                                {
+                                    GoBack = () =>
+                                    {
+                                        editVm!.Refresh();
+                                        CurrentView = editVm;
+                                    }
+                                };
+                                CurrentView = snmpVm;
+                            }
+                        };
+                        CurrentView = editVm;
+                    }
                 };
-                CurrentView = vm;
+                CurrentView = detailsVm;
             };
 
             ConnectionsViewCommand = new RelayCommand(
                 o => CurrentView = ConnectionsViewModel,
                 o => IsAuthenticated);
 
-            
+            // === Address Tree ===
 
-            // Core
+            AddressTreeViewCommand = new RelayCommand(
+                o => CurrentView = AddressTreeViewModel,
+                o => IsAuthenticated);
+
+            AddressTreeViewModel.NavigateAddCity = node =>
+            {
+                var vm = new CityAddEditViewModel(node)
+                {
+                    GoBack = () =>
+                    {
+                        AddressTreeViewModel.Refresh();
+                        CurrentView = AddressTreeViewModel;
+                    }
+                };
+                CurrentView = vm;
+            };
+
+            AddressTreeViewModel.NavigateAddStreet = (city, node) =>
+            {
+                var vm = new StreetAddEditViewModel(city, node)
+                {
+                    GoBack = () =>
+                    {
+                        AddressTreeViewModel.Refresh();
+                        CurrentView = AddressTreeViewModel;
+                    }
+                };
+                CurrentView = vm;
+            };
+
+            AddressTreeViewModel.NavigateAddAddress = (street, node) =>
+            {
+                var vm = new AddressAddEditViewModel(street, node)
+                {
+                    GoBack = () =>
+                    {
+                        AddressTreeViewModel.Refresh();
+                        CurrentView = AddressTreeViewModel;
+                    }
+                };
+                CurrentView = vm;
+            };
+
+            AddressTreeViewModel.NavigateEditCity = node =>
+            {
+                var vm = new CityAddEditViewModel(node)
+                {
+                    GoBack = () =>
+                    {
+                        AddressTreeViewModel.Refresh();
+                        CurrentView = AddressTreeViewModel;
+                    }
+                };
+                CurrentView = vm;
+            };
+
+            AddressTreeViewModel.NavigateEditStreet = node =>
+            {
+                var vm = new StreetAddEditViewModel(null, node)
+                {
+                    GoBack = () =>
+                    {
+                        AddressTreeViewModel.Refresh();
+                        CurrentView = AddressTreeViewModel;
+                    }
+                };
+                CurrentView = vm;
+            };
+
+            AddressTreeViewModel.NavigateEditAddress = node =>
+            {
+                var vm = new AddressAddEditViewModel(null, node)
+                {
+                    GoBack = () =>
+                    {
+                        AddressTreeViewModel.Refresh();
+                        CurrentView = AddressTreeViewModel;
+                    }
+                };
+                CurrentView = vm;
+            };
+
+            AddressTreeViewModel.NavigateToDetails = node =>
+            {
+                var vm = new AddressDetailsViewModel(node.Address)
+                {
+                    GoBack = () => CurrentView = AddressTreeViewModel
+                };
+                var addressId = node.Address.Id;
+                vm.NavigateAddEditMountingPoint = mp =>
+                {
+                    var addVm = new MountingPointAddEditViewModel(addressId, mp)
+                    {
+                        GoBack = () =>
+                        {
+                            vm.Refresh();
+                            CurrentView = vm;
+                        }
+                    };
+                    CurrentView = addVm;
+                };
+                vm.NavigateDeviceDetails = device =>
+                {
+                    NetworkDeviceDetailsViewModel? currentDetails = null;
+                    NetworkDeviceAddEditViewModel? editVm = null;
+
+                    currentDetails = new NetworkDeviceDetailsViewModel(device)
+                    {
+                        GoBack = () => CurrentView = vm,
+                        NavigateEditDevice = device =>
+                        {
+                            editVm = new NetworkDeviceAddEditViewModel(device)
+                            {
+                                GoBack = () =>
+                                {
+                                    currentDetails!.Refresh();
+                                    CurrentView = currentDetails;
+                                },
+
+                                NavigateAddEditSnmpProfile = profile =>
+                                {
+                                    var snmpVm = new SnmpProfileViewModel(profile)
+                                    {
+                                        GoBack = () =>
+                                        {
+                                            editVm!.Refresh();
+                                            CurrentView = editVm;
+                                        }
+                                    };
+                                    CurrentView = snmpVm;
+                                }
+                            };
+                            CurrentView = editVm;
+                        }
+                    };
+                    CurrentView = currentDetails;
+                };
+                vm.NavigateEditDevice = device =>
+                {
+                    var editVm = new NetworkDeviceAddEditViewModel(device)
+                    {
+                        GoBack = () => CurrentView = vm
+                    };
+                    CurrentView = editVm;
+                };
+                vm.NavigateBindDevice = addressId =>
+                {
+                    var vm2 = new BindDeviceViewModel(addressId)
+                    {
+                        GoBack = () =>
+                        {
+                            vm.Refresh();
+                            CurrentView = vm;
+                        }
+                    };
+                    CurrentView = vm2;
+                };
+                CurrentView = vm;
+            };
+
+            // === Core ===
+
             LoginViewModel.OnLoginSuccess = user =>
             {
                 CurrentSession.Login(user);

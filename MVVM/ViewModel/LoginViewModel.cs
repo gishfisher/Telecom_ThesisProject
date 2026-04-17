@@ -44,8 +44,21 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         private void ExecuteLogin(object parameter)
         {
-            var passwordBox = parameter as PasswordBox;
-            string password = passwordBox?.Password;
+            string password = null;
+
+            if (parameter is System.Windows.Controls.PasswordBox pb)
+                password = pb.Password;
+            else if (parameter != null)
+            {
+                var prop = parameter.GetType().GetProperty("Password");
+                password = prop?.GetValue(parameter) as string;
+            }
+
+            if (string.IsNullOrEmpty(password))
+            {
+                ErrorMessage = "Введите пароль";
+                return;
+            }
 
             var user = _authService.Authenticate(Login, password);
 

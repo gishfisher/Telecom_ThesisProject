@@ -66,6 +66,8 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // === Helpers ===
+
         private static void DetachNavigations(Client client)
         {
             client.Address = null!;

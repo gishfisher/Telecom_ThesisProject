@@ -43,9 +43,15 @@ public partial class TelecomDbContext : DbContext
 
     public virtual DbSet<Employee> Employees { get; set; }
 
+    public virtual DbSet<MonitoringEvent> MonitoringEvents { get; set; }
+
+    public virtual DbSet<MonitoringEventType> MonitoringEventTypes { get; set; }
+
     public virtual DbSet<MountingPoint> MountingPoints { get; set; }
 
     public virtual DbSet<MountingPointType> MountingPointTypes { get; set; }
+
+    public virtual DbSet<MountingSpotType> MountingSpotTypes { get; set; }
 
     public virtual DbSet<NetworkDevice> NetworkDevices { get; set; }
 
@@ -59,60 +65,64 @@ public partial class TelecomDbContext : DbContext
 
     public virtual DbSet<Service> Services { get; set; }
 
+    public virtual DbSet<SnmpProfile> SnmpProfiles { get; set; }
+
     public virtual DbSet<Street> Streets { get; set; }
 
     public virtual DbSet<Tariff> Tariffs { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<Vlan> Vlans { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Address>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Addresse__3214EC07067436AB");
+            entity.HasKey(e => e.Id).HasName("PK__Addresses");
 
-            entity.Property(e => e.Apartment).HasMaxLength(10);
             entity.Property(e => e.HouseNumber).HasMaxLength(10);
 
             entity.HasOne(d => d.Street).WithMany(p => p.Addresses)
                 .HasForeignKey(d => d.StreetId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Addresses__Stree__5070F446");
         });
 
         modelBuilder.Entity<City>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Cities__3214EC07821B331C");
+            entity.HasKey(e => e.Id).HasName("PK__Cities");
 
-            entity.HasIndex(e => e.Name, "UQ__Cities__737584F645D25256").IsUnique();
+            entity.HasIndex(e => e.Name, "UQ__Cities__Name").IsUnique();
 
             entity.Property(e => e.Name).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Client>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Clients__3214EC07035415DE");
+            entity.HasKey(e => e.Id).HasName("PK__Clients");
 
-            entity.HasIndex(e => e.ContractNumber, "UQ__Clients__C51D43DA678D900C").IsUnique();
+            entity.HasIndex(e => e.ContractNumber, "UQ__Clients__ContractNumber").IsUnique();
 
             entity.Property(e => e.ContractNumber).HasMaxLength(50);
             entity.Property(e => e.FirstName).HasMaxLength(50);
             entity.Property(e => e.LastName).HasMaxLength(50);
             entity.Property(e => e.MiddleName).HasMaxLength(50);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(20);
 
             entity.HasOne(d => d.Address).WithMany(p => p.Clients)
                 .HasForeignKey(d => d.AddressId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Clients__Address__797309D9");
         });
 
         modelBuilder.Entity<Connection>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Connecti__3214EC0759F9FFE7");
+            entity.HasKey(e => e.Id).HasName("PK__Connections");
 
-            entity.HasIndex(e => e.PortId, "UQ__Connecti__D859BF8E92C3E6DD").IsUnique();
+            entity.HasIndex(e => e.PortId, "UQ__Connections_Ports").IsUnique();
 
             entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.StaticIp).HasMaxLength(45);
 
             entity.HasOne(d => d.Client).WithMany(p => p.Connections)
                 .HasForeignKey(d => d.ClientId)
@@ -120,7 +130,6 @@ public partial class TelecomDbContext : DbContext
 
             entity.HasOne(d => d.Port).WithOne(p => p.Connection)
                 .HasForeignKey<Connection>(d => d.PortId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Connectio__PortI__00200768");
 
             entity.HasOne(d => d.Tariff).WithMany(p => p.Connections)
@@ -131,27 +140,31 @@ public partial class TelecomDbContext : DbContext
 
         modelBuilder.Entity<DevicePort>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__DevicePo__3214EC07298AA9FF");
+            entity.HasKey(e => e.Id).HasName("PK__DevicePorts");
 
             entity.Property(e => e.PortName).HasMaxLength(50);
 
             entity.HasOne(d => d.Device).WithMany(p => p.DevicePorts)
                 .HasForeignKey(d => d.DeviceId)
                 .HasConstraintName("FK__DevicePor__Devic__656C112C");
+
+            entity.HasOne(d => d.Vlan).WithMany(p => p.DevicePorts)
+                .HasForeignKey(d => d.VlanId)
+                .HasConstraintName("FK_DevicePorts_Vlans");
         });
 
         modelBuilder.Entity<DeviceType>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__DeviceTy__3214EC0722B6F356");
+            entity.HasKey(e => e.Id).HasName("PK__DeviceType");
 
             entity.Property(e => e.TypeName).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Employee__3214EC071002895B");
+            entity.HasKey(e => e.Id).HasName("PK__Employees");
 
-            entity.HasIndex(e => e.UserId, "UQ__Employee__1788CC4D9566C745").IsUnique();
+            entity.HasIndex(e => e.UserId, "UQ__Employees__User").IsUnique();
 
             entity.Property(e => e.FirstName).HasMaxLength(100);
             entity.Property(e => e.LastName).HasMaxLength(100);
@@ -163,43 +176,71 @@ public partial class TelecomDbContext : DbContext
                 .HasConstraintName("FK__Employees__UserI__71D1E811");
         });
 
+        modelBuilder.Entity<MonitoringEvent>(entity =>
+        {
+            entity.HasIndex(e => new { e.CheckedAt, e.DeviceId }, "IX_MonitoringEvents_Device_Time").IsDescending(true, false);
+
+            entity.Property(e => e.CheckedAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Device).WithMany(p => p.MonitoringEvents)
+                .HasForeignKey(d => d.DeviceId)
+                .HasConstraintName("FK_MonitoringEvents_NetworkDevices");
+
+            entity.HasOne(d => d.EventType).WithMany(p => p.MonitoringEvents)
+                .HasForeignKey(d => d.EventTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_MonitoringEvents_MonitoringEventTypes");
+        });
+
+        modelBuilder.Entity<MonitoringEventType>(entity =>
+        {
+            entity.Property(e => e.Name).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<MountingPoint>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Mounting__3214EC07201906A7");
+            entity.HasKey(e => e.Id).HasName("PK__MountingPoints");
 
             entity.Property(e => e.LocationDescription).HasMaxLength(255);
+            entity.Property(e => e.MountingDate).HasDefaultValueSql("(getdate())");
 
             entity.HasOne(d => d.Address).WithMany(p => p.MountingPoints)
                 .HasForeignKey(d => d.AddressId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__MountingP__Addre__5629CD9C");
 
             entity.HasOne(d => d.PointType).WithMany(p => p.MountingPoints)
                 .HasForeignKey(d => d.PointTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__MountingP__Point__571DF1D5");
+
+            entity.HasOne(d => d.SpotType).WithMany(p => p.MountingPoints)
+                .HasForeignKey(d => d.SpotTypeId)
+                .HasConstraintName("FK_MountingPoints_MountingSpotTypes");
         });
 
         modelBuilder.Entity<MountingPointType>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Mounting__3214EC0728304840");
+            entity.HasKey(e => e.Id).HasName("PK__MountingPointTypes");
 
+            entity.Property(e => e.Name).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<MountingSpotType>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Name).HasMaxLength(50);
         });
 
         modelBuilder.Entity<NetworkDevice>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__NetworkD__3214EC07A73E028B");
+            entity.HasKey(e => e.Id).HasName("PK__NetworkDevices");
 
-            entity.HasIndex(e => e.IpAddress, "UQ__NetworkD__30C707A334784E2E").IsUnique();
+            entity.HasIndex(e => e.IpAddress, "UQ__NetworkDevice_IpAddress").IsUnique();
 
-            entity.Property(e => e.InstallationDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.InstallationDate);
             entity.Property(e => e.IpAddress).HasMaxLength(45);
             entity.Property(e => e.IsMonitored).HasDefaultValue(true);
             entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.SnmpCommunity)
-                .HasMaxLength(50)
-                .HasDefaultValue("public");
 
             entity.HasOne(d => d.DeviceType).WithMany(p => p.NetworkDevices)
                 .HasForeignKey(d => d.DeviceTypeId)
@@ -214,16 +255,20 @@ public partial class TelecomDbContext : DbContext
             entity.HasOne(d => d.ParentDevice).WithMany(p => p.InverseParentDevice)
                 .HasForeignKey(d => d.ParentDeviceId)
                 .HasConstraintName("FK__NetworkDe__Paren__619B8048");
+
+            entity.HasOne(d => d.SnmpProfile).WithMany(p => p.NetworkDevices)
+                .HasForeignKey(d => d.SnmpProfileId)
+                .HasConstraintName("FK_NetworkDevices_SnmpProfiles");
         });
 
         modelBuilder.Entity<Request>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Requests__3214EC07BEBAD227");
+            entity.HasKey(e => e.Id).HasName("PK__Requests");
 
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.Description).HasMaxLength(300);
+            entity.Property(e => e.Description).HasMaxLength(255);
 
             entity.HasOne(d => d.Client).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.ClientId)
@@ -232,10 +277,12 @@ public partial class TelecomDbContext : DbContext
 
             entity.HasOne(d => d.Device).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.DeviceId)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Requests__Device__0D7A0286");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.EmployeeId)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Requests__Employ__0E6E26BF");
 
             entity.HasOne(d => d.Status).WithMany(p => p.Requests)
@@ -250,9 +297,9 @@ public partial class TelecomDbContext : DbContext
 
         modelBuilder.Entity<RequestStatus>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__RequestS__3214EC072D5349FD");
+            entity.HasKey(e => e.Id).HasName("PK__RequestStatuses");
 
-            entity.HasIndex(e => e.Name, "UQ__RequestS__737584F607E5D735").IsUnique();
+            entity.HasIndex(e => e.Name, "UQ__RequestStatuses__Name").IsUnique();
 
             entity.Property(e => e.Name).HasMaxLength(50);
         });
@@ -264,34 +311,40 @@ public partial class TelecomDbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC072550C532");
+            entity.HasKey(e => e.Id).HasName("PK__Roles");
 
-            entity.HasIndex(e => e.Name, "UQ__Roles__737584F6611FC767").IsUnique();
+            entity.HasIndex(e => e.Name, "UQ__Roles__Name").IsUnique();
 
             entity.Property(e => e.Name).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Service>(entity =>
         {
-            entity.Property(e => e.Description).HasMaxLength(150);
+            entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.Name).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<SnmpProfile>(entity =>
+        {
+            entity.Property(e => e.Community).HasMaxLength(255);
+            entity.Property(e => e.Name).HasMaxLength(50);
+            entity.Property(e => e.Version).HasMaxLength(3);
         });
 
         modelBuilder.Entity<Street>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Streets__3214EC075D8FFAFD");
+            entity.HasKey(e => e.Id).HasName("PK__Streets");
 
             entity.Property(e => e.Name).HasMaxLength(100);
 
             entity.HasOne(d => d.City).WithMany(p => p.Streets)
                 .HasForeignKey(d => d.CityId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Streets__CityId__4D94879B");
         });
 
         modelBuilder.Entity<Tariff>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Tariffs__3214EC07C1B042BA");
+            entity.HasKey(e => e.Id).HasName("PK__Tariffs");
 
             entity.Property(e => e.MonthlyFee)
                 .HasDefaultValue(0m)
@@ -318,7 +371,7 @@ public partial class TelecomDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC07755CF916");
+            entity.HasKey(e => e.Id).HasName("PK__Users");
 
             entity.HasIndex(e => e.Login, "UQ__Users__5E55825BDB28843E").IsUnique();
 
@@ -333,6 +386,14 @@ public partial class TelecomDbContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Users__RoleId__6E01572D");
+        });
+
+        modelBuilder.Entity<Vlan>(entity =>
+        {
+            entity.HasIndex(e => e.VlanTag, "UQ_Vlans_VlanTag").IsUnique();
+
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.Name).HasMaxLength(50);
         });
 
         OnModelCreatingPartial(modelBuilder);

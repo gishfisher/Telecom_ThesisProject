@@ -26,12 +26,12 @@ public class SnmpNetworkDevicePoller : INetworkDevicePoller
         if (!IPAddress.TryParse(device.IpAddress.Trim(), out var ip))
             return NetworkDevicePollResult.Fail("Некорректный IP адрес.");
 
-        var communityText = string.IsNullOrWhiteSpace(device.SnmpCommunity)
-            ? "public"
-            : device.SnmpCommunity.Trim();
+        //var communityText = string.IsNullOrWhiteSpace(device.SnmpCommunity)
+        //    ? "public"
+        //    : device.SnmpCommunity.Trim();
 
         var endpoint = new IPEndPoint(ip, _options.SnmpPort);
-        var community = new OctetString(communityText);
+        var community = new OctetString("public");
         var variables = new List<Variable>
         {
             new(new ObjectIdentifier(_options.SysNameOid)),

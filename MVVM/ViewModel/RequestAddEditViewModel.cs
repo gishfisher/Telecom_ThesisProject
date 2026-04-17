@@ -91,9 +91,9 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
             try
             {
-                DetachNavigationForPersistence();
+                //DetachNavigationForPersistence();
 
-                if (Request.Id == 0)
+                if (IsNewRequest)
                     _requestService.AddRequest(Request);
                 else
                     _requestService.EditRequest(Request);
@@ -116,7 +116,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 return false;
             }
 
-            if (Request.ClientId == null && Request.Client == null)
+            if (Request.Client == null)
                 errors.AppendLine("Укажите клиента.");
 
             if (!string.IsNullOrWhiteSpace(Request.Description) && Request.Description.Length > 300)
@@ -132,13 +132,13 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             return true;
         }
 
-        private void DetachNavigationForPersistence()
-        {
-            Request.Client = null;
-            Request.Employee = null;
-            Request.Device = null;
-            Request.Status = null;
-        }
+        //private void DetachNavigationForPersistence()
+        //{
+        //    Request.Client = null;
+        //    Request.Employee = null;
+        //    Request.Device = null;
+        //    Request.Status = null;
+        //}
 
         private static Request CreateEditableRequest(Request? request)
         {

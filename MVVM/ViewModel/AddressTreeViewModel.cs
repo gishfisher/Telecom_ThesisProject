@@ -17,7 +17,12 @@ public class AddressTreeViewModel : ObservableObject
     public object? SelectedNode
     {
         get => _selectedNode;
-        set { _selectedNode = value; OnPropertyChanged(); RefreshCommands(); }
+        set 
+        { 
+            _selectedNode = value; 
+            OnPropertyChanged(); 
+            //RefreshCommands(); 
+        }
     }
 
     public RelayCommand AddCityCommand { get; }
@@ -114,8 +119,16 @@ public class AddressTreeViewModel : ObservableObject
             case CityNodeViewModel cityNode:
                 if (_messageService.Confirm($"Удалить город \"{cityNode.Name}\" и все вложенные элементы?"))
                 {
-                    _addressService.RemoveCity(cityNode.City);
-                    Cities.Remove(cityNode);
+                    try
+                    {
+                        _addressService.RemoveCity(cityNode.City);
+                        Cities.Remove(cityNode);
+                    }
+                    catch (Exception ex)
+                    {
+                        _messageService.ShowError($"Ошибка при удалении города: {ex.Message}");
+                        return;
+                    }
                 }
                 break;
 
@@ -123,8 +136,16 @@ public class AddressTreeViewModel : ObservableObject
                 var parentCity = Cities.FirstOrDefault(c => c.Streets.Contains(streetNode));
                 if (_messageService.Confirm($"Удалить улицу \"{streetNode.Name}\" и все дома?"))
                 {
-                    _addressService.RemoveStreet(streetNode.Street);
-                    parentCity?.RemoveStreet(streetNode);
+                    try
+                    {
+                        _addressService.RemoveStreet(streetNode.Street);
+                        parentCity?.RemoveStreet(streetNode);
+                    }
+                    catch (Exception ex)
+                    {
+                        _messageService.ShowError($"Ошибка при удалении улицы: {ex.Message}");
+                        return;
+                    }
                 }
                 break;
 
@@ -134,20 +155,28 @@ public class AddressTreeViewModel : ObservableObject
                     .FirstOrDefault(s => s.Addresses.Contains(addressNode));
                 if (_messageService.Confirm($"Удалить дом \"{addressNode.DisplayText}\"?"))
                 {
-                    _addressService.RemoveAddress(addressNode.Address);
-                    parentStreet?.RemoveAddress(addressNode);
+                    try
+                    {
+                        _addressService.RemoveAddress(addressNode.Address);
+                        parentStreet?.RemoveAddress(addressNode);
+                    }
+                    catch (Exception ex)
+                    {
+                        _messageService.ShowError($"Ошибка при удалении дома: {ex.Message}");
+                        return;
+                    }
                 }
                 break;
         }
     }
 
-    private void RefreshCommands()
-    {
-        AddStreetCommand.RaiseCanExecuteChanged();
-        AddAddressCommand.RaiseCanExecuteChanged();
-        EditCommand.RaiseCanExecuteChanged();
-        DeleteCommand.RaiseCanExecuteChanged();
-    }
+    //private void RefreshCommands()
+    //{
+    //    AddStreetCommand.RaiseCanExecuteChanged();
+    //    AddAddressCommand.RaiseCanExecuteChanged();
+    //    EditCommand.RaiseCanExecuteChanged();
+    //    DeleteCommand.RaiseCanExecuteChanged();
+    //}
 
     public void Refresh()
     {

@@ -7,7 +7,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel;
 public class CityNodeViewModel : ObservableObject
 {
     private readonly City _city;
-    private bool _isExpanded;
+    //private bool _isExpanded;
 
     public CityNodeViewModel(City city)
     {
@@ -15,17 +15,17 @@ public class CityNodeViewModel : ObservableObject
         Streets = new ObservableCollection<StreetNodeViewModel>();
     }
 
-    public int Id => _city.Id;
+    public int? Id => _city.Id;
     public string Name => _city.Name;
     public City City => _city;
 
     public ObservableCollection<StreetNodeViewModel> Streets { get; }
 
-    public bool IsExpanded
-    {
-        get => _isExpanded;
-        set { _isExpanded = value; OnPropertyChanged(); }
-    }
+    //public bool IsExpanded
+    //{
+    //    get => _isExpanded;
+    //    set { _isExpanded = value; OnPropertyChanged(); }
+    //}
 
     public void AddStreet(StreetNodeViewModel street)
     {

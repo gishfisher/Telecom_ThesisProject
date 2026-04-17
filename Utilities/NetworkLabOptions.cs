@@ -2,8 +2,6 @@ namespace Telecom_ThesisProject.Utilities;
 
 public class NetworkLabOptions
 {
-    public string Description { get; set; } = "";
-    public string TopologyNote { get; set; } = "";
     public string ManagementNetworkCidr { get; set; } = "192.168.0.0/24";
     public int SnmpPort { get; set; } = 161;
     public int SnmpTimeoutMs { get; set; } = 3000;

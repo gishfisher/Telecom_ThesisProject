@@ -9,6 +9,8 @@ namespace Telecom_ThesisProject.Services;
 
 class NetworkDeviceService
 {
+    // === Network Devices ===
+
     public void AddDevice(NetworkDevice device)
     {
         ArgumentNullException.ThrowIfNull(device);
@@ -34,8 +36,8 @@ class NetworkDeviceService
             existing.Name = device.Name;
             existing.DeviceTypeId = device.DeviceTypeId;
             existing.IpAddress = device.IpAddress;
-            existing.SnmpCommunity = device.SnmpCommunity;
             existing.MountingPointId = device.MountingPointId;
+            existing.SnmpProfileId = device.SnmpProfileId;
             existing.ParentDeviceId = device.ParentDeviceId;
             existing.IsMonitored = device.IsMonitored;
             existing.InstallationDate = device.InstallationDate;
@@ -43,7 +45,6 @@ class NetworkDeviceService
             db.SaveChanges();
         }
     }
-
     public void RemoveDevice(NetworkDevice device)
     {
         ArgumentNullException.ThrowIfNull(device);
@@ -64,7 +65,24 @@ class NetworkDeviceService
         }
     }
 
-    public List<NetworkDevice> GetAll()
+    // === Getters ===
+    public NetworkDevice? GetDeviceById(int id)
+    {
+        using (var db = new TelecomDbContext())
+        {
+            return db.NetworkDevices
+                .AsNoTracking()
+                .Include(d => d.MountingPoint)
+                    .ThenInclude(m => m.Address)
+                        .ThenInclude(a => a.Street)
+                            .ThenInclude(s => s.City)
+                .Include(d => d.DeviceType)
+                .Include(d => d.ParentDevice)
+                .FirstOrDefault(d => d.Id == id);
+        }
+    }
+
+    public List<NetworkDevice> GetAllDevices()
     {
         using (var db = new TelecomDbContext())
         {
@@ -110,6 +128,113 @@ class NetworkDeviceService
         }
     }
 
+    #region Others Getters
+
+    //public List<NetworkDevice> GetDevicesByMountingPoint(int mountingPointId)
+    //{
+    //    using (var db = new TelecomDbContext())
+    //    {
+    //        return db.NetworkDevices
+    //            .Where(d => d.MountingPointId == mountingPointId)
+    //            .Include(d => d.DeviceType)
+    //            .Include(d => d.ParentDevice)
+    //            .OrderBy(d => d.Name)
+    //            .ToList();
+    //    }
+    //}
+
+    //public List<NetworkDevice> GetDevicesByParent(int parentDeviceId)
+    //{
+    //    using (var db = new TelecomDbContext())
+    //    {
+    //        return db.NetworkDevices
+    //            .Where(d => d.ParentDeviceId == parentDeviceId)
+    //            .Include(d => d.DeviceType)
+    //            .Include(d => d.MountingPoint)
+    //            .OrderBy(d => d.Name)
+    //            .ToList();
+    //    }
+    //}
+
+    //public List<NetworkDevice> GetDevicesForParent(int? excludeDeviceId)
+    //{
+    //    using (var db = new TelecomDbContext())
+    //    {
+    //        var q = db.NetworkDevices.AsQueryable();
+    //        if (excludeDeviceId.HasValue && excludeDeviceId.Value > 0)
+    //            q = q.Where(d => d.Id != excludeDeviceId.Value);
+    //        return q.OrderBy(d => d.Name).ToList();
+    //    }
+    //}
+
+    #endregion
+
+    // === SNMP ===
+
+    public void SetSnmpProfile(int deviceId, int? snmpProfileId)
+    {
+        using (var db = new TelecomDbContext())
+        {
+            var device = db.NetworkDevices.FirstOrDefault(d => d.Id == deviceId) ?? throw new Exception("Устройство не найдено");
+            device.SnmpProfileId = snmpProfileId;
+            db.SaveChanges();
+        }
+    }
+
+    public void AddSnmpProfile(SnmpProfile profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        using (var db = new TelecomDbContext())
+        {
+            db.SnmpProfiles.Add(profile);
+            db.SaveChanges();
+        }
+    }
+
+    public void EditSnmpProfile(SnmpProfile profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        using (var db = new TelecomDbContext())
+        {
+            var existing = db.SnmpProfiles.FirstOrDefault(p => p.Id == profile.Id) ?? throw new Exception("Профиль не найден");
+            existing.Name = profile.Name;
+            existing.Community = profile.Community;
+            existing.Version = profile.Version;
+            db.SaveChanges();
+        }
+    }
+
+    public void DeleteSnmpProfile(SnmpProfile profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        using (var db = new TelecomDbContext())
+        {
+            var existing = db.SnmpProfiles.FirstOrDefault(p => p.Id == profile.Id) ?? throw new Exception("Профиль не найден");
+            var devices = db.NetworkDevices.Where(d => d.SnmpProfileId == profile.Id).ToList();
+            foreach (var d in devices)
+                d.SnmpProfileId = null;
+            db.SaveChanges();
+            db.SnmpProfiles.Remove(existing);
+            db.SaveChanges();
+        }
+    }
+
+    // === Getters ===
+
+    public List<SnmpProfile> GetSnmpProfiles()
+    {
+        using (var db = new TelecomDbContext())
+        {
+            return db.SnmpProfiles.OrderBy(p => p.Name).ToList();
+        }
+    }
+
+    // === Helpers ===
+
+    // Detach навигационных свойств, чтобы избежать проблем с отслеживанием сущностей при добавлении/редактировании
     private static void DetachNavigations(NetworkDevice device)
     {
         device.DeviceType = null!;

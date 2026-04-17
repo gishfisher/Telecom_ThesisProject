@@ -15,7 +15,7 @@ public class StreetNodeViewModel : ObservableObject
         Addresses = new ObservableCollection<AddressNodeViewModel>();
     }
 
-    public int Id => _street.Id;
+    public int? Id => _street.Id;
     public string Name => _street.Name;
     public Street Street => _street;
 
