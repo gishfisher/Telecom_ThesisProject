@@ -12,7 +12,7 @@ namespace Telecom_ThesisProject.Services
         public void AddRequest(Request request)
         {
             ArgumentNullException.ThrowIfNull(request);
-            DetachNavigations(request);
+            //DetachNavigations(request);
 
             using (var db = new TelecomDbContext())
             {
@@ -28,7 +28,7 @@ namespace Telecom_ThesisProject.Services
         public void EditRequest(Request request)
         {
             ArgumentNullException.ThrowIfNull(request);
-            DetachNavigations(request);
+            //DetachNavigations(request);
 
             using (var db = new TelecomDbContext())
             {
@@ -66,19 +66,36 @@ namespace Telecom_ThesisProject.Services
                 return db.Requests
                     .Include(r => r.Client)
                     .Include(r => r.Employee)
+                    .Include(r => r.Type)
                     .Include(r => r.Status)
                     .ToList();
             }
         }
 
+        public List<RequestStatus> GetAllStatuses()
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.RequestStatuses.ToList();
+            }
+        }
+
+        public List<RequestsType> GetAllRequestTypes()
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.RequestsTypes.ToList();
+            }
+        }
+
         // === Helpers ===
 
-        private static void DetachNavigations(Request request)
-        {
-            request.Client = null;
-            request.Employee = null;
-            request.Device = null;
-            request.Status = null;
-        }
+        //private static void DetachNavigations(Request request)
+        //{
+        //    request.Client = null;
+        //    request.Employee = null;
+        //    request.Device = null;
+        //    request.Status = null;
+        //}
     }
 }

@@ -16,8 +16,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         private readonly IMessageService _messageService;
 
         public Tariff Tariff { get; set; }
-        public ObservableCollection<Service> AvailableServices { get; }
-        public ObservableCollection<Service> SelectedServices { get; }
 
         private Service? _selectedServiceToAdd;
         public Service? SelectedServiceToAdd
@@ -29,6 +27,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 OnPropertyChanged();
             }
         }
+        public ObservableCollection<Service> AvailableServices { get; }
+        public ObservableCollection<Service> SelectedServices { get; }
 
         public RelayCommand SaveCommand { get; }
         public RelayCommand CancelCommand { get; }

@@ -14,12 +14,7 @@ public class CityAddEditViewModel : ObservableObject
     private readonly AddressService _addressService;
     private readonly IMessageService _messageService;
 
-    private City? _city;
-
-    public void OnNavigatedTo(object? parameter)
-    {
-        _city = parameter as City;
-    }
+    #region Properties 
 
     private string _name = string.Empty;
     public string Name
@@ -39,6 +34,8 @@ public class CityAddEditViewModel : ObservableObject
 
     public bool IsEdit { get; }
     public int? CityId { get; }
+
+    #endregion
 
     public RelayCommand SaveCommand { get; }
     public RelayCommand CancelCommand { get; }

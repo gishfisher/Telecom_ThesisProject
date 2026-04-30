@@ -93,6 +93,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         {
             if (SelectedRequest == null) return;
             _requestService.RemoveRequest(SelectedRequest);
+           
             LoadRequests();
             FilterRequests();
         }

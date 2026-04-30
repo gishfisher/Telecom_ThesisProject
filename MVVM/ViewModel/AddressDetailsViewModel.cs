@@ -77,95 +77,9 @@ public class AddressDetailsViewModel : ObservableObject
         LoadData();
     }
 
-    //private void LoadData()
-    //{
-    //    using var db = new TelecomDbContext();
-
-    //    var addr = db.Addresses
-    //        .Include(a => a.Street).ThenInclude(s => s.City)
-    //        .Include(a => a.MountingPoints)
-    //            .ThenInclude(mp => mp.PointType)
-    //        .Include(a => a.MountingPoints)
-    //            .ThenInclude(mp => mp.NetworkDevices)
-    //                .ThenInclude(d => d.DeviceType)
-    //        .Include(a => a.MountingPoints)
-    //            .ThenInclude(mp => mp.NetworkDevices)
-    //                .ThenInclude(d => d.DevicePorts)
-    //                    .ThenInclude(p => p.Connection)
-    //                        .ThenInclude(c => c.Client)
-    //        .Include(a => a.MountingPoints)
-    //            .ThenInclude(mp => mp.NetworkDevices)
-    //                .ThenInclude(d => d.DevicePorts)
-    //                    .ThenInclude(p => p.Connection)
-    //                        .ThenInclude(c => c.Tariff)
-    //        .FirstOrDefault(a => a.Id == _addressId);
-
-    //    if (addr == null) return;
-
-    //    var city = addr.Street?.City?.Name ?? "—";
-    //    var street = addr.Street?.Name ?? "—";
-    //    FullAddress = $"{city}, {street}, д. {addr.HouseNumber}" +
-    //                  (!string.IsNullOrWhiteSpace(addr.Apartment) ? $", кв. {addr.Apartment}" : "");
-
-    //    MountingPoints.Clear();
-    //    foreach (var mp in addr.MountingPoints)
-    //    {
-    //        db.Entry(mp).State = EntityState.Detached;
-    //        if (mp.PointType != null) db.Entry(mp.PointType).State = EntityState.Detached;
-    //        MountingPoints.Add(mp);
-    //    }
-
-    //    Devices.Clear();
-    //    foreach (var mp in addr.MountingPoints)
-    //    {
-    //        foreach (var device in mp.NetworkDevices)
-    //        {
-    //            db.Entry(device).State = EntityState.Detached;
-    //            if (device.DeviceType != null) db.Entry(device.DeviceType).State = EntityState.Detached;
-    //            Devices.Add(device);
-    //        }
-    //    }
-
-    //    Ports.Clear();
-    //    foreach (var mp in addr.MountingPoints)
-    //    {
-    //        foreach (var device in mp.NetworkDevices)
-    //        {
-    //            foreach (var port in device.DevicePorts)
-    //            {
-    //                db.Entry(port).State = EntityState.Detached;
-    //                if (port.Connection?.Client != null) db.Entry(port.Connection.Client).State = EntityState.Detached;
-    //                if (port.Connection?.Tariff != null) db.Entry(port.Connection.Tariff).State = EntityState.Detached;
-    //                Ports.Add(port);
-    //            }
-    //        }
-    //    }
-    //}
-
     private void LoadData()
     {
-        using var db = new TelecomDbContext();
-
-        var addr = db.Addresses
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Include(a => a.Street).ThenInclude(s => s.City)
-            .Include(a => a.MountingPoints)
-                .ThenInclude(mp => mp.PointType)
-            .Include(a => a.MountingPoints)
-                .ThenInclude(mp => mp.NetworkDevices)
-                    .ThenInclude(d => d.DeviceType)
-            .Include(a => a.MountingPoints)
-                .ThenInclude(mp => mp.NetworkDevices)
-                    .ThenInclude(d => d.DevicePorts)
-                        .ThenInclude(p => p.Connection)
-                            .ThenInclude(c => c.Client)
-            .Include(a => a.MountingPoints)
-                .ThenInclude(mp => mp.NetworkDevices)
-                    .ThenInclude(d => d.DevicePorts)
-                        .ThenInclude(p => p.Connection)
-                            .ThenInclude(c => c.Tariff)
-            .FirstOrDefault(a => a.Id == _addressId);
+        var addr = _addressService.GetAddressesWithInclude().FirstOrDefault(a => a.Id == _addressId);
 
         if (addr == null) return;
 
@@ -174,15 +88,17 @@ public class AddressDetailsViewModel : ObservableObject
         FullAddress = $"{city}, {street}, д. {addr.HouseNumber}";
 
         MountingPoints.Clear();
-        foreach (var mp in addr.MountingPoints) MountingPoints.Add(mp);
+        foreach (var mp in addr.MountingPoints)
+        {
+            MountingPoints.Add(mp);
+        }
 
         var allDevices = addr.MountingPoints.SelectMany(mp => mp.NetworkDevices).ToList();
         Devices.Clear();
-        foreach (var dev in allDevices) Devices.Add(dev);
-
-        //var allPorts = allDevices.SelectMany(d => d.DevicePorts).ToList();
-        //Ports.Clear();
-        //foreach (var port in allPorts) Ports.Add(port);
+        foreach (var dev in allDevices)
+        {
+            Devices.Add(dev);
+        }
     }
 
     private void DeleteSelectedMountingPoint(object? param)
@@ -208,18 +124,16 @@ public class AddressDetailsViewModel : ObservableObject
     {
         if (param is not NetworkDevice device) return;
 
-        if (!_messageService.Confirm($"Отвязать устройство \"{device.Name}\" от точки монтажа? Устройство останется в базе."))
+        if (!_messageService.Confirm($"Отвязать устройство \"{device.Name}\" от точки монтажа?"))
             return;
 
         try
         {
-            using var db = new TelecomDbContext();
-            var existing = db.NetworkDevices.FirstOrDefault(d => d.Id == device.Id);
-            if (existing != null)
+           if (device != null)
             {
-                existing.MountingPointId = null;
-                existing.InstallationDate = null;
-                db.SaveChanges();
+                device.MountingPointId = null;
+                device.InstallationDate = null;
+                _deviceService.EditDevice(device);
             }
             LoadData();
         }

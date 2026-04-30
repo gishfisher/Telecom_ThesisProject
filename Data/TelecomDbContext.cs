@@ -31,6 +31,8 @@ public partial class TelecomDbContext : DbContext
 
     public virtual DbSet<Address> Addresses { get; set; }
 
+    public virtual DbSet<Apartment> Apartments { get; set; }
+
     public virtual DbSet<City> Cities { get; set; }
 
     public virtual DbSet<Client> Clients { get; set; }
@@ -56,6 +58,8 @@ public partial class TelecomDbContext : DbContext
     public virtual DbSet<NetworkDevice> NetworkDevices { get; set; }
 
     public virtual DbSet<Request> Requests { get; set; }
+
+    public virtual DbSet<RequestComment> RequestComments { get; set; }
 
     public virtual DbSet<RequestStatus> RequestStatuses { get; set; }
 
@@ -88,6 +92,16 @@ public partial class TelecomDbContext : DbContext
                 .HasConstraintName("FK__Addresses__Stree__5070F446");
         });
 
+        modelBuilder.Entity<Apartment>(entity =>
+        {
+            entity.Property(e => e.Number).HasMaxLength(50);
+
+            entity.HasOne(d => d.Address).WithMany(p => p.Apartments)
+                .HasForeignKey(d => d.AddressId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Apartments_Addresses");
+        });
+
         modelBuilder.Entity<City>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Cities");
@@ -101,18 +115,10 @@ public partial class TelecomDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__Clients");
 
-            entity.HasIndex(e => e.ContractNumber, "UQ__Clients__ContractNumber").IsUnique();
-
-            entity.Property(e => e.ContractNumber).HasMaxLength(50);
             entity.Property(e => e.FirstName).HasMaxLength(50);
             entity.Property(e => e.LastName).HasMaxLength(50);
             entity.Property(e => e.MiddleName).HasMaxLength(50);
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
-
-            entity.HasOne(d => d.Address).WithMany(p => p.Clients)
-                .HasForeignKey(d => d.AddressId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Clients__Address__797309D9");
         });
 
         modelBuilder.Entity<Connection>(entity =>
@@ -123,6 +129,11 @@ public partial class TelecomDbContext : DbContext
 
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.StaticIp).HasMaxLength(45);
+
+            entity.HasOne(d => d.Apartment).WithMany(p => p.Connections)
+                .HasForeignKey(d => d.ApartmentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Connections_Apartments");
 
             entity.HasOne(d => d.Client).WithMany(p => p.Connections)
                 .HasForeignKey(d => d.ClientId)
@@ -237,7 +248,6 @@ public partial class TelecomDbContext : DbContext
 
             entity.HasIndex(e => e.IpAddress, "UQ__NetworkDevice_IpAddress").IsUnique();
 
-            entity.Property(e => e.InstallationDate);
             entity.Property(e => e.IpAddress).HasMaxLength(45);
             entity.Property(e => e.IsMonitored).HasDefaultValue(true);
             entity.Property(e => e.Name).HasMaxLength(100);
@@ -265,6 +275,7 @@ public partial class TelecomDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__Requests");
 
+            entity.Property(e => e.ClosedAt).HasColumnType("datetime");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -272,8 +283,11 @@ public partial class TelecomDbContext : DbContext
 
             entity.HasOne(d => d.Client).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.ClientId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Requests__Client__0C85DE4D");
+
+            entity.HasOne(d => d.Connection).WithMany(p => p.Requests)
+                .HasForeignKey(d => d.ConnectionId)
+                .HasConstraintName("FK_Requests_Connections");
 
             entity.HasOne(d => d.Device).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.DeviceId)
@@ -293,6 +307,21 @@ public partial class TelecomDbContext : DbContext
                 .HasForeignKey(d => d.TypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Requests_RequestsTypes");
+        });
+
+        modelBuilder.Entity<RequestComment>(entity =>
+        {
+            entity.Property(e => e.Comment).HasMaxLength(255);
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.RequestComments)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RequestComments_Employees");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.RequestComments)
+                .HasForeignKey(d => d.RequestId)
+                .HasConstraintName("FK_RequestComments_Requests");
         });
 
         modelBuilder.Entity<RequestStatus>(entity =>

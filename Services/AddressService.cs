@@ -10,17 +10,6 @@ namespace Telecom_ThesisProject.Services
     class AddressService
     {
         // === Cities ===
-        public List<City> GetAllCities()
-        {
-            using (var db = new TelecomDbContext())
-            {
-                return db.Cities
-                    .Include(c => c.Streets)
-                    .ThenInclude(s => s.Addresses)
-                    .OrderBy(c => c.Name)
-                    .ToList();
-            }
-        }
 
         public void AddCity(City city)
         {
@@ -61,6 +50,19 @@ namespace Telecom_ThesisProject.Services
 
         // === Getters ===
 
+        public List<City> GetAllCities()
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Cities
+                    .Include(c => c.Streets)
+                    .ThenInclude(s => s.Addresses)
+                    .ThenInclude(a => a.Apartments)
+                    .OrderBy(c => c.Name)
+                    .ToList();
+            }
+        }
+
         public List<City> GetCitiesForCombo()
         {
             using (var db = new TelecomDbContext())
@@ -69,7 +71,16 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        public List<City> GetCitiesById(int id)
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Cities.Where(c => c.Id == id).ToList();
+            }
+        }
+
         // === Streets ===
+
         public void AddStreet(Street street)
         {
             ArgumentNullException.ThrowIfNull(street);
@@ -114,11 +125,15 @@ namespace Telecom_ThesisProject.Services
         {
             using (var db = new TelecomDbContext())
             {
-                return db.Streets.Where(s => s.CityId == cityId).OrderBy(s => s.Name).ToList();
+                return db.Streets.Where(s => s.CityId == cityId)
+                         .Include(s => s.Addresses)
+                         .OrderBy(s => s.Name)
+                         .ToList();
             }
         }
 
         // === Addreses ===
+
         public void AddAddress(Address address)
         {
             ArgumentNullException.ThrowIfNull(address);
@@ -151,24 +166,127 @@ namespace Telecom_ThesisProject.Services
                     .FirstOrDefault(a => a.Id == address.Id)
                     ?? throw new Exception("Адрес не найден");
 
-                bool hasClients = db.Clients.Any(c => c.AddressId == existing.Id);
-                if (hasClients)
-                    throw new InvalidOperationException("Есть клиенты, привязанные к адресу.");
+                // хз
+
+                //bool hasClients = db.Clients.Any(c => c.Connections.FirstOrDefault().ApartmentId == existing.Apartments.FirstOrDefault().Id);
+                //if (hasClients)
+                //    throw new InvalidOperationException("Есть клиенты, привязанные к адресу.");
 
                 db.Addresses.Remove(existing);
                 db.SaveChanges();
             }
         }
 
+        // === Apartments ===
+
+        public void AddApartment(Apartment apartment)
+        {
+            ArgumentNullException.ThrowIfNull(apartment);
+            using (var db = new TelecomDbContext())
+            {
+                db.Apartments.Add(apartment);
+                db.SaveChanges();
+            }
+        }
+
+        public void EditApartment(Apartment apartment)
+        {
+            ArgumentNullException.ThrowIfNull(apartment);
+            using (var db = new TelecomDbContext())
+            {
+                var existing = db.Apartments.FirstOrDefault(a => a.Id == apartment.Id)
+                    ?? throw new Exception("Квартира не найдена");
+                existing.Number = apartment.Number;
+                existing.AddressId = apartment.AddressId;
+                db.SaveChanges();
+            }
+        }
+
+        public void RemoveApartment(Apartment apartment)
+        {
+            ArgumentNullException.ThrowIfNull(apartment);
+            using (var db = new TelecomDbContext())
+            {
+                var existing = db.Apartments.FirstOrDefault(a => a.Id == apartment.Id)
+                    ?? throw new Exception("Квартира не найдена");
+                bool hasClients = db.Clients.FirstOrDefault()?.Connections.Any(c => c.ApartmentId == existing.Id) ?? false;
+                if (hasClients)
+                    throw new InvalidOperationException("Есть клиенты, привязанные к квартире.");
+                db.Apartments.Remove(existing);
+                db.SaveChanges();
+            }
+        }
+
         // === Getters ===
+
+        public List<Address> GetAddressesByStreetId(int streetId)
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Addresses.Where(s => s.StreetId == streetId)
+                                   .OrderBy(s => s.HouseNumber)
+                                   .ToList();
+            }
+        }
+
+        public Apartment GetApartmentIdByAddressIdAndNumber(int addressId, string number)
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Apartments.FirstOrDefault(a => a.AddressId == addressId && a.Number == number) 
+                    ?? throw new Exception("Квартира не найдена");
+            }
+        }
+
+        public List<Apartment> GetApartmentsByAddressId(int addressId)
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Apartments.Where(a => a.AddressId == addressId)
+                                    .OrderBy(a => a.Number)
+                                    .ToList();
+            }
+        }
+
+        public bool ApartamentIsExist(int addressId, string number)
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Apartments.Any(a => a.AddressId == addressId && a.Number == number);
+            }
+        }
+
         public List<Address> GetAllWithLocation()
         {
             using (var db = new TelecomDbContext())
             {
                 return db.Addresses
+                    .AsNoTracking()
                     .Include(a => a.Street)
                     .ThenInclude(s => s.City)
+                    .Include(a => a.Apartments)
                     .OrderBy(a => a.Id)
+                    .ToList();
+            }
+        }
+
+        public List<Address> GetAddressesWithInclude()
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Addresses
+                    .AsNoTracking()
+                    .AsSplitQuery()
+                    .Include(a => a.Apartments)
+                    .Include(a => a.Street)
+                        .ThenInclude(s => s.City)
+                    .Include(a => a.MountingPoints)
+                        .ThenInclude(mp => mp.PointType)
+                    .Include(a => a.MountingPoints)
+                        .ThenInclude(mp => mp.SpotType)
+                    .Include(a => a.MountingPoints)
+                        .ThenInclude(mp => mp.NetworkDevices)
+                            .ThenInclude(tp => tp.DeviceType)
                     .ToList();
             }
         }
@@ -178,9 +296,6 @@ namespace Telecom_ThesisProject.Services
         public void AddMountingPoint(MountingPoint mp)
         {
             ArgumentNullException.ThrowIfNull(mp);
-
-            if (!mp.MountingDate.HasValue)
-                mp.MountingDate = DateOnly.FromDateTime(DateTime.Today);
 
             using (var db = new TelecomDbContext())
             {
@@ -240,24 +355,11 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
-        public List<MountingPoint> GetMountingPointsById()
+        public MountingPoint? GetMountingPointsById(int id)
         {
             using (var db = new TelecomDbContext())
             {
-                return db.MountingPoints.OrderBy(t => t.Id).ToList();
-            }
-        }
-
-        public List<MountingPoint> GetMountingPointsWithAddress()
-        {
-            using (var db = new TelecomDbContext())
-            {
-                return db.MountingPoints
-                    .Include(mp => mp.Address)
-                        .ThenInclude(a => a.Street)
-                            .ThenInclude(s => s.City)
-                    .OrderBy(mp => mp.Id)
-                    .ToList();
+                return db.MountingPoints.FirstOrDefault(mp => mp.Id == id);
             }
         }
     }

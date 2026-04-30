@@ -16,6 +16,11 @@
                       SelectedValuePath="Id"
                       SelectedValue="{Binding SelectedPointTypeId}"/>
 
+            <Label Content="Тип точки размещения"/>
+            <ComboBox ItemsSource="{Binding}"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"/>
+
             <Label Content="Описание расположения (необязательно)"/>
             <TextBox Text="{Binding LocationDescription, UpdateSourceTrigger=PropertyChanged}"
                      AcceptsReturn="True"

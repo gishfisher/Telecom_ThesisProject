@@ -16,7 +16,6 @@ public partial class SnmpProfile
     public string Version { get; set; } = null!;
 
     public virtual ICollection<NetworkDevice> NetworkDevices { get; set; } = new List<NetworkDevice>();
-
     public string SnmpProfileString =>
         string.Join(", ", new[] { Name, $"Версия: {Version}" }.Where(s => !string.IsNullOrWhiteSpace(s))).Trim();
 }

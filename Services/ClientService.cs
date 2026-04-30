@@ -12,7 +12,7 @@ namespace Telecom_ThesisProject.Services
         public void AddClient(Client client)
         {
             ArgumentNullException.ThrowIfNull(client);
-            DetachNavigations(client);
+            //DetachNavigations(client);
 
             using (var db = new TelecomDbContext())
             {
@@ -33,8 +33,6 @@ namespace Telecom_ThesisProject.Services
                 existing.FirstName = client.FirstName;
                 existing.LastName = client.LastName;
                 existing.MiddleName = client.MiddleName;
-                existing.ContractNumber = client.ContractNumber;
-                existing.AddressId = client.AddressId;
 
                 db.SaveChanges();
             }
@@ -59,18 +57,15 @@ namespace Telecom_ThesisProject.Services
             using (var db = new TelecomDbContext())
             {
                 return db.Clients
-                    .Include(c => c.Address)
-                    .ThenInclude(a => a.Street)
-                    .ThenInclude(s => s.City)
-                    .ToList();
+                       .ToList();
             }
         }
 
         // === Helpers ===
 
-        private static void DetachNavigations(Client client)
-        {
-            client.Address = null!;
-        }
+        //private static void DetachNavigations(Client client)
+        //{
+        //    client.Address = null!;
+        //}
     }
 }

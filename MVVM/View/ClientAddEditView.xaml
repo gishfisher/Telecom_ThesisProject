@@ -4,34 +4,84 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="10">
-        <StackPanel>
-            <Label Content="Фамилия"/>
-            <TextBox Text="{Binding Client.LastName, UpdateSourceTrigger=PropertyChanged}"/>
+             d:DesignHeight="700" d:DesignWidth="800"
+             Background="White">
+    <ScrollViewer>
+        <Grid Margin="10">
+            <StackPanel>
 
-            <Label Content="Имя"/>
-            <TextBox Text="{Binding Client.FirstName, UpdateSourceTrigger=PropertyChanged}"/>
+                <ui:Card>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:Button Content="Назад" Icon="{ui:SymbolIcon ArrowStepBack20}"
+                       Command="{Binding CancelCommand}" Margin="0,0,10,0"/>
+                        <ui:Button Content="Сохранить" Icon="{ui:SymbolIcon Add24}"
+                       Command="{Binding SaveCommand}" Margin="0,0,10,0"/>
 
-            <Label Content="Отчество"/>
-            <TextBox Text="{Binding Client.MiddleName, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ui:TextBlock Text="{Binding Title}" 
+                          FontTypography="Subtitle"/>
+                    </StackPanel>
+                </ui:Card>
 
-            <Label Content="Номер договора"/>
-            <TextBox Text="{Binding Client.ContractNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                <ui:Card Margin="0,10,0,0">
+                    <StackPanel>
+                        <ui:TextBlock FontTypography="BodyStrong"
+                                      Margin="10,10">
+                            <Run Text="Общая информация"/>
+                            <!--<LineBreak/>-->
+                            <!--<Run Text="Контактная информация клиента" 
+                                 FontStyle="Italic" FontWeight="Normal" Foreground="#94A3B8"/>-->
+                        </ui:TextBlock>
+                        <ui:Card>
+                            <StackPanel>
+                                <Label Content="Фамилия"/>
+                                <TextBox Text="{Binding Client.LastName, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Label Content="Адрес"/>
-            <ComboBox ItemsSource="{Binding Addresses}"
-                      DisplayMemberPath="GetFullAddress"
-                      SelectedValuePath="Id"
-                      SelectedValue="{Binding Client.AddressId, Mode=TwoWay}"/>
+                                <Label Content="Имя"/>
+                                <TextBox Text="{Binding Client.FirstName, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Button Content="Сохранить"
-                Command="{Binding SaveCommand}" Margin="0,12,0,0"/>
+                                <Label Content="Отчество"/>
+                                <TextBox Text="{Binding Client.MiddleName, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </ui:Card>
 
-            <Button Content="Назад"
-                Command="{Binding CancelCommand}"/>
-        </StackPanel>
-    </Grid>
+                        <!--<Expander Margin="0,10,0,0" IsExpanded="True">
+                            <Expander.Header>
+                                <ui:TextBlock FontTypography="BodyStrong">
+                                    <Run Text="Адрес проживания"/>
+                                    <LineBreak/>
+                                    <Run Text="(необязательно, если клиент уже привязан к адресу)" 
+         FontStyle="Italic" FontWeight="Normal" Foreground="#94A3B8"/>
+                                </ui:TextBlock>
+                            </Expander.Header>
+                            <StackPanel>
+                                <Label Content="Город"/>
+                                <ComboBox ItemsSource="{Binding Cities}"
+          DisplayMemberPath="Name"
+          SelectedValuePath="Id"
+          SelectedValue="{Binding SelectedCityId}"/>
 
+                                <Label Content="Улица"/>
+                                <ComboBox ItemsSource="{Binding Streets}"
+          DisplayMemberPath="Name"
+          SelectedValuePath="Id"
+          SelectedValue="{Binding SelectedStreetId}"/>
+
+                                <Label Content="Дом"/>
+                                <ComboBox ItemsSource="{Binding Addresses}"
+          DisplayMemberPath="HouseNumber"
+          SelectedValuePath="Id"
+          SelectedValue="{Binding SelectedAddressId}"/>
+
+                                <Label Content="Номер квартиры"/>
+                                <TextBox Text="{Binding ApartmentNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </Expander>-->
+                    </StackPanel>
+                </ui:Card>
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

@@ -7,24 +7,17 @@ namespace Telecom_ThesisProject.MVVM.ViewModel;
 public class StreetNodeViewModel : ObservableObject
 {
     private readonly Street _street;
-    private bool _isExpanded;
+    public Street Street => _street;
+    
+    public int? Id => _street.Id;
+    public string Name => _street.Name;
 
+    public ObservableCollection<AddressNodeViewModel> Addresses { get; }
+    
     public StreetNodeViewModel(Street street)
     {
         _street = street;
         Addresses = new ObservableCollection<AddressNodeViewModel>();
-    }
-
-    public int? Id => _street.Id;
-    public string Name => _street.Name;
-    public Street Street => _street;
-
-    public ObservableCollection<AddressNodeViewModel> Addresses { get; }
-
-    public bool IsExpanded
-    {
-        get => _isExpanded;
-        set { _isExpanded = value; OnPropertyChanged(); }
     }
 
     public void AddAddress(AddressNodeViewModel address)

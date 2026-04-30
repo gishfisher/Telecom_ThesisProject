@@ -10,15 +10,15 @@
 
     <Border MaxWidth="400"
             VerticalAlignment="Center" HorizontalAlignment="Center"
-            Background="#FFFFFF" Width="350">
+            Background="#FFFFFF" Width="350"
+            CornerRadius="10">
 
         <StackPanel Margin="25">
 
-            <Label Content="Авторизация"
-                   FontSize="18pt"
-                   FontWeight="Bold" 
-                   HorizontalAlignment="Center" 
-                   Margin="0,0,0,20"/>
+            <ui:TextBlock Text="Авторизация" 
+                       HorizontalAlignment="Center"
+                       FontTypography="Subtitle"
+                       Margin="0,0,0,20"/>
 
             <Label Content="Логин"/>
             <ui:TextBox Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}" Margin="0,5"

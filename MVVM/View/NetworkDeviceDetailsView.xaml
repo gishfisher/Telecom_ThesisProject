@@ -5,10 +5,48 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:utils="clr-namespace:Telecom_ThesisProject.Utilities"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <Border Margin="10" Padding="10" CornerRadius="10" 
+    <UserControl.Resources>
+        <Style x:Key="StatusIndicatorStyle" TargetType="Ellipse">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Height" Value="8"/>
+            <Setter Property="Margin" Value="0,0,12,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DeviceStatus}" Value="В сети">
+                    <Setter Property="Fill" Value="#2ECC71"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#2ECC71" BlurRadius="8" ShadowDepth="0" Opacity="0.6"/>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DeviceStatus}" Value="Недоступен">
+                    <Setter Property="Fill" Value="#E74C3C"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#E74C3C" BlurRadius="8" ShadowDepth="0" Opacity="0.6"/>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DeviceStatus}" Value="Загрузка...">
+                    <Setter Property="Fill" Value="#F1C40F"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#F1C40F" BlurRadius="8" ShadowDepth="0" Opacity="0.6"/>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <utils:IsNotNullConverter x:Key="IsNotNullConverter"/>
+    </UserControl.Resources>
+
+    <Border Padding="10" Margin="10" 
+            CornerRadius="10" 
             Background="White">
         <Grid>
             <Grid.RowDefinitions>
@@ -17,13 +55,23 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
-                <TextBlock Text="{Binding Device.Name, StringFormat={}Карточка оборудования «{0}»}" FontSize="14pt" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding Device.IpAddress}" FontSize="18" Foreground="Gray"
-                   Margin="15,0,0,0" VerticalAlignment="Bottom"/>
-                <Button Content="Редактировать" Command="{Binding EditCommand}"
-                Margin="30,0,0,0" Padding="12,6"/>
-                <Button Content="Назад" Command="{Binding GoBackCommand}"
-                Margin="10,0,0,0" Padding="12,6"/>
+                <ui:Button Icon="{ui:SymbolIcon ArrowStepBack20}" Command="{Binding GoBackCommand}"
+                           Padding="10" Margin="0,0,5,0" ToolTip="Назад"/>
+                <ui:Button Icon="{ui:SymbolIcon Edit24}" Command="{Binding EditCommand}"
+                           Padding="10" Margin="0,0,5,0" ToolTip="Редактировать"/>
+                <ui:Button Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding RefreshDeviceDetails}"
+                           Padding="10" ToolTip="Обновить"/>
+
+                <Separator Margin="5,2" Grid.Column="1"/>
+
+                <ui:TextBlock Text="{Binding Device.Name, FallbackValue=Карточка оборудования, StringFormat={}Карточка оборудования «{0}»}" 
+                              VerticalAlignment="Center" 
+                              FontTypography="Subtitle"/>
+                <!--<ui:TextBlock Text="{Binding Device.IpAddress, FallbackValue=192.168.0.0}"
+                              FontTypography="Caption"
+                              Foreground="#94A3B8" 
+                              VerticalAlignment="Center" 
+                              Margin="10,0,0,0"/>-->
             </StackPanel>
 
             <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0,1,0,0">
@@ -39,7 +87,7 @@
                                         <Border x:Name="InnerBorder" 
                                                 Background="Transparent" 
                                                 Padding="5">
-                                            <ContentPresenter />
+                                            <ContentPresenter/>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="ItemsControl.AlternationIndex" Value="1">
@@ -58,16 +106,15 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Общая информация" 
-                                   FontSize="14" 
-                                   Margin="5,0,0,15"/>
+                        <ui:TextBlock Text="Общая информация" 
+                                      FontTypography="BodyStrong"
+                                      Margin="5,0,0,5"/>
 
                         <ui:Card Grid.Row="1" Padding="0" VerticalAlignment="Top">
                             <ListBox Background="Transparent" 
                                      BorderThickness="0"
                                      AlternationCount="2"
-                                     ItemContainerStyle="{StaticResource ZebraStyle}"
-                                     ItemsSource="{Binding DeviceDetailsList}">
+                                     ItemContainerStyle="{StaticResource ZebraStyle}">
                                 <ListBox.Items>
                                     <ListBoxItem>
                                         <Grid>
@@ -75,8 +122,8 @@
                                                 <ColumnDefinition Width="200"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Text="Имя устройства"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding Device.Name}"/>
+                                            <ui:TextBlock FontTypography="Body" Text="Имя устройства"/>
+                                            <ui:TextBlock FontTypography="Body" Grid.Column="1" Text="{Binding Device.Name}"/>
                                         </Grid>
                                     </ListBoxItem>
 
@@ -98,7 +145,7 @@
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Text="Тип устройства"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding DeviceTypeName}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Device.DeviceType.TypeName}" />
                                         </Grid>
                                     </ListBoxItem>
 
@@ -109,7 +156,25 @@
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Text="Время работы (Uptime)"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding Device.Uptime, FallbackValue='14д. 05ч. 12м.'}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding DeviceUpTime}"
+                                                       ToolTipService.InitialShowDelay="100"
+                                                       ToolTipService.Placement="MousePoint"
+                                                       ToolTipService.ToolTip="SysUpTime">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="TextAlignment" Value="Left"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding DeviceUpTime}" Value="Недоступен">
+                                                                <Setter Property="Foreground" Value="#EF4444"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding DeviceUpTime}" Value="Загрузка...">
+                                                                <Setter Property="Foreground" Value="#F1C40F"/>
+                                                                <Setter Property="FontStyle" Value="Italic"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
                                         </Grid>
                                     </ListBoxItem>
 
@@ -120,6 +185,18 @@
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Text="SNMP Профиль"/>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Device.SnmpProfile.SnmpProfileString}"/>
+                                                <ui:HyperlinkButton Icon="{ui:SymbolIcon MoreCircle32}"
+                                                                    Command="{Binding ManageSnmpProfilesCommand}" 
+                                                                    Grid.Column="1"
+                                                                    Padding="1"
+                                                                    Margin="10,0">
+                                                    <TextBlock>
+                                                        Подробнее об SNMP профиле
+                                                    </TextBlock>
+                                                </ui:HyperlinkButton>
+                                            </StackPanel>
                                         </Grid>
                                     </ListBoxItem>
 
@@ -129,10 +206,33 @@
                                                 <ColumnDefinition Width="200"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Text="Статус мониторинга"/>
+
+                                            <TextBlock Text="Статус"/>
+
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                <Ellipse Width="5" Height="5" Margin="0,0,10,0"/>
-                                                <TextBlock Text="{Binding IsMonitoredText}" />
+                                                <Ellipse Style="{StaticResource StatusIndicatorStyle}"/>
+                                                <ui:TextBlock Text="{Binding DeviceStatus}"
+                                                              ToolTipService.InitialShowDelay="100"
+                                                              ToolTipService.Placement="MousePoint"
+                                                              ToolTipService.ToolTip="Ping (ICMP)">
+                                                    <ui:TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="TextAlignment" Value="Left"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding DeviceStatus}" Value="В сети">
+                                                                    <Setter Property="Foreground" Value="#2ECC71"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding DeviceStatus}" Value="Недоступен">
+                                                                    <Setter Property="Foreground" Value="#EF4444"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding DeviceStatus}" Value="Загрузка...">
+                                                                    <Setter Property="Foreground" Value="#F1C40F"/>
+                                                                    <Setter Property="FontStyle" Value="Italic"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ui:TextBlock.Style>
+                                                </ui:TextBlock>
                                             </StackPanel>
                                         </Grid>
                                     </ListBoxItem>
@@ -145,14 +245,36 @@
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Text="Местоположение"/>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Device.Location, FallbackValue='Серверная А-12'}"/>
+                                                <TextBlock Text="{Binding Device.MountingPoint.Address.GetFullAddress}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </ListBoxItem>
+
+                                    <ListBoxItem>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="200"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Родитель"/>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Device.ParentDevice.Name}"/>
                                                 <ui:HyperlinkButton Icon="{ui:SymbolIcon MoreCircle32}"
-                                                                    Command="{Binding}" 
+                                                                    Command="{Binding ViewParentDeviceDetailsCommand}" 
                                                                     Grid.Column="1"
-                                                                    Padding="1"
-                                                                    Margin="10,0">
+                                                                    Padding="1" Margin="10,0">
+                                                    <ui:HyperlinkButton.Style>
+                                                        <Style TargetType="ui:HyperlinkButton" BasedOn="{StaticResource {x:Type ui:HyperlinkButton}}">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Device.ParentDevice.Name}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ui:HyperlinkButton.Style>
                                                     <TextBlock>
-                                                        <Underline>Подробнее о точке монтажа</Underline>
+                                                        Подробнее об устройстве
                                                     </TextBlock>
                                                 </ui:HyperlinkButton>
                                             </StackPanel>
@@ -164,71 +286,168 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem Header="Порты устройства">
+                <TabItem Header="Интерфейсы">
                     <Grid Margin="0,10,0,0">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Button Content="Обновить порты (SNMP)" Command="{Binding RefreshPortsCommand}"/>
-                            <ui:TextBox PlaceholderText="Поиск порта" Width="300" Margin="10,0,0,0" VerticalContentAlignment="Center"/>
-                        </StackPanel>
+                        <ui:TextBlock Text="Информация об интерфейсах" 
+                                      FontTypography="BodyStrong"
+                                      Margin="5,0,0,0"/>
 
-                        <DataGrid Grid.Row="1" ItemsSource="{Binding Ports}" AutoGenerateColumns="False" 
-                          CanUserAddRows="False" SelectionMode="Single"
-                          BorderBrush="#DDD" RowHeight="40" GridLinesVisibility="Horizontal">
-                            <DataGrid.Columns>
+                        <!--<ui:Card>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Обновить порты (SNMP)" Command="{Binding RefreshPortsCommand}"/>
+                                <ui:TextBox PlaceholderText="Поиск порта" Width="300" Margin="10,0,0,0" VerticalContentAlignment="Center"/>
+                            </StackPanel>
+                        </ui:Card>-->
 
-                                <DataGridTextColumn Header="№" Binding="{Binding PortNumber}" Width="40" IsReadOnly="True"/>
-                                <DataGridTextColumn Header="Интерфейс" Binding="{Binding PortName}" Width="100" FontWeight="Bold" IsReadOnly="True"/>
-                                <DataGridTextColumn Header="Uplink" Binding="{Binding IsUplink}" Width="100" FontWeight="Bold" IsReadOnly="True"/>
+                        <TextBlock Text="{Binding ErrorMessage}"
+                                   Margin="5,10,0,0"
+                                   TextWrapping="Wrap"
+                                   Grid.Row="1">
+                            <TextBlock.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ErrorMessage}" Value="Ошибка загрузки интерфейсов.">
+                                            <Setter Property="Foreground" Value="#EF4444"/>
+                                            <Setter Property="ToolTip" Value="Скорее всего устройство не подключено к сети или недоступно">
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ErrorMessage}" Value="Загрузка...">
+                                            <Setter Property="Foreground" Value="#F1C40F"/>
+                                            <Setter Property="FontStyle" Value="Italic"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ErrorMessage}" Value="Данные успешно обновлены.">
+                                            <Setter Property="Foreground" Value="#10B981"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ErrorMessage}" Value="">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Resources>
+                        </TextBlock>
 
-                                <DataGridTemplateColumn Header="Абонент" Width="*">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <ComboBox ItemsSource="{Binding DataContext.ClientsList, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                              SelectedItem="{Binding SelectedClient, UpdateSourceTrigger=PropertyChanged}"
-                                              DisplayMemberPath="FullName"
-                                              IsEditable="True" 
-                                              TextSearch.TextPath="FullName"
-                                              BorderThickness="0"
-                                              VerticalContentAlignment="Center">
-                                                <ComboBox.Style>
-                                                    <Style TargetType="ComboBox">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsUplink}" Value="True">
-                                                                <Setter Property="IsEnabled" Value="False"/>
-                                                                <Setter Property="Opacity" Value="0.5"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </ComboBox.Style>
-                                            </ComboBox>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
 
-                                <!--<DataGridTemplateColumn Width="100">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Управлять" 
-                                            Command="{Binding DataContext.ManagePortCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
-                                            CommandParameter="{Binding}" 
-                                            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>-->
+                        <ui:Card Margin="0,10,0,0" Grid.Row="2" VerticalAlignment="Top">
+                            <ui:DataGrid x:Name="PortsGrid"
+                                         ItemsSource="{Binding DevicePorts}"
+                                         SelectedItem="{Binding SelectedPort, Mode=TwoWay}"
+                                         AutoGenerateColumns="False"
+                                         CanUserAddRows="False"
+                                         RowBackground="#7FF7F6F6" 
+                                         AlternatingRowBackground="White">
+                                <ui:DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID"
+                                                        Binding="{Binding Id}"
+                                                        IsReadOnly="True"
+                                                        Width="100"/>
+                                    <DataGridTextColumn Header="Наименование"
+                                                        Binding="{Binding PortName}"
+                                                        IsReadOnly="True"
+                                                        Width="150"/>
+                                
+                                    <DataGridCheckBoxColumn Header="Uplink"
+                                                            Binding="{Binding IsUplink}"
+                                                            Width="100"/>
 
-                            </DataGrid.Columns>
-                        </DataGrid>
+                                    <DataGridTextColumn Header="Статус"
+                                                        Binding="{Binding OperationalStatus}"
+                                                        Width="80" 
+                                                        IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding OperationalStatus}" Value="Активен">
+                                                        <Setter Property="Foreground" Value="#10B981"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding OperationalStatus}" Value="Неактивен">
+                                                        <Setter Property="Foreground" Value="#EF4444"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding OperationalStatus}" Value="Неизвестно">
+                                                        <Setter Property="Foreground" Value="#FFB1B1B1"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding OperationalStatus}" Value="Тестирование">
+                                                        <Setter Property="Foreground" Value="#FF2D4DFF"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Подключения"
+                                                        Binding="{Binding Connection.GetConnectionString, FallbackValue=Нет подключения}"
+                                                        IsReadOnly="True"
+                                                        Width="250">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HasConnection}" Value="False">
+                                                        <Setter Property="Foreground" Value="#FFB1B1B1"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTemplateColumn Width="250">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <ui:Button x:Name="CreateConnectionButton" Content="Подключить" Icon="{ui:SymbolIcon Add24}" 
+                                                               Command="{Binding DataContext.AddConnectionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                               CommandParameter="{Binding}"
+                                                               Padding="5"/>
+                                                    <ui:Button x:Name="EditConnectionButton" Content="Подробнее" Icon="{ui:SymbolIcon Edit24}" 
+                                                               Command="{Binding DataContext.EditConnectionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                               CommandParameter="{Binding}"
+                                                               Padding="5"/>
+                                                    <ui:TextBlock x:Name="IsUplinkDesc" Text="Узел восходящей связи" Foreground="#FFB1B1B1"
+                                                                  Visibility="Collapsed"/>
+                                                </StackPanel>
+
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding HasConnection}" Value="True">
+                                                        <Setter TargetName="CreateConnectionButton" Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding HasConnection}" Value="False">
+                                                        <Setter TargetName="EditConnectionButton" Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding IsUplink}" Value="True">
+                                                        <Setter TargetName="CreateConnectionButton" Property="Visibility" Value="Collapsed"/>
+                                                        <Setter TargetName="IsUplinkDesc" Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
+
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                </ui:DataGrid.Columns>
+                            </ui:DataGrid>
+                        </ui:Card>
                     </Grid>
                 </TabItem>
 
                 <TabItem Header="Инструменты">
-                    <StackPanel Margin="0,20,0,0">
-                        <Button Content="Открыть SSH Консоль" Command="{Binding OpenSshCommand}" Width="200" Height="40" Margin="0,0,0,10"/>
+                    <StackPanel Margin="0,10,0,0">
+
+                        <ui:TextBlock Text="Вспомогательные инструменты" 
+                                      FontTypography="BodyStrong"
+                                      Margin="5,0,0,5"/>
+
+                        <Button Content="Открыть SSH Консоль" 
+                                Command="{Binding OpenSshCommand}" 
+                                Width="200" Height="40" Margin="0,0,0,10"
+                                ToolTip="Открыть SSH консоль для удаленного управления устройством"/>
                     </StackPanel>
                 </TabItem>
 

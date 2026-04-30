@@ -71,6 +71,10 @@
             <DataTemplate DataType="{x:Type vm:ConnectionsViewModel}">
                 <view:ConnectionsView/>
             </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type vm:ConnectionAddEditViewModel}">
+                <view:ConnectionAddEditView/>
+            </DataTemplate>
 
             <DataTemplate DataType="{x:Type vm:AddressTreeViewModel}">
                 <view:AddressTreeView/>
@@ -86,6 +90,10 @@
 
             <DataTemplate DataType="{x:Type vm:AddressAddEditViewModel}">
                 <view:AddressAddEditView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ApartmentAddEditViewModel}">
+                <view:ApartmentAddEditView/>
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vm:AddressDetailsViewModel}">

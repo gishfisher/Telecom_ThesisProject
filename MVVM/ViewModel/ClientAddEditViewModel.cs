@@ -59,8 +59,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
             try
             {
-                Client.Address = null!;
-
                 if (Client.Id == 0)
                     _clientService.AddClient(Client);
                 else
@@ -97,13 +95,13 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             if (!string.IsNullOrWhiteSpace(Client.MiddleName) && Client.MiddleName.Length > 50)
                 errors.AppendLine("Отчество не должно превышать 50 символов.");
 
-            if (string.IsNullOrWhiteSpace(Client.ContractNumber))
-                errors.AppendLine("Номер договора обязателен.");
-            else if (Client.ContractNumber.Length > 50)
-                errors.AppendLine("Номер договора не должен превышать 50 символов.");
+            //if (string.IsNullOrWhiteSpace(Client.ContractNumber))
+            //    errors.AppendLine("Номер договора обязателен.");
+            //else if (Client.ContractNumber.Length > 50)
+            //    errors.AppendLine("Номер договора не должен превышать 50 символов.");
 
-            if (Client.AddressId <= 0)
-                errors.AppendLine("Выберите адрес.");
+            //if (Client.AddressId <= 0)
+            //    errors.AppendLine("Выберите адрес.");
 
             if (errors.Length > 0)
             {
@@ -125,9 +123,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 Id = client.Id,
                 LastName = client.LastName,
                 FirstName = client.FirstName,
-                MiddleName = client.MiddleName,
-                ContractNumber = client.ContractNumber,
-                AddressId = client.AddressId
+                MiddleName = client.MiddleName
             };
         }
     }

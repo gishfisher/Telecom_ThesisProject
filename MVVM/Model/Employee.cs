@@ -15,6 +15,8 @@ public partial class Employee
 
     public int? UserId { get; set; }
 
+    public virtual ICollection<RequestComment> RequestComments { get; set; } = new List<RequestComment>();
+
     public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
 
     public virtual User? User { get; set; }

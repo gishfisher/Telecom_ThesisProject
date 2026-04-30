@@ -11,15 +11,30 @@ public partial class Connection
 
     public int ClientId { get; set; }
 
+    public int ApartmentId { get; set; }
+
     public int PortId { get; set; }
 
     public int TariffId { get; set; }
 
     public bool IsActive { get; set; }
 
+    public virtual Apartment Apartment { get; set; } = null!;
+
     public virtual Client Client { get; set; } = null!;
 
     public virtual DevicePort Port { get; set; } = null!;
 
+    public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
+
     public virtual Tariff Tariff { get; set; } = null!;
+
+    public string GetConnectionString
+    {
+        get
+        {
+            return $"Подключение №{Id}, {Client.GetFullNameIn}";
+        }
+    }
+
 }

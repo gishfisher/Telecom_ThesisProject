@@ -21,13 +21,13 @@ public class AddressTreeViewModel : ObservableObject
         { 
             _selectedNode = value; 
             OnPropertyChanged(); 
-            //RefreshCommands(); 
         }
     }
 
     public RelayCommand AddCityCommand { get; }
     public RelayCommand AddStreetCommand { get; }
     public RelayCommand AddAddressCommand { get; }
+    public RelayCommand AddApartmentCommand { get; }
     public RelayCommand EditCommand { get; }
     public RelayCommand DeleteCommand { get; }
     public RelayCommand RefreshCommand { get; }
@@ -35,9 +35,11 @@ public class AddressTreeViewModel : ObservableObject
     public Action<CityNodeViewModel?>? NavigateAddCity { get; set; }
     public Action<CityNodeViewModel, StreetNodeViewModel?>? NavigateAddStreet { get; set; }
     public Action<StreetNodeViewModel, AddressNodeViewModel?>? NavigateAddAddress { get; set; }
+    public Action<AddressNodeViewModel, ApartmentNodeViewModel?>? NavigateAddApartment { get; set; }
     public Action<CityNodeViewModel>? NavigateEditCity { get; set; }
     public Action<StreetNodeViewModel>? NavigateEditStreet { get; set; }
     public Action<AddressNodeViewModel>? NavigateEditAddress { get; set; }
+    public Action<ApartmentNodeViewModel>? NavigateEditApartment { get; set; }
     public Action<AddressNodeViewModel>? NavigateToDetails { get; set; }
 
     public AddressTreeViewModel()
@@ -48,6 +50,7 @@ public class AddressTreeViewModel : ObservableObject
         AddCityCommand = new RelayCommand(_ => NavigateAddCity?.Invoke(null));
         AddStreetCommand = new RelayCommand(_ => AddStreet(), _ => SelectedNode is CityNodeViewModel);
         AddAddressCommand = new RelayCommand(_ => AddAddress(), _ => SelectedNode is StreetNodeViewModel);
+        AddApartmentCommand = new RelayCommand(_ => AddApartment(), _ => SelectedNode is AddressNodeViewModel);
         EditCommand = new RelayCommand(_ => EditSelected(), _ => SelectedNode != null);
         DeleteCommand = new RelayCommand(_ => DeleteSelected(), _ => SelectedNode != null);
         RefreshCommand = new RelayCommand(_ => LoadTree());
@@ -70,6 +73,12 @@ public class AddressTreeViewModel : ObservableObject
                 {
                     var addressNode = new AddressNodeViewModel(address);
                     addressNode.OpenDetails = () => NavigateToDetails?.Invoke(addressNode);
+
+                    foreach (var apartments in address.Apartments)
+                    {
+                        var apartmentNode = new ApartmentNodeViewModel(apartments);
+                        addressNode.AddApartment(apartmentNode);
+                    }
                     streetNode.AddAddress(addressNode);
                 }
                 cityNode.AddStreet(streetNode);
@@ -96,6 +105,14 @@ public class AddressTreeViewModel : ObservableObject
         }
     }
 
+    private void AddApartment()
+    {
+        if (SelectedNode is AddressNodeViewModel addressNode)
+        {
+            NavigateAddApartment?.Invoke(addressNode, null);
+        }
+    }
+
     private void EditSelected()
     {
         switch (SelectedNode)
@@ -108,6 +125,9 @@ public class AddressTreeViewModel : ObservableObject
                 break;
             case AddressNodeViewModel addressNode:
                 NavigateEditAddress?.Invoke(addressNode);
+                break;
+            case ApartmentNodeViewModel apartmentNode:
+                NavigateEditApartment?.Invoke(apartmentNode);
                 break;
         }
     }
@@ -167,16 +187,28 @@ public class AddressTreeViewModel : ObservableObject
                     }
                 }
                 break;
+
+            case ApartmentNodeViewModel apartmentNode:
+                var parentAddress = Cities
+                    .SelectMany(c => c.Streets)
+                    .SelectMany(s => s.Addresses)
+                    .FirstOrDefault(a => a.Apartments.Contains(apartmentNode));
+                if (_messageService.Confirm($"Удалить квартиру \"{apartmentNode.DisplayText}\"?"))
+                {
+                    try
+                    {
+                        _addressService.RemoveApartment(apartmentNode.Apartment);
+                        parentAddress?.RemoveApartment(apartmentNode);
+                    }
+                    catch (Exception ex)
+                    {
+                        _messageService.ShowError($"Ошибка при удалении квартиры: {ex.Message}");
+                        return;
+                    }
+                }
+                break;
         }
     }
-
-    //private void RefreshCommands()
-    //{
-    //    AddStreetCommand.RaiseCanExecuteChanged();
-    //    AddAddressCommand.RaiseCanExecuteChanged();
-    //    EditCommand.RaiseCanExecuteChanged();
-    //    DeleteCommand.RaiseCanExecuteChanged();
-    //}
 
     public void Refresh()
     {

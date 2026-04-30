@@ -6,10 +6,10 @@
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="950">
+             d:DesignHeight="50">
 
-    <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Visibility="{Binding IsAuthenticated, 
-                 Converter={StaticResource BoolToVisibilityConverter}}">
+    <DockPanel Grid.Row="1" Grid.ColumnSpan="2" 
+               Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
 
         <RadioButton Content="Home"
              Height="50" 

@@ -30,8 +30,8 @@ public class AddressAddEditViewModel : ObservableObject
         set { _apartment = value; OnPropertyChanged(); }
     }
 
-    private int? _selectedStreetId;
-    public int? SelectedStreetId
+    private int _selectedStreetId;
+    public int SelectedStreetId
     {
         get => _selectedStreetId;
         set { _selectedStreetId = value; OnPropertyChanged(); }
@@ -53,12 +53,12 @@ public class AddressAddEditViewModel : ObservableObject
 
     public bool IsEdit { get; }
     public int? AddressId { get; }
+    public string Title => IsEdit ? "Редактирование дома" : "Добавление дома";
 
     #endregion
 
     public ObservableCollection<Street> Streets { get; } = new();
-
-    public string Title => IsEdit ? "Редактирование дома" : "Добавление дома";
+    public ObservableCollection<City> Cities { get; } = new();
 
     public RelayCommand SaveCommand { get; }
     public RelayCommand CancelCommand { get; }
@@ -76,13 +76,21 @@ public class AddressAddEditViewModel : ObservableObject
 
         if (IsEdit && node != null)
         {
-            SelectedCityId = node.Address.Street.CityId;
+            SelectedCityId = node.Address!.Street.CityId;   
 
-            var cities = _addressService.GetCitiesForCombo().Where(s => s.Id == SelectedCityId).ToList();
+            var cities = _addressService.GetCitiesById(SelectedCityId)
+                                        .ToList();
             foreach (var city in cities)
             {
-                var streets = _addressService.GetStreetsByCityId(city.Id);
-                foreach (var s in streets) Streets.Add(s);
+                Cities.Add(city);
+
+                var streets = _addressService.GetStreetsByCityId(city.Id)
+                                             .Where(a => a.Id == node.Address.StreetId)
+                                             .ToList();
+                foreach (var s in streets)
+                {
+                    Streets.Add(s);
+                }
             }
             SelectedStreetId = node.Address.StreetId;
         }
@@ -92,15 +100,22 @@ public class AddressAddEditViewModel : ObservableObject
             {
                 SelectedCityId = parentStreet.Street.CityId;
 
-                var cities = _addressService.GetCitiesForCombo().Where(s => s.Id == SelectedCityId).ToList();
+                var cities = _addressService.GetCitiesById(SelectedCityId)
+                                            .ToList();
                 if (cities != null)
                 {
                     foreach (var city in cities)
                     {
-                        var streets = _addressService.GetStreetsByCityId(city.Id);
-                        foreach (var s in streets) Streets.Add(s);
+                        Cities.Add(city);
+
+                        var streets = _addressService.GetStreetsByCityId(city.Id)
+                                                     .ToList();
+                        foreach (var s in streets)
+                        {
+                            Streets.Add(s);
+                        }
                     }
-                    SelectedStreetId = parentStreet.Id;
+                    SelectedStreetId = parentStreet.Street.Id;
                 }
             }
         }

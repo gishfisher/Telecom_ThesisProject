@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Telecom_ThesisProject.Core;
 
 namespace Telecom_ThesisProject.MVVM.Model;
 

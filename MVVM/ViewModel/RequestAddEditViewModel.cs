@@ -18,17 +18,19 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         private readonly EmployeeService _employeeService;
         private readonly IMessageService _messageService;
 
+        #region Properties
+
         public Request Request { get; set; }
+        public string PageTitle { get; private set; } = "Заявка";
+        public bool IsNewRequest => Request.Id == 0;
+        public bool IsExistingRequest => Request.Id != 0;
+
+        #endregion
 
         public ObservableCollection<Client> Clients { get; }
         public ObservableCollection<Employee> Employees { get; }
         public ObservableCollection<RequestStatus> Statuses { get; }
-
-        public string PageTitle { get; private set; } = "Заявка";
-
-        public bool IsNewRequest => Request.Id == 0;
-
-        public bool IsExistingRequest => Request.Id != 0;
+        public ObservableCollection<RequestsType> RequestTypes { get; }
 
         public RelayCommand SaveCommand { get; }
         public RelayCommand CancelCommand { get; }
@@ -57,29 +59,17 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
             PageTitle = BuildPageTitle(Request);
             OnPropertyChanged(nameof(PageTitle));
-            OnPropertyChanged(nameof(IsNewRequest));
-            OnPropertyChanged(nameof(IsExistingRequest));
 
+            RequestTypes = new ObservableCollection<RequestsType>(_requestService.GetAllRequestTypes());
+            Statuses = new ObservableCollection<RequestStatus>(_requestService.GetAllStatuses());
             Clients = new ObservableCollection<Client>(_clientService.GetAll());
             Employees = new ObservableCollection<Employee>(_employeeService.GetAll());
-            Statuses = new ObservableCollection<RequestStatus>(GetAllStatuses());
 
             SaveCommand = new RelayCommand(o => Save());
             CancelCommand = new RelayCommand(o => GoBack?.Invoke());
         }
 
-        private static string BuildPageTitle(Request request)
-        {
-            if (request.Id == 0)
-                return "Новая заявка";
-
-            var created = request.CreatedAt;
-            var datePart = created.HasValue
-                ? created.Value.ToString("dd.MM.yyyy HH:mm")
-                : "—";
-
-            return $"Заявка №{request.Id:D4} от {datePart}";
-        }
+       
 
         private void Save()
         {
@@ -91,8 +81,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
             try
             {
-                //DetachNavigationForPersistence();
-
                 if (IsNewRequest)
                     _requestService.AddRequest(Request);
                 else
@@ -116,7 +104,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 return false;
             }
 
-            if (Request.Client == null)
+            if (Request.ClientId == 0)
                 errors.AppendLine("Укажите клиента.");
 
             if (!string.IsNullOrWhiteSpace(Request.Description) && Request.Description.Length > 300)
@@ -132,13 +120,18 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             return true;
         }
 
-        //private void DetachNavigationForPersistence()
-        //{
-        //    Request.Client = null;
-        //    Request.Employee = null;
-        //    Request.Device = null;
-        //    Request.Status = null;
-        //}
+        private static string BuildPageTitle(Request request)
+        {
+            if (request.Id == 0)
+                return "Новая заявка";
+
+            var created = request.CreatedAt;
+            var datePart = created.HasValue
+                ? created.Value.ToString("dd.MM.yyyy HH:mm")
+                : "—";
+
+            return $"Заявка №{request.Id:D4} от {datePart}";
+        }
 
         private static Request CreateEditableRequest(Request? request)
         {
@@ -159,19 +152,13 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 ClientId = request.ClientId,
                 DeviceId = request.DeviceId,
                 EmployeeId = request.EmployeeId,
+                TypeId = request.TypeId,
                 Client = request.Client,
                 Device = request.Device,
                 Employee = request.Employee,
-                Status = request.Status
+                Status = request.Status,
+                Type = request.Type,
             };
-        }
-
-        private static List<RequestStatus> GetAllStatuses()
-        {
-            using (var db = new TelecomDbContext())
-            {
-                return db.RequestStatuses.ToList();
-            }
         }
     }
 }

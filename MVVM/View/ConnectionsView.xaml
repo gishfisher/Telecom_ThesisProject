@@ -3,9 +3,62 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="600">
-    <Border Padding="20">
-        <TextBlock Text="{Binding Info}" TextWrapping="Wrap" FontSize="13" Foreground="#334155"/>
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <Border Margin="10" Padding="10" CornerRadius="10" Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <ui:TextBlock Text="Журнал подключений"
+                          FontTypography="Subtitle"
+                          Padding="5"
+                          Grid.Row="0"/>
+
+            <ui:Card Grid.Row="1">
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Icon="{ui:SymbolIcon Add24}" 
+                               Content="Добавить подключение" 
+                               Command="{Binding AddCommand}" 
+                               Margin="5,0"/>
+                    
+                    <Separator Margin="5,2"/>
+
+                    <ui:Button Icon="{ui:SymbolIcon Edit24}" 
+                               Command="{Binding EditCommand}" 
+                               Margin="5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon Delete24}" 
+                               Command="{Binding DeleteCommand}" 
+                               Margin="0,0,5,0"/>
+                </StackPanel>
+            </ui:Card>
+
+            <ui:Card Grid.Row="2" Padding="0" VerticalAlignment="Top" Margin="0,5,0,0">
+                <DataGrid ItemsSource="{Binding Connections}"
+                          SelectedItem="{Binding SelectedConnection, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                        <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullName}" Width="2*"/>
+                        <DataGridTextColumn Header="Адрес" Binding="{Binding Apartment.Address.GetFullAddressWithApartment}" Width="2*"/>
+                        <DataGridTextColumn Header="Статический IP" Binding="{Binding StaticIp}" Width="2*"/>
+                        <DataGridTextColumn Header="Порт" Binding="{Binding Port.PortName}" Width="1.5*"/>
+                        <DataGridTextColumn Header="Устройство" Binding="{Binding NetworkDevice.Name}" Width="2*"/>
+                        <DataGridTextColumn Header="Тариф" Binding="{Binding Tariff.Name}" Width="*"/>
+                    </DataGrid.Columns>
+
+                    <DataGrid.InputBindings>
+                        <MouseBinding Gesture="LeftDoubleClick"
+                                      Command="{Binding EditCommand}" />
+                    </DataGrid.InputBindings>
+                </DataGrid>
+            </ui:Card>
+        </Grid>
     </Border>
 </UserControl>

@@ -13,13 +13,7 @@ public partial class Client
 
     public string? MiddleName { get; set; }
 
-    public string ContractNumber { get; set; } = null!;
-
     public string? PhoneNumber { get; set; }
-
-    public int? AddressId { get; set; }
-
-    public virtual Address? Address { get; set; }
 
     public virtual ICollection<Connection> Connections { get; set; } = new List<Connection>();
 
@@ -27,4 +21,7 @@ public partial class Client
 
     public string GetFullName =>
         string.Join(" ", new[] { LastName, FirstName, MiddleName }.Where(s => !string.IsNullOrWhiteSpace(s))).Trim();
+
+    public string GetFullNameIn =>
+        $"{LastName} {FirstName[0]}.{MiddleName?[0]}.";
 }

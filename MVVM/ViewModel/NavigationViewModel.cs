@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Telecom.Utilities;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.MVVM.Model;
@@ -11,9 +12,11 @@ using Telecom_ThesisProject.Services;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel
 {
-    class NavigationViewModel : ObservableObject
+    class NavigationViewModel : ObservableObject, IDisposable
     {
         private object? _currentView;
+        private bool _disposed = false;
+
         public object? CurrentView
         {
             get => _currentView;
@@ -31,7 +34,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public NetworkDeviceViewModel NetworkDeviceViewModel { get; }
         public ConnectionsViewModel ConnectionsViewModel { get; }
         public AddressTreeViewModel AddressTreeViewModel { get; }
-        public SnmpProfileViewModel SnmpProfilesViewModel { get; }
+        public SnmpProfileViewModel SnmpProfileViewModel { get; }
 
         //  Commands
         public RelayCommand HomeViewCommand { get; }
@@ -58,11 +61,11 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             NetworkDeviceViewModel = new NetworkDeviceViewModel();
             ConnectionsViewModel = new ConnectionsViewModel();
             AddressTreeViewModel = new AddressTreeViewModel();
+            SnmpProfileViewModel = new SnmpProfileViewModel(null);
 
             // === Views ===
 
             // === Clients ===
-
             ClientViewCommand = new RelayCommand(
                 o => { ClientViewModel.Refresh(); CurrentView = ClientViewModel; },
                 o => IsAuthenticated);
@@ -81,7 +84,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             };
 
             // === Employees + Users ===
-
             EmployeeViewCommand = new RelayCommand(
                 o => { EmployeeViewModel.Refresh(); CurrentView = EmployeeViewModel; },
                 o => IsAuthenticated);
@@ -100,7 +102,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             };
 
             // === Requests ===
-
             RequestViewCommand = new RelayCommand(
                 o => { RequestViewModel.Refresh(); CurrentView = RequestViewModel; },
                 o => IsAuthenticated);
@@ -119,7 +120,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             };
 
             // === Services ===
-
             ServiceViewCommand = new RelayCommand(
                 o => { ServiceViewModel.Refresh(); CurrentView = ServiceViewModel; },
                 o => IsAuthenticated);
@@ -138,7 +138,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             };
 
             // === Tariffs ===
-
             TariffViewCommand = new RelayCommand(
                 o => { TariffViewModel.Refresh(); CurrentView = TariffViewModel; },
                 o => IsAuthenticated);
@@ -157,7 +156,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             };
 
             //=== Network Devices ===
-
             NetworkDevicesViewCommand = new RelayCommand(
                 o => { NetworkDeviceViewModel.Refresh(); CurrentView = NetworkDeviceViewModel; },
                 o => IsAuthenticated && CurrentSession.CanSeeNetworkMenu);
@@ -185,7 +183,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                             }
                         };
                         CurrentView = snmpVm;
-                    }
+                    },
                 };
                 CurrentView = editVm;
             };
@@ -203,9 +201,102 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                         CurrentView = NetworkDeviceViewModel;
                     },
 
-                    NavigateEditDevice = device =>
+                    NavigateToParentDeviceDetails = parentDevice =>
                     {
-                        editVm = new NetworkDeviceAddEditViewModel(device)
+                        NetworkDeviceDetailsViewModel? parentVm = null;
+
+                        parentVm = new NetworkDeviceDetailsViewModel(parentDevice)
+                        {
+                            GoBack = () =>
+                            {
+                                detailsVm!.Refresh();
+                                CurrentView = detailsVm;
+                            },
+
+                            NavigateAddEditSnmpProfile = profile =>
+                            {
+                                var snmpVm = new SnmpProfileViewModel(profile)
+                                {
+                                    GoBack = () =>
+                                    {
+                                        parentVm!.Refresh();
+                                        CurrentView = parentVm;
+                                    }
+                                };
+                                CurrentView = snmpVm;
+                            },
+
+                            NavigateToAddEditConnection = (connection, port) =>
+                            {
+                                var vm = new ConnectionAddEditViewModel(connection, port?.Id)
+                                {
+                                    GoBack = () =>
+                                    {
+                                        parentVm!.Refresh();
+                                        CurrentView = parentVm;
+                                    }
+                                };
+                                CurrentView = vm;
+                            },
+
+                            NavigateEditDevice = dev =>
+                            {
+                                editVm = new NetworkDeviceAddEditViewModel(dev)
+                                {
+                                    GoBack = () =>
+                                    {
+                                        parentVm!.Refresh();
+                                        CurrentView = parentVm;
+                                    },
+
+                                    NavigateAddEditSnmpProfile = profile =>
+                                    {
+                                        var snmpVm = new SnmpProfileViewModel(profile)
+                                        {
+                                            GoBack = () =>
+                                            {
+                                                editVm!.Refresh();
+                                                CurrentView = editVm;
+                                            }
+                                        };
+                                        CurrentView = snmpVm;
+                                    },
+                                };
+                                CurrentView = editVm;
+                            }
+                        };
+                        CurrentView = parentVm;
+                    },
+
+                    NavigateToAddEditConnection = (connection, port) =>
+                    {
+                        var vm = new ConnectionAddEditViewModel(connection, port?.Id)
+                        {
+                            GoBack = () =>
+                            {
+                                detailsVm!.Refresh();
+                                CurrentView = detailsVm;
+                            }
+                        };
+                        CurrentView = vm;
+                    },
+
+                    NavigateAddEditSnmpProfile = profile =>
+                    {
+                        var snmpVm = new SnmpProfileViewModel(profile)
+                        {
+                            GoBack = () =>
+                            {
+                                detailsVm!.Refresh();
+                                CurrentView = detailsVm;
+                            }
+                        };
+                        CurrentView = snmpVm;
+                    },
+
+                    NavigateEditDevice = dev =>
+                    {
+                        editVm = new NetworkDeviceAddEditViewModel(dev)
                         {
                             GoBack = () =>
                             {
@@ -224,7 +315,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                                     }
                                 };
                                 CurrentView = snmpVm;
-                            }
+                            },
                         };
                         CurrentView = editVm;
                     }
@@ -232,9 +323,24 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 CurrentView = detailsVm;
             };
 
+            // === Connections ===
+
             ConnectionsViewCommand = new RelayCommand(
-                o => CurrentView = ConnectionsViewModel,
+                o => { ConnectionsViewModel.Refresh(); CurrentView = ConnectionsViewModel; } ,
                 o => IsAuthenticated);
+
+            ConnectionsViewModel.Navigate = connection =>
+            {
+                var vm = new ConnectionAddEditViewModel(connection)
+                {
+                    GoBack = () =>
+                    {
+                        ConnectionsViewModel.Refresh();
+                        CurrentView = ConnectionsViewModel;
+                    }
+                };
+                CurrentView = vm;
+            };
 
             // === Address Tree ===
 
@@ -271,6 +377,19 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             AddressTreeViewModel.NavigateAddAddress = (street, node) =>
             {
                 var vm = new AddressAddEditViewModel(street, node)
+                {
+                    GoBack = () =>
+                    {
+                        AddressTreeViewModel.Refresh();
+                        CurrentView = AddressTreeViewModel;
+                    }
+                };
+                CurrentView = vm;
+            };
+
+            AddressTreeViewModel.NavigateAddApartment = (address, node) =>
+            {
+                var vm = new ApartmentAddEditViewModel(address, node)
                 {
                     GoBack = () =>
                     {
@@ -320,20 +439,32 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 CurrentView = vm;
             };
 
-            AddressTreeViewModel.NavigateToDetails = node =>
+            AddressTreeViewModel.NavigateEditApartment = node =>
             {
-                var vm = new AddressDetailsViewModel(node.Address)
+                var vm = new ApartmentAddEditViewModel(null, node)
                 {
-                    GoBack = () => 
+                    GoBack = () =>
                     {
                         AddressTreeViewModel.Refresh();
                         CurrentView = AddressTreeViewModel;
                     }
                 };
-                var addressId = node.Address.Id;
+                CurrentView = vm;
+            };
+
+            AddressTreeViewModel.NavigateToDetails = node =>
+            {
+                var vm = new AddressDetailsViewModel(node.Address)
+                {
+                    GoBack = () =>
+                    {
+                        AddressTreeViewModel.Refresh();
+                        CurrentView = AddressTreeViewModel;
+                    }
+                };
                 vm.NavigateAddEditMountingPoint = mp =>
                 {
-                    var addVm = new MountingPointAddEditViewModel(addressId, mp)
+                    var addVm = new MountingPointAddEditViewModel(node.Address.Id, mp)
                     {
                         GoBack = () =>
                         {
@@ -350,15 +481,108 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
                     currentDetails = new NetworkDeviceDetailsViewModel(device)
                     {
-                        GoBack = () => 
-                        { 
-                            vm.Refresh(); 
-                            CurrentView = vm; 
+                        GoBack = () =>
+                        {
+                            vm.Refresh();
+                            CurrentView = vm;
                         },
 
-                        NavigateEditDevice = device =>
+                        NavigateAddEditSnmpProfile = profile =>
                         {
-                            editVm = new NetworkDeviceAddEditViewModel(device)
+                            var snmpVm = new SnmpProfileViewModel(profile)
+                            {
+                                GoBack = () =>
+                                {
+                                    currentDetails!.Refresh();
+                                    CurrentView = currentDetails;
+                                }
+                            };
+                            CurrentView = snmpVm;
+                        },
+
+                        NavigateToAddEditConnection = (connection, port) =>
+                        {
+                            var vm = new ConnectionAddEditViewModel(connection, port?.Id)
+                            {
+                                GoBack = () =>
+                                {
+                                    currentDetails!.Refresh();
+                                    CurrentView = currentDetails;
+                                }
+                            };
+                            CurrentView = vm;
+                        },
+
+                        NavigateToParentDeviceDetails = parentDevice =>
+                        {
+                            NetworkDeviceDetailsViewModel? parentVm = null;
+
+                            parentVm = new NetworkDeviceDetailsViewModel(parentDevice)
+                            {
+                                GoBack = () =>
+                                {
+                                    currentDetails!.Refresh();
+                                    CurrentView = currentDetails;
+                                },
+
+                                NavigateAddEditSnmpProfile = profile =>
+                                {
+                                    var snmpVm = new SnmpProfileViewModel(profile)
+                                    {
+                                        GoBack = () =>
+                                        {
+                                            parentVm!.Refresh();
+                                            CurrentView = parentVm;
+                                        }
+                                    };
+                                    CurrentView = snmpVm;
+                                },
+
+                                NavigateToAddEditConnection = (connection, port) =>
+                                {
+                                    var vm = new ConnectionAddEditViewModel(connection, port?.Id)
+                                    {
+                                        GoBack = () =>
+                                        {
+                                            parentVm!.Refresh();
+                                            CurrentView = parentVm;
+                                        }
+                                    };
+                                    CurrentView = vm;
+                                },
+
+                                NavigateEditDevice = dev =>
+                                {
+                                    editVm = new NetworkDeviceAddEditViewModel(dev)
+                                    {
+                                        GoBack = () =>
+                                        {
+                                            parentVm!.Refresh();
+                                            CurrentView = parentVm;
+                                        },
+
+                                        NavigateAddEditSnmpProfile = profile =>
+                                        {
+                                            var snmpVm = new SnmpProfileViewModel(profile)
+                                            {
+                                                GoBack = () =>
+                                                {
+                                                    editVm!.Refresh();
+                                                    CurrentView = editVm;
+                                                }
+                                            };
+                                            CurrentView = snmpVm;
+                                        },
+                                    };
+                                    CurrentView = editVm;
+                                }
+                            };
+                            CurrentView = parentVm;
+                        },
+
+                        NavigateEditDevice = dev =>
+                        {
+                            editVm = new NetworkDeviceAddEditViewModel(dev)
                             {
                                 GoBack = () =>
                                 {
@@ -377,7 +601,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                                         }
                                     };
                                     CurrentView = snmpVm;
-                                }
+                                },
                             };
                             CurrentView = editVm;
                         }
@@ -388,10 +612,10 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 {
                     var editVm = new NetworkDeviceAddEditViewModel(device)
                     {
-                        GoBack = () => 
-                        { 
-                            vm.Refresh(); 
-                            CurrentView = vm; 
+                        GoBack = () =>
+                        {
+                            vm.Refresh();
+                            CurrentView = vm;
                         }
                     };
                     CurrentView = editVm;
@@ -432,7 +656,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             CurrentView = LoginViewModel;
         }
 
-        // Check user privileges and update the UI accordingly
         private void OnSessionChanged()
         {
             OnPropertyChanged(nameof(IsAuthenticated));
@@ -448,5 +671,13 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public bool IsAuthenticated => CurrentSession.IsAuthenticated;
         public bool CanSeeNetworkMenu => CurrentSession.CanSeeNetworkMenu;
         public bool CanSeeAdminMenu => CurrentSession.CanSeeAdminMenu;
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            CurrentSession.SessionChanged -= OnSessionChanged;
+            _disposed = true;
+            GC.SuppressFinalize(this);
+        }
     }
 }

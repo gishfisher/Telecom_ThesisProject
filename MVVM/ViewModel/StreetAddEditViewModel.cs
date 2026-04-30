@@ -14,6 +14,8 @@ public class StreetAddEditViewModel : ObservableObject
     private readonly AddressService _addressService;
     private readonly IMessageService _messageService;
 
+    #region Properties
+
     private string _name = string.Empty;
     public string Name
     {
@@ -28,8 +30,6 @@ public class StreetAddEditViewModel : ObservableObject
         set { _selectedCityId = value; OnPropertyChanged(); }
     }
 
-    public ObservableCollection<City> Cities { get; } = new();
-
     private string _errorMessage = string.Empty;
     public string ErrorMessage
     {
@@ -41,6 +41,10 @@ public class StreetAddEditViewModel : ObservableObject
 
     public bool IsEdit { get; }
     public int? StreetId { get; }
+
+    #endregion
+
+    public ObservableCollection<City> Cities { get; } = new();
 
     public RelayCommand SaveCommand { get; }
     public RelayCommand CancelCommand { get; }
@@ -57,7 +61,9 @@ public class StreetAddEditViewModel : ObservableObject
         Name = node?.Name ?? string.Empty;
 
         var cities = _addressService.GetCitiesForCombo();
-        foreach (var c in cities) Cities.Add(c);
+
+        foreach (var c in cities) 
+            Cities.Add(c);
 
         if (IsEdit && node != null)
         {
@@ -84,12 +90,21 @@ public class StreetAddEditViewModel : ObservableObject
         {
             if (IsEdit && StreetId.HasValue)
             {
-                var street = new Street { Id = StreetId.Value, Name = Name.Trim(), CityId = SelectedCityId };
+                var street = new Street 
+                { 
+                    Id = StreetId.Value, 
+                    Name = Name.Trim(), 
+                    CityId = SelectedCityId 
+                };
                 _addressService.EditStreet(street);
             }
             else
             {
-                var street = new Street { Name = Name.Trim(), CityId = SelectedCityId };
+                var street = new Street 
+                { 
+                    Name = Name.Trim(), 
+                    CityId = SelectedCityId 
+                };
                 _addressService.AddStreet(street);
             }
 

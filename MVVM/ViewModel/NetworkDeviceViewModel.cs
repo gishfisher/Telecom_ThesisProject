@@ -56,6 +56,21 @@ class NetworkDeviceViewModel : ObservableObject
         DeleteCommand = new RelayCommand(_ => DeleteDevice(), _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
         OpenDeviceDetailsCommand = new RelayCommand(_ => NavigateDeviceDetails?.Invoke(SelectedDevice), _ => SelectedDevice != null);
     }
+    private void DeleteDevice()
+    {
+        if (SelectedDevice == null) return;
+        try
+        {
+            _networkDeviceService.RemoveDevice(SelectedDevice);
+        }
+        catch (Exception ex)
+        {
+            _messageService.Show("Невозможно удалить устройство: " + ex.Message);
+            return;
+        }
+
+        Refresh();
+    }
 
     private void LoadDevices()
     {
@@ -80,22 +95,6 @@ class NetworkDeviceViewModel : ObservableObject
         foreach (var d in filtered)
             Devices.Add(d);
         OnPropertyChanged(nameof(Devices));
-    }
-
-    private void DeleteDevice()
-    {
-        if (SelectedDevice == null) return;
-        try
-        {
-            _networkDeviceService.RemoveDevice(SelectedDevice);
-        }
-        catch (Exception ex)
-        {
-            _messageService.Show("Невозможно удалить устройство: " + ex.Message);
-            return;
-        }
-
-        Refresh();
     }
 
     public void Refresh()

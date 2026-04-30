@@ -16,57 +16,27 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <!--<RowDefinition Height="Auto"/>-->
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="◀️ Назад"
-                            Command="{Binding CancelCommand}"
-                            Foreground="#94A3B8"
-                            Margin="5,0,0,0"
-                            Padding="8,4"
-                            Cursor="Hand"/>
+                <Label Content="{Binding PageTitle}"
+                       FontSize="14pt"
+                       Padding="5"/>
 
-                    <Label Content="{Binding PageTitle}"
-                           FontSize="14pt"
-                           Padding="5"/>
-                </StackPanel>
-
-                <DockPanel Grid.Row="1" Margin="0,0,0,10">
+                <DockPanel Grid.Row="1">
+                    <Button Content="Назад"
+                            Command="{Binding CancelCommand}"/>
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="➕ Добавить заявку"
-                                Background="#10B981"
-                                Foreground="#FFFFFF"
-                                Margin="5,0"
-                                Padding="10,6"
+                        <Button Content="Добавить заявку"
                                 Cursor="Hand"
                                 Command="{Binding SaveCommand}">
-                            <Button.Visibility>
-                                <Binding Path="IsNewRequest" Converter="{StaticResource BoolToVisibilityConverter}"/>
-                            </Button.Visibility>
                         </Button>
 
-                        <Button Content="📝 Редактировать заявку"
-                                Background="#2563EB"
-                                Foreground="#FFFFFF"
-                                Margin="5,0"
-                                Padding="10,6"
+                        <Button Content="Редактировать заявку"
                                 Cursor="Hand"
                                 Command="{Binding SaveCommand}">
-                            <Button.Visibility>
-                                <Binding Path="IsExistingRequest" Converter="{StaticResource BoolToVisibilityConverter}"/>
-                            </Button.Visibility>
                         </Button>
-
-                        <Button Content="🔘 Взять заявку" Background="#2563EB" Foreground="#FFFFFF" Visibility="Collapsed" Margin="5,0" Padding="10,6"/>
-                        <Button Content="✅ Выполнить" Background="#10B981" Foreground="#FFFFFF" Visibility="Collapsed" Margin="5,0" Padding="10,6"/>
-                        <Button Content="Начать работу" Background="#E27A53" Foreground="#FFFFFF" Visibility="Collapsed" Margin="5,0" Padding="10,6"/>
-                        <Button Content="❎ Отменить заявку" Foreground="#EF4444" Visibility="Collapsed" Margin="5,0" Padding="10,6"/>
-                        <Button Content="🎯 Закрыть заявку" Background="#94A3B8" Foreground="#FFFFFF" Visibility="Collapsed" Margin="5,0" Padding="10,6"/>
                     </StackPanel>
                 </DockPanel>
-
-                <Separator Grid.Row="2" Padding="5" Background="#94A3B8" Margin="0,4,0,8"/>
 
                 <StackPanel Grid.Row="3" HorizontalAlignment="Left">
                     <Grid>
@@ -79,139 +49,71 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2">
+                        <StackPanel Grid.Row="0" Margin="0,0,15,10">
                             <Label Content="Статус"/>
-                            <StackPanel Orientation="Horizontal">
-                                <Label>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Ellipse Width="10" Height="10" Margin="5"
-                                                 VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                 Fill="#3B82F6"/>
-                                        <TextBlock Text="{Binding Request.Status.Name, FallbackValue=—}"
-                                                   FontSize="12pt"
-                                                   VerticalAlignment="Center"
-                                                   Margin="4,0,0,0"/>
-                                    </StackPanel>
-                                </Label>
-                            </StackPanel>
+                            <ComboBox ItemsSource="{Binding Statuses}"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="Id"
+                                      SelectedValue="{Binding Request.StatusId, Mode=TwoWay}"
+                                      Grid.Column="1"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="0" Grid.Row="1">
-                            <Grid Margin="0,0,15,0">
+                            <Grid Margin="0,0,15,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="1.25*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel>
+                                <StackPanel  Grid.Column="0" Grid.Row="0">
                                     <Label Content="Номер заявки"/>
                                     <TextBox IsReadOnly="True"
                                              Margin="0,0,15,0"
-                                             Text="{Binding Request.Id, StringFormat=\{0:D4\}}"
-                                             Tag="Номер"/>
+                                             Text="{Binding Request.Id, StringFormat=\{0:D4\}}"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1">
                                     <Label Content="Дата"/>
                                     <TextBox IsReadOnly="True"
-                                             Text="{Binding Request.CreatedAt, StringFormat=dd.MM.yyyy HH:mm}"
-                                             Tag="Дата и время"/>
+                                             Text="{Binding Request.CreatedAt, StringFormat=dd.MM.yyyy HH:mm}"/>
                                 </StackPanel>
                             </Grid>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Grid.Row="1">
-                            <Label Content="Приоритет"/>
-                            <ComboBox IsEnabled="False"
-                                      Tag="Выберите приоритет"
-                                      ToolTip="В текущей модели БД приоритет заявки не задан."/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="0" Grid.Row="2" Margin="0,0,15,0">
                             <Label Content="Клиент"/>
                             <ComboBox ItemsSource="{Binding Clients}"
-                                      DisplayMemberPath="FullName"
+                                      DisplayMemberPath="GetFullName"
                                       SelectedValuePath="Id"
-                                      SelectedValue="{Binding Request.ClientId, Mode=TwoWay}"
-                                      Tag="Укажите клиента"/>
+                                      SelectedValue="{Binding Request.ClientId, Mode=TwoWay}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Grid.Row="1">
+                            <Label Content="Тип обращения"/>
+                            <ComboBox ItemsSource="{Binding RequestTypes}"
+                                      SelectedValue="{Binding Request.TypeId, Mode=TwoWay}"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="Id" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Grid.Row="2">
-                            <Label Content="Тип обращения"/>
-                            <ComboBox IsEnabled="False"
-                                      Tag="Выберите тип обращения"
-                                      ToolTip="В текущей модели БД тип обращения не задан (используйте наименование заявки)."/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="0" Grid.Row="3" Margin="0,0,15,0">
-                            <Label Content="Наименование"/>
-                            <TextBox Text="{Binding Request.Title, UpdateSourceTrigger=PropertyChanged}"
-                                     Tag="Краткое название заявки"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" Grid.Row="3">
                             <Label Content="Назначенный сотрудник"/>
                             <ComboBox ItemsSource="{Binding Employees}"
                                       DisplayMemberPath="GetFullName"
                                       SelectedValuePath="Id"
-                                      SelectedValue="{Binding Request.EmployeeId, Mode=TwoWay}"
-                                      Tag="Укажите сотрудника"/>
+                                      SelectedValue="{Binding Request.EmployeeId, Mode=TwoWay}"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" Margin="0,8,0,0">
+                        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Margin="0,8,0,0">
                             <Label Content="Описание"/>
                             <TextBox TextWrapping="Wrap"
                                      Text="{Binding Request.Description}"
-                                     Height="80"
-                                     Tag="Добавьте описание заявки"/>
+                                     Height="80"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
-                
-                <!--<Expander Header="Услуги" IsExpanded="True" Grid.Row="4" Margin="0,16,0,0">
-                    <Expander.Resources>
-                        <Style TargetType="Expander">
-                            <Setter Property="HeaderTemplate">
-                                <Setter.Value>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}" FontSize="14pt" Margin="10"/>
-                                    </DataTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Expander.Resources>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Grid.Row="0" TextWrapping="Wrap" Foreground="#64748B" Margin="0,0,0,8"
-                                   Text="Привязка услуг к заявке в этой версии приложения не реализована (в модели нет связи заявка–услуга). После добавления таблицы можно подключить список, как в старом проекте."/>
-
-                        <DockPanel Grid.Row="1" Margin="0,0,0,5" IsEnabled="False" Opacity="0.6">
-                            <ComboBox Width="200" Height="30"
-                                      Tag="Выберите услугу"/>
-                            <Button Content="➕ Добавить услугу"
-                                    DockPanel.Dock="Left"
-                                    HorizontalAlignment="Left"
-                                    Foreground="#2C3E50"
-                                    Margin="8,0,0,0"/>
-                        </DockPanel>
-
-                        <DataGrid Grid.Row="2" IsReadOnly="True" AutoGenerateColumns="False"
-                                  MinHeight="80"
-                                  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Наименование" Width="*" Binding="{Binding Name}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Grid>
-                </Expander>-->
             </Grid>
         </ScrollViewer>
     </Border>

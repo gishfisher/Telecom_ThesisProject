@@ -134,7 +134,7 @@
                             <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
                             <DataGridTextColumn Header="Тип" Binding="{Binding DeviceType.TypeName}" Width="*"/>
                             <DataGridTextColumn Header="IP" Binding="{Binding IpAddress}" Width="*"/>
-                            <DataGridTextColumn Header="Мониторинг" Binding="{Binding IsMonitored}" Width="*">
+                            <!--<DataGridTextColumn Header="Мониторинг" Binding="{Binding IsMonitored}" Width="*">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="TextAlignment" Value="Center"/>
@@ -148,7 +148,7 @@
                                         </Style.Triggers>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
+                            </DataGridTextColumn>-->
                             <DataGridTextColumn Header="Точка монтажа" Binding="{Binding MountingPoint.LocationDescription}" Width="*"/>
                             <!--<DataGridTemplateColumn Width="100">
                                 <DataGridTemplateColumn.CellTemplate>

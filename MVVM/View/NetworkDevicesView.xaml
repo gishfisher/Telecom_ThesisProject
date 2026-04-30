@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="900">
-    <Border Padding="10" Margin="10" CornerRadius="10"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Border Padding="10" Margin="10" 
+            CornerRadius="10"
             Background="White">
         <Grid>
             <Grid.RowDefinitions>
@@ -15,50 +16,70 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Сетевые устройства"
-               FontSize="14pt"
-               Foreground="#111827"
-               Padding="5"
-               Grid.Row="0"/>
-
-            <ui:Card Grid.Row="1" >
+            <ui:TextBlock Text="Сетевые устройства"
+                              FontTypography="Subtitle"
+                              Padding="5"
+                              Grid.Row="0"/>
+            <ui:Card Grid.Row="1">
                 <StackPanel Orientation="Horizontal">
-                    <ui:Button Content="Добавить устройство" Icon="{ui:SymbolIcon Add24}" Command="{Binding AddCommand}" Margin="0,0,5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon Add24}" 
+                               Content="Добавить устройство" 
+                               Command="{Binding AddCommand}" 
+                               Margin="5,0"/>
 
                     <Separator Margin="5,2"/>
 
-                    <ui:Button Icon="{ui:SymbolIcon Edit24}" Command="{Binding EditCommand}" 
-                               Appearance="Transparent" Margin="5,0"/>
-                    <ui:Button Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeleteCommand}" 
-                               Appearance="Transparent" Margin="0,0,5,0"/>
-
-                    <Separator Margin="5,2"/>
+                    <ui:Button Icon="{ui:SymbolIcon Edit24}" 
+                               Command="{Binding EditCommand}" 
+                               Margin="5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon Delete24}" 
+                               Command="{Binding DeleteCommand}" 
+                               Margin="0,0,5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon ArrowClockwise24}" 
+                               Command="{Binding RefreshCommand}" 
+                               Margin="0,0,5,0"/>
                     
-                    <ui:TextBox PlaceholderText="Поиск по имени или IP" 
-                                Icon="{ui:SymbolIcon Search24}" Width="300" Margin="5,0"
-                                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                ToolTip="Поиск по имени или IP"/>
-                    </StackPanel>
+                    <ui:TextBox PlaceholderText="Поиск по имени или IP" Icon="{ui:SymbolIcon Search24}" Width="300" 
+                                Margin="5,0" Padding="5"
+                                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
             </ui:Card>
-            
-            
-            <ui:DataGrid Grid.Row="2"
-              ItemsSource="{Binding Devices}"
-              SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
-              AutoGenerateColumns="False"
-              IsReadOnly="True">
-                <ui:DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                    <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
-                    <DataGridTextColumn Header="IP" Binding="{Binding IpAddress}" Width="*"/>
-                    <DataGridTextColumn Header="Тип" Binding="{Binding DeviceType.TypeName}" Width="*"/>
-                    <DataGridCheckBoxColumn Header="Мониторинг" Binding="{Binding IsMonitored}" Width="*"/>
-                    <DataGridTextColumn Header="Родитель" Binding="{Binding ParentDevice.Name}" Width="*"/>
-                </ui:DataGrid.Columns>
-                <ui:DataGrid.InputBindings>
-                    <MouseBinding Gesture="LeftDoubleClick" Command="{Binding OpenDeviceDetailsCommand}"/>
-                </ui:DataGrid.InputBindings>
-            </ui:DataGrid>
+
+            <ui:Card Grid.Row="2" VerticalAlignment="Top" Margin="0,5,0,0">
+                <ui:DataGrid ItemsSource="{Binding Devices}"
+                             SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
+                             AutoGenerateColumns="False"
+                             IsReadOnly="True">
+                    <ui:DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
+                        <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="2*"/>
+                        <DataGridTextColumn Header="IP" Binding="{Binding IpAddress}" Width="*"/>
+                        <DataGridTextColumn Header="Тип" Binding="{Binding DeviceType.TypeName}" Width="*"/>
+                        <DataGridTextColumn Header="Родитель" Binding="{Binding ParentDevice.Name}" Width="*"/>
+                        <DataGridTemplateColumn Header="Точка монтажа" Width="2*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock x:Name="TxtBlock" TextAlignment="Center" Text="{Binding MountingPoint.Address.GetFullAddress}"/>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding MountingPoint.Address.GetFullAddress}" Value="{x:Null}">
+                                            <Setter TargetName="TxtBlock" Property="Text" Value="Не смонтировано"/>
+                                            <Setter TargetName="TxtBlock" Property="Foreground" Value="#FFB1B1B1"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding MountingPoint.Address.GetFullAddress}" Value="">
+                                            <Setter TargetName="TxtBlock" Property="Text" Value="Не смонтировано"/>
+                                            <Setter TargetName="TxtBlock" Property="Foreground" Value="#FFB1B1B1"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                    </ui:DataGrid.Columns>
+                    <ui:DataGrid.InputBindings>
+                        <MouseBinding Gesture="LeftDoubleClick" Command="{Binding OpenDeviceDetailsCommand}"/>
+                    </ui:DataGrid.InputBindings>
+                </ui:DataGrid>
+            </ui:Card>
         </Grid>
     </Border>
 </UserControl>

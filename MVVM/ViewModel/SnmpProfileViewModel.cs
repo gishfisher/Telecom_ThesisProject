@@ -30,6 +30,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         private readonly NetworkDeviceService _networkDeviceService;
         private readonly IMessageService _messageService;
 
+        public SnmpProfile SnmpProfile { get; }
+
         private string _name = string.Empty;
 
         public string Name
@@ -98,17 +100,23 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 });
             }
 
-            IsEdit = profile != null;
-            ProfileId = profile?.Id ?? 0;
+            var sourceProfile = profile;
+            if (profile?.Id > 0)
+                sourceProfile = _networkDeviceService.GetSnmpProfilesById(profile.Id).FirstOrDefault() ?? profile;
+
+            SnmpProfile = sourceProfile;
+
+            IsEdit = SnmpProfile != null;
+            ProfileId = SnmpProfile?.Id ?? 0;
             SelectedSnmpVersionId = (int)SnmpVersion.V2c;
 
-            if (IsEdit && profile != null)
+            if (IsEdit && SnmpProfile != null)
             {
-                if (int.TryParse(profile.Version, out int parsedId))
+                if (int.TryParse(SnmpProfile.Version, out int parsedId))
                 {
                     SelectedSnmpVersionId = parsedId;
                 }
-                else if (Enum.TryParse<SnmpVersion>(profile.Version, true, out var enumVal))
+                else if (Enum.TryParse<SnmpVersion>(SnmpProfile.Version, true, out var enumVal))
                 {
                     SelectedSnmpVersionId = (int)enumVal;
                 }
@@ -117,9 +125,9 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                     SelectedSnmpVersionId = (int)SnmpVersion.V2c;
                 }
 
-                Name = profile.Name;
-                Port = profile.Port;
-                CommunityString = profile.Community;
+                Name = SnmpProfile.Name;
+                Port = SnmpProfile.Port;
+                CommunityString = SnmpProfile.Community;
             }
             else if (ProfileId == 0)
             {
