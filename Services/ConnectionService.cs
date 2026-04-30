@@ -17,9 +17,8 @@ namespace Telecom_ThesisProject.Services
 
             using (var db = new TelecomDbContext())
             {
-                var existing = db.Connections.FirstOrDefault(c => c.ApartmentId == connection.ApartmentId);
-                    
-                if (existing != null) throw new Exception("Квартира уже подключена");
+                var hasConnection = db.Connections.Any(c => c.ApartmentId == connection.ApartmentId && c.Id != connection.Id);
+                if (hasConnection) throw new Exception("Квартира уже подключена");
 
                 db.Connections.Add(connection);
                 db.SaveChanges();
@@ -34,6 +33,9 @@ namespace Telecom_ThesisProject.Services
             {
                 var existing = db.Connections.FirstOrDefault(c => c.Id == connection.Id)
                     ?? throw new Exception("Подключение не найдено");
+
+                var hasConnection = db.Connections.Any(c => c.ApartmentId == connection.ApartmentId && c.Id != connection.Id);
+                if (hasConnection) throw new Exception("Квартира уже подключена");
 
                 existing.StaticIp = connection.StaticIp;
                 existing.TariffId = connection.TariffId;
