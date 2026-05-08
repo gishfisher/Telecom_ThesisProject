@@ -15,7 +15,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
     {
         private readonly RequestService _requestService;
 
-        public ObservableCollection<Request> Requests { get; set; }
+        #region Properties
 
         private string _searchText = string.Empty;
         public string SearchText
@@ -36,32 +36,43 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             set { _selectedRequest = value; OnPropertyChanged(); }
         }
 
+        #endregion
+
+        #region ObservableCollections
+        
+        public ObservableCollection<Request> Requests { get; set; }
+
+        #endregion
+
+        #region RelayCommands
+
         public RelayCommand AddCommand { get; }
         public RelayCommand EditCommand { get; }
         public RelayCommand DeleteCommand { get; }
+        public RelayCommand RequestDetailsCommand {  get; }
 
+        #endregion
+
+        #region Actions
+        
         public Action<Request> Navigate { get; set; }
+        public Action<Request> NavigateToDetails {  get; set; }
+
+        #endregion
 
         public RequestViewModel()
         {
-            Requests = new ObservableCollection<Request>();
-
             _requestService = new RequestService();
+
+            Requests = new ObservableCollection<Request>();
 
             LoadRequests();
             FilterRequests();
 
-            AddCommand = new RelayCommand(
-                o => Navigate?.Invoke(null!),
-                o => !CurrentSession.IsSysAdmin);
-
-            EditCommand = new RelayCommand(
-                o => Navigate?.Invoke(SelectedRequest),
-                o => SelectedRequest != null && !CurrentSession.IsSysAdmin);
-
-            DeleteCommand = new RelayCommand(
-                o => DeleteRequest(),
-                o => SelectedRequest != null && !CurrentSession.IsSysAdmin);
+            AddCommand = new RelayCommand(_ => Navigate?.Invoke(null!), _ => !CurrentSession.IsSysAdmin);
+            EditCommand = new RelayCommand(_ => Navigate?.Invoke(SelectedRequest), _ => SelectedRequest != null && !CurrentSession.IsSysAdmin);
+            DeleteCommand = new RelayCommand(_ => DeleteRequest(), _ => SelectedRequest != null && !CurrentSession.IsSysAdmin);
+            RequestDetailsCommand = new RelayCommand(_ => NavigateToDetails.Invoke(SelectedRequest), _ => SelectedRequest != null);
         }
 
         private void LoadRequests()

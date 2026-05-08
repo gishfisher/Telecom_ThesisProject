@@ -25,18 +25,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public bool IsNewRequest => Request.Id == 0;
         public bool IsExistingRequest => Request.Id != 0;
 
-        #endregion
-
-        public ObservableCollection<Client> Clients { get; }
-        public ObservableCollection<Employee> Employees { get; }
-        public ObservableCollection<RequestStatus> Statuses { get; }
-        public ObservableCollection<RequestsType> RequestTypes { get; }
-
-        public RelayCommand SaveCommand { get; }
-        public RelayCommand CancelCommand { get; }
-
-        public Action? GoBack { get; set; }
-
         private string _errorMessage = string.Empty;
         public string ErrorMessage
         {
@@ -47,6 +35,30 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 OnPropertyChanged(nameof(ErrorMessage));
             }
         }
+
+        #endregion
+
+        #region ObservableCollections
+
+        public ObservableCollection<Client> Clients { get; }
+        public ObservableCollection<Employee> Employees { get; }
+        public ObservableCollection<RequestStatus> Statuses { get; }
+        public ObservableCollection<RequestsType> RequestTypes { get; }
+
+        #endregion
+
+        #region RelayCommands
+        
+        public RelayCommand SaveCommand { get; }
+        public RelayCommand CancelCommand { get; }
+
+        #endregion
+
+        #region Actions
+        
+        public Action? GoBack { get; set; }
+
+        #endregion
 
         public RequestAddEditViewModel(Request? selectedRequest)
         {
@@ -69,8 +81,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             CancelCommand = new RelayCommand(o => GoBack?.Invoke());
         }
 
-       
-
         private void Save()
         {
             if (!Validate())
@@ -82,9 +92,13 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             try
             {
                 if (IsNewRequest)
+                {
                     _requestService.AddRequest(Request);
+                }
                 else
+                {
                     _requestService.EditRequest(Request);
+                }
 
                 GoBack?.Invoke();
             }
@@ -94,6 +108,50 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             }
         }
 
+        // === Вспомогательные методы ===
+
+        // Построение заголовка страницы
+        private static string BuildPageTitle(Request request)
+        {
+            if (request.Id == 0)
+                return "Новая заявка";
+
+            var created = request.CreatedAt;
+            var datePart = created.HasValue
+                ? created.Value.ToString("dd.MM.yyyy HH:mm")
+                : "—";
+
+            return $"Заявка №{request.Id:D4} от {datePart}";
+        }
+        
+        // Создание объекта, если уже существует создание копии для редактирования
+        private static Request CreateEditableRequest(Request? request)
+        {
+            if (request == null)
+            {
+                return new Request
+                {
+                    CreatedAt = DateTime.Now
+                };
+            }
+
+            return new Request
+            {
+                Id = request.Id,
+                Description = request.Description,
+                CreatedAt = request.CreatedAt,
+                StatusId = request.StatusId,
+                ClientId = request.ClientId,
+                EmployeeId = request.EmployeeId,
+                TypeId = request.TypeId,
+                Client = request.Client,
+                Employee = request.Employee,
+                Status = request.Status,
+                Type = request.Type,
+            };
+        }
+        
+        // Метод для валидации и проверки корректности входных данных
         private bool Validate()
         {
             var errors = new StringBuilder();
@@ -120,45 +178,5 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             return true;
         }
 
-        private static string BuildPageTitle(Request request)
-        {
-            if (request.Id == 0)
-                return "Новая заявка";
-
-            var created = request.CreatedAt;
-            var datePart = created.HasValue
-                ? created.Value.ToString("dd.MM.yyyy HH:mm")
-                : "—";
-
-            return $"Заявка №{request.Id:D4} от {datePart}";
-        }
-
-        private static Request CreateEditableRequest(Request? request)
-        {
-            if (request == null)
-            {
-                return new Request
-                {
-                    CreatedAt = DateTime.Now
-                };
-            }
-
-            return new Request
-            {
-                Id = request.Id,
-                Description = request.Description,
-                CreatedAt = request.CreatedAt,
-                StatusId = request.StatusId,
-                ClientId = request.ClientId,
-                DeviceId = request.DeviceId,
-                EmployeeId = request.EmployeeId,
-                TypeId = request.TypeId,
-                Client = request.Client,
-                Device = request.Device,
-                Employee = request.Employee,
-                Status = request.Status,
-                Type = request.Type,
-            };
-        }
     }
 }

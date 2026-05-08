@@ -4,51 +4,61 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Border Padding="10"
+            CornerRadius="10"
+            Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+            <ui:TextBlock Text="Сотрудники"
+                          FontTypography="Subtitle"
+                          Padding="5"
+                          Grid.Row="0"/>
+            <ui:Card Grid.Row="1">
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Icon="{ui:SymbolIcon Add24}" 
+                           Content="Добавить сотрудника" 
+                           Command="{Binding AddCommand}" 
+                           Margin="5,0"/>
 
-        <TextBlock Text="Employees"
-               FontSize="14pt"
-               FontWeight="DemiBold" 
-               Foreground="#111827"
-               Padding="5"
-               Grid.Row="0"/>
+                    <Separator Margin="5,2"/>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Добавить"
-            Command="{Binding AddCommand}"/>
+                    <ui:Button Icon="{ui:SymbolIcon Edit24}" 
+                           Command="{Binding EditCommand}" 
+                           Margin="5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon Delete24}" 
+                           Command="{Binding DeleteCommand}" 
+                           Margin="0,0,5,0"/>
 
-            <Button Content="Редактировать"
-            Command="{Binding EditCommand}"/>
+                    <!--<Separator Margin="5,2"/>-->
 
-            <Button Content="Удалить"
-            Command="{Binding DeleteCommand}"/>
+                    <!--<ui:TextBox PlaceholderText="Поиск по имени или IP" Icon="{ui:SymbolIcon Search24}" Width="300" 
+                            Margin="5,0" Padding="5"
+                            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>-->
+                </StackPanel>
+            </ui:Card>
+            <DataGrid ItemsSource="{Binding Employee}"
+                      SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
+                      Grid.Row="2" 
+                      IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
+                    <DataGridTextColumn Header="ФИО" Binding="{Binding GetFullName}" Width="*"/>
+                </DataGrid.Columns>
 
-            <TextBox Width="200" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
-        </StackPanel>
-
-        <DataGrid ItemsSource="{Binding Employee}"
-              SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
-              AutoGenerateColumns="False"
-              Grid.Row="2" 
-              IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                <DataGridTextColumn Header="ФИО" Binding="{Binding GetFullName}" Width="*"/>
-            </DataGrid.Columns>
-
-            <DataGrid.InputBindings>
-                <MouseBinding Gesture="LeftDoubleClick"
+                <DataGrid.InputBindings>
+                    <MouseBinding Gesture="LeftDoubleClick"
                           Command="{Binding EditCommand}" />
-            </DataGrid.InputBindings>
-        </DataGrid>
-
-    </Grid>
+                </DataGrid.InputBindings>
+            </DataGrid>
+        </Grid>
+    </Border>
 </UserControl>

@@ -8,8 +8,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <Border Margin="10" Padding="10" CornerRadius="10"
-            Background="White">
+    <Border Padding="10"
+        CornerRadius="10"
+        Background="White">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -18,37 +19,31 @@
             </Grid.RowDefinitions>
 
             <ui:TextBlock Text="Клиенты"
-                          FontTypography="Subtitle"
-                          Padding="5"
-                          Grid.Row="0"/>
-
-            <ui:Card Grid.Row="1" >
+                      FontTypography="Subtitle"
+                      Padding="5"
+                      Grid.Row="0"/>
+            <ui:Card Grid.Row="1">
                 <StackPanel Orientation="Horizontal">
-                    <ui:Button Content="Добавить клиента"
-                               Command="{Binding AddCommand}"
-                               Icon="{ui:SymbolIcon Add24}"
-                               Margin="0,0,5,0"
-                               ToolTip="Добавить клиента"/>
+                    <ui:Button Icon="{ui:SymbolIcon Add24}" 
+                       Content="Добавить клиента" 
+                       Command="{Binding AddCommand}" 
+                       Margin="5,0"/>
 
                     <Separator Margin="5,2"/>
 
-                    <ui:Button Icon="{ui:SymbolIcon Edit24}"
-                               Command="{Binding EditCommand}"
-                               Margin="5,0"
-                               ToolTip="Редактировать выбранного клиента"/>
+                    <ui:Button Icon="{ui:SymbolIcon Edit24}" 
+                       Command="{Binding EditCommand}" 
+                       Margin="5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon Delete24}" 
+                       Command="{Binding DeleteCommand}" 
+                       Margin="0,0,5,0"/>
 
-                    <ui:Button Icon="{ui:SymbolIcon Delete24}"
-                               Command="{Binding DeleteCommand}"
-                               Margin="0,0,5,0"
-                               ToolTip="Удалить выбранного клиента"/>
-                    
-                    <Separator Margin="5,2"/>
-                    
-                    <ui:TextBox Icon="{ui:SymbolIcon Search24}" PlaceholderText="Поиск клиента по имени или IP"
-                                Width="300" Margin="5,0"
-                                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                    <!--<Separator Margin="5,2"/>-->
+
+                    <!--<ui:TextBox PlaceholderText="Поиск по имени или IP" Icon="{ui:SymbolIcon Search24}" Width="300" 
+                        Margin="5,0" Padding="5"
+                        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>-->
                 </StackPanel>
-
             </ui:Card>
 
             <ui:Card Grid.Row="2" VerticalAlignment="Top" Margin="0,5,0,0">
@@ -59,7 +54,6 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
                         <DataGridTextColumn Header="ФИО" Binding="{Binding GetFullName}" Width="*"/>
-                        <DataGridTextColumn Header="Договор" Binding="{Binding ContractNumber}" Width="*"/>
                     </DataGrid.Columns>
 
                     <DataGrid.InputBindings>
@@ -68,8 +62,6 @@
                     </DataGrid.InputBindings>
                 </DataGrid>
             </ui:Card>
-            
-
         </Grid>
     </Border>
 </UserControl>

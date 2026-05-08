@@ -12,9 +12,9 @@ namespace Telecom_ThesisProject.MVVM.ViewModel;
 class NetworkDeviceViewModel : ObservableObject
 {
     private readonly NetworkDeviceService _networkDeviceService;
-    private readonly IMessageService _messageService = new MessageService();
+    private readonly IMessageService _messageService;
 
-    public ObservableCollection<NetworkDevice> Devices { get; }
+    #region Properties
 
     private string _searchText = string.Empty;
     public string SearchText
@@ -32,30 +32,52 @@ class NetworkDeviceViewModel : ObservableObject
     public NetworkDevice? SelectedDevice
     {
         get => _selectedDevice;
-        set { _selectedDevice = value; OnPropertyChanged(); }
+        set 
+        { 
+            _selectedDevice = value;
+            OnPropertyChanged(); 
+        }
     }
 
+    #endregion
+
+    #region Observable Collections
+    
+    public ObservableCollection<NetworkDevice> Devices { get; }
+
+    #endregion
+
+    #region RelayCommands
+    
     public RelayCommand AddCommand { get; }
     public RelayCommand EditCommand { get; }
     public RelayCommand DeleteCommand { get; }
     public RelayCommand OpenDeviceDetailsCommand { get; }
 
-    public Action<NetworkDevice?> NavigateEditDevice { get; set; }
-    public Action<NetworkDevice?> NavigateDeviceDetails { get; set; }
-    public Action GoBack { get; set; }
+    #endregion
+
+    #region Actions
+
+    public Action<NetworkDevice?>? NavigateAddEditDevice { get; set; }
+    public Action<NetworkDevice?>? NavigateDeviceDetails { get; set; }
+    //public Action GoBack { get; set; }
+
+    #endregion
 
     public NetworkDeviceViewModel()
     {
         Devices = new ObservableCollection<NetworkDevice>();
         _networkDeviceService = new NetworkDeviceService();
+        _messageService = new MessageService();
 
         LoadDevices();
 
-        AddCommand = new RelayCommand(_ => NavigateEditDevice(null), _ => CurrentSession.CanSeeNetworkMenu);
-        EditCommand = new RelayCommand(_ => NavigateEditDevice(SelectedDevice), _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
+        AddCommand = new RelayCommand(_ => NavigateAddEditDevice?.Invoke(null), _ => CurrentSession.CanSeeNetworkMenu);
+        EditCommand = new RelayCommand(_ => NavigateAddEditDevice?.Invoke(SelectedDevice), _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
         DeleteCommand = new RelayCommand(_ => DeleteDevice(), _ => SelectedDevice != null && CurrentSession.CanSeeNetworkMenu);
         OpenDeviceDetailsCommand = new RelayCommand(_ => NavigateDeviceDetails?.Invoke(SelectedDevice), _ => SelectedDevice != null);
     }
+
     private void DeleteDevice()
     {
         if (SelectedDevice == null) return;

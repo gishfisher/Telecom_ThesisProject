@@ -119,6 +119,35 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 CurrentView = vm;
             };
 
+            RequestViewModel.NavigateToDetails = req =>
+            {
+                RequestDetailsViewModel? detailsVm = null;
+                RequestAddEditViewModel? editVm = null;
+
+                detailsVm = new RequestDetailsViewModel(req)
+                {
+                    GoBack = () =>
+                    {
+                        RequestViewModel.Refresh();
+                        CurrentView = RequestViewModel;
+                    },
+
+                    NavigateToAddEditPage = request =>
+                    {
+                        editVm = new RequestAddEditViewModel(request)
+                        {
+                            GoBack = () =>
+                            {
+                                detailsVm!.Refresh();
+                                CurrentView = detailsVm;
+                            }
+                        };
+                        CurrentView = editVm;
+                    }
+                };
+                CurrentView = detailsVm;
+            };
+
             // === Services ===
             ServiceViewCommand = new RelayCommand(
                 o => { ServiceViewModel.Refresh(); CurrentView = ServiceViewModel; },
@@ -160,7 +189,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 o => { NetworkDeviceViewModel.Refresh(); CurrentView = NetworkDeviceViewModel; },
                 o => IsAuthenticated && CurrentSession.CanSeeNetworkMenu);
 
-            NetworkDeviceViewModel.NavigateEditDevice = device =>
+            NetworkDeviceViewModel.NavigateAddEditDevice = device =>
             {
                 NetworkDeviceAddEditViewModel? editVm = null;
 

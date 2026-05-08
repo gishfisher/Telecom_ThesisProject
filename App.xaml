@@ -51,6 +51,10 @@
             <DataTemplate DataType="{x:Type vm:RequestAddEditViewModel}">
                 <view:RequestAddEditView/>
             </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type vm:RequestDetailsViewModel}">
+                <view:RequestDetailsView/>
+            </DataTemplate>
 
             <DataTemplate DataType="{x:Type vm:ServiceViewModel}">
                 <view:ServicesView/>

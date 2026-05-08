@@ -11,7 +11,7 @@
     <DockPanel Grid.Row="1" Grid.ColumnSpan="2" 
                Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
 
-        <RadioButton Content="Home"
+        <RadioButton Content="Главное"
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"
@@ -19,21 +19,21 @@
              IsChecked="True"
              Command="{Binding HomeViewCommand}"/>
 
-        <RadioButton Content="Clients" 
+        <RadioButton Content="Клиенты" 
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
              Command="{Binding ClientViewCommand}"/>
 
-        <RadioButton Content="Requests" 
+        <RadioButton Content="Заявки" 
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
              Command="{Binding RequestViewCommand}"/>
 
-        <RadioButton Content="Employees" 
+        <RadioButton Content="Сотрудники" 
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"
@@ -58,35 +58,35 @@
             </ui:DropDownButton.Flyout>
         </ui:DropDownButton>-->
 
-        <RadioButton Content="Tariffs" 
+        <RadioButton Content="Тарифы" 
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
              Command="{Binding TariffViewCommand}"/>
 
-        <RadioButton Content="Services" 
+        <RadioButton Content="Услуги" 
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
              Command="{Binding ServiceViewCommand}"/>
 
-        <RadioButton Content="Connections"
+        <RadioButton Content="Журнал подключений"
              Height="50"
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
              Command="{Binding ConnectionsViewCommand}"/>
 
-        <RadioButton Content="Addresses"
+        <RadioButton Content="Журнал адресов"
              Height="50"
              Foreground="#FFFFFF"
              FontSize="14pt"
              Style="{StaticResource MenuButtonTheme}"
              Command="{Binding AddressTreeViewCommand}"/>
 
-        <RadioButton Content="Network Devices"
+        <RadioButton Content="Оборудование"
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"
@@ -95,7 +95,7 @@
              Visibility="{Binding CanSeeNetworkMenu, 
                 Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-        <RadioButton Content="Logout" 
+        <RadioButton Content="Выйти" 
              Height="50" 
              Foreground="#FFFFFF"
              FontSize="14pt"

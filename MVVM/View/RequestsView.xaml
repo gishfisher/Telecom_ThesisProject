@@ -4,55 +4,67 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             Background="White">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+             d:DesignHeight="450" d:DesignWidth="800">
 
-        <TextBlock Text="Requests"
-               FontSize="14pt"
-               FontWeight="DemiBold" 
-               Foreground="#111827"
-               Padding="5"
-               Grid.Row="0"/>
+    <Border Padding="10"
+            CornerRadius="10"
+            Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Добавить"
-                Command="{Binding AddCommand}"/>
+            <ui:TextBlock Text="Заявки"
+                          FontTypography="Subtitle"
+                          Padding="5"
+                          Grid.Row="0"/>
+            <ui:Card Grid.Row="1">
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Icon="{ui:SymbolIcon Add24}" 
+                           Content="Добавить заявку" 
+                           Command="{Binding AddCommand}" 
+                           Margin="5,0"/>
 
-            <Button Content="Редактировать"
-                Command="{Binding EditCommand}"/>
+                    <Separator Margin="5,2"/>
 
-            <Button Content="Удалить"
-                Command="{Binding DeleteCommand}"/>
+                    <ui:Button Icon="{ui:SymbolIcon Edit24}" 
+                           Command="{Binding EditCommand}" 
+                           Margin="5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon Delete24}" 
+                           Command="{Binding DeleteCommand}" 
+                           Margin="0,0,5,0"/>
 
-            <TextBox Width="200" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
-        </StackPanel>
+                    <!--<Separator Margin="5,2"/>-->
 
-        <DataGrid ItemsSource="{Binding Requests}"
-              SelectedItem="{Binding SelectedRequest, Mode=TwoWay}"
-              AutoGenerateColumns="False"
-              Grid.Row="2" 
-              IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="100"/>
-                <!--<DataGridTextColumn Header="Наименование" Binding="{Binding Title}" Width="*"/>-->
-                <DataGridTextColumn Header="Дата создания" Binding="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy}}" Width="*"/>
-                <DataGridTextColumn Header="Статус" Binding="{Binding Status.Name}" Width="*"/>
-                <DataGridTextColumn Header="Тип" Binding="{Binding Type.Name}" Width="*"/>
-                <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullName}" Width="*"/>
-                <DataGridTextColumn Header="Сотрудник" Binding="{Binding Employee.GetFullName}" Width="*"/>
-            </DataGrid.Columns>
+                    <!--<ui:TextBox PlaceholderText="Поиск по имени или IP" Icon="{ui:SymbolIcon Search24}" Width="300" 
+                            Margin="5,0" Padding="5"
+                            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>-->
+                </StackPanel>
+            </ui:Card>
 
-            <DataGrid.InputBindings>
-                <MouseBinding Gesture="LeftDoubleClick"
-              Command="{Binding EditCommand}" />
-            </DataGrid.InputBindings>
-        </DataGrid>
-    </Grid>
+            <DataGrid ItemsSource="{Binding Requests}"
+                      SelectedItem="{Binding SelectedRequest, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
+                      Grid.Row="2" 
+                      IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
+                    <DataGridTextColumn Header="Дата создания" Binding="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy}}" Width="*"/>
+                    <DataGridTextColumn Header="Статус" Binding="{Binding Status.Name}" Width="*"/>
+                    <DataGridTextColumn Header="Тип" Binding="{Binding Type.Name}" Width="*"/>
+                    <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullName}" Width="*"/>
+                    <DataGridTextColumn Header="Сотрудник" Binding="{Binding Employee.GetFullName}" Width="*"/>
+                </DataGrid.Columns>
+
+                <DataGrid.InputBindings>
+                    <MouseBinding Gesture="LeftDoubleClick"
+                                  Command="{Binding RequestDetailsCommand}" />
+                </DataGrid.InputBindings>
+            </DataGrid>
+        </Grid>
+    </Border>
 </UserControl>

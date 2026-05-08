@@ -6,215 +6,132 @@
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="900"
-             Background="White">
+             d:DesignHeight="600" d:DesignWidth="900">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Border Padding="10" 
+            CornerRadius="10" Background="White">
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="15,15,15,0">
-            <TextBlock Text="{Binding FullAddress}"
-                       FontSize="16pt"
-                       FontWeight="DemiBold"
-                       Foreground="#111827"
-                       VerticalAlignment="Center"/>
-            <Button Content="Назад"
-                    Command="{Binding GoBackCommand}"
-                    Margin="20,0,0,0"
-                    Padding="15,5"/>
-        </StackPanel>
+            <Grid Grid.Row="0"  Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-        <TabControl Grid.Row="1" Margin="15,10,15,15" Background="Transparent" BorderBrush="Transparent">
-            <TabItem Header="Точки монтажа" FontSize="12pt">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}"
+                               Command="{Binding GoBackCommand}"
+                               Margin="0,0,5,0"
+                               Padding="10"/>
+                </StackPanel>
 
-                    <ui:Card>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
-                            <ui:Button Content="Добавить точку монтажа"
-                                       Command="{Binding AddMountingPointCommand}"
-                                       Icon="{ui:SymbolIcon Add24}"
-                                       Margin="0,0,5,0"/>
+                <Separator Margin="5,2" Grid.Column="1"/>
 
-                            <Separator Margin="5,2"/>
+                <ui:TextBlock Grid.Column="2"
+                              Text="{Binding FullAddress, FallbackValue=Детали адреса}"
+                              FontTypography="Subtitle"
+                              VerticalAlignment="Center"/>
+            </Grid>
 
-                            <ui:Button Icon="{ui:SymbolIcon Edit24}" 
-                                       Command="{Binding EditMountingPointCommand}" 
-                                       Appearance="Transparent" Margin="5,0"/>
-                            <ui:Button Icon="{ui:SymbolIcon Delete24}" 
-                                       Command="{Binding DeleteMountingPointCommand}" 
-                                       CommandParameter="{Binding SelectedMountingPoint}" 
-                                       Appearance="Transparent" Margin="0,0,5,0"/>
+            <TabControl Grid.Row="1" Background="Transparent" BorderBrush="Transparent">
+                <TabItem Header="Точки монтажа" FontSize="12pt">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                        </StackPanel>
-                    </ui:Card>
+                        <ui:Card Margin="0,0,0,5">
+                            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                <ui:Button Content="Добавить точку монтажа"
+                                   Command="{Binding AddMountingPointCommand}"
+                                   Icon="{ui:SymbolIcon Add24}"
+                                   Margin="0,0,5,0"/>
 
-                    <DataGrid Grid.Row="1"
-                              ItemsSource="{Binding MountingPoints}"
-                              SelectedItem="{Binding SelectedMountingPoint, Mode=TwoWay}"
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True">
-                        <DataGrid.InputBindings>
-                            <MouseBinding MouseAction="LeftDoubleClick"
-                                          Command="{Binding EditMountingPointCommand}"/>
-                        </DataGrid.InputBindings>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                            <DataGridTextColumn Header="Тип" Binding="{Binding PointType.Name}" Width="*"/>
-                            <DataGridTextColumn Header="Дата монтажа" Binding="{Binding MountingDate, StringFormat={}{0:dd.MM.yy}}" Width="*"/>
-                            <DataGridTextColumn Header="Описание" Binding="{Binding LocationDescription}" Width="*"/>
-                            <!--<DataGridTemplateColumn Width="100">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Редактировать"
-                                                Command="{Binding DataContext.EditMountingPointCommand,
-                                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Padding="5,2"
-                                                FontSize="10"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="100">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Удалить"
-                                                Command="{Binding DataContext.DeleteMountingPointCommand,
-                                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Padding="5,2"
-                                                FontSize="10"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>-->
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </TabItem>
+                                <Separator Margin="5,2"/>
 
-            <TabItem Header="Сетевое оборудование" FontSize="12pt">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                                <ui:Button Icon="{ui:SymbolIcon Edit24}" 
+                                           Command="{Binding EditMountingPointCommand}" 
+                                           Appearance="Transparent" Margin="5,0"/>
+                                <ui:Button Icon="{ui:SymbolIcon Delete24}" 
+                                           Command="{Binding DeleteMountingPointCommand}" 
+                                           CommandParameter="{Binding SelectedMountingPoint}" 
+                                           Appearance="Transparent" Margin="0,0,5,0"/>
 
-                    <ui:Card>
-                        <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
-                            <ui:Button Content="Привязать устройство"
-                                    Command="{Binding AddDeviceCommand}"
-                                    Icon="{ui:SymbolIcon Link24}"
-                                    Margin="0,0,5,0"/>
+                            </StackPanel>
+                        </ui:Card>
 
-                            <Separator Margin="5,2"/>
+                        <ui:Card Grid.Row="1" VerticalAlignment="Top" >
+                            <ui:DataGrid ItemsSource="{Binding MountingPoints}"
+                                      SelectedItem="{Binding SelectedMountingPoint, Mode=TwoWay}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True">
+                                <ui:DataGrid.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick"
+                                                  Command="{Binding EditMountingPointCommand}"/>
+                                </ui:DataGrid.InputBindings>
+                                <ui:DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
+                                    <DataGridTextColumn Header="Тип" Binding="{Binding PointType.Name}" Width="*"/>
+                                    <DataGridTextColumn Header="Дата монтажа" Binding="{Binding MountingDate, StringFormat={}{0:dd.MM.yy}}" Width="*"/>
+                                    <DataGridTextColumn Header="Описание" Binding="{Binding LocationDescription}" Width="*"/>
+                                </ui:DataGrid.Columns>
+                            </ui:DataGrid>
+                        </ui:Card>
+                    </Grid>
+                </TabItem>
 
-                            <ui:Button Icon="{ui:SymbolIcon LinkDismiss24}" 
-                                       Command="{Binding UnbindDeviceCommand}"
-                                       CommandParameter="{Binding SelectedDevice}"
-                                       Appearance="Transparent" Margin="5,0"/>
-                        </StackPanel>
-                    </ui:Card>
+                <TabItem Header="Сетевое оборудование" FontSize="12pt">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                    <DataGrid Grid.Row="1" ItemsSource="{Binding Devices}"
-                              SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True" Grid.ColumnSpan="2">
-                        <DataGrid.InputBindings>
-                            <MouseBinding MouseAction="LeftDoubleClick"
+                        <ui:Card Margin="0,0,0,5">
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
+                                <ui:Button Content="Привязать устройство"
+                                            Command="{Binding AddDeviceCommand}"
+                                            Icon="{ui:SymbolIcon Link24}"
+                                            Margin="0,0,5,0"/>
+
+                                <Separator Margin="5,2"/>
+
+                                <ui:Button Icon="{ui:SymbolIcon LinkDismiss24}" 
+                                           Command="{Binding UnbindDeviceCommand}"
+                                           CommandParameter="{Binding SelectedDevice}"
+                                           Appearance="Transparent" Margin="5,0"/>
+                            </StackPanel>
+                        </ui:Card>
+
+                        <ui:Card Grid.Row="1" VerticalAlignment="Top">
+                            <ui:DataGrid ItemsSource="{Binding Devices}"
+                                      SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True" Grid.ColumnSpan="2">
+                                <ui:DataGrid.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick"
                                           Command="{Binding OpenDeviceDetailsCommand}"/>
-                        </DataGrid.InputBindings>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
-                            <DataGridTextColumn Header="Тип" Binding="{Binding DeviceType.TypeName}" Width="*"/>
-                            <DataGridTextColumn Header="IP" Binding="{Binding IpAddress}" Width="*"/>
-                            <!--<DataGridTextColumn Header="Мониторинг" Binding="{Binding IsMonitored}" Width="*">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="TextAlignment" Value="Center"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsMonitored}" Value="True">
-                                                <Setter Property="Foreground" Value="#10B981"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsMonitored}" Value="False">
-                                                <Setter Property="Foreground" Value="#EF4444"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>-->
-                            <DataGridTextColumn Header="Точка монтажа" Binding="{Binding MountingPoint.LocationDescription}" Width="*"/>
-                            <!--<DataGridTemplateColumn Width="100">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Отвязать"
-                                                Command="{Binding DataContext.UnbindDeviceCommand,
-                                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Padding="5,2"
-                                                FontSize="10"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>-->
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </TabItem>
-
-            <!--<TabItem Header="Порты и подключения" FontSize="12pt">
-                <DataGrid ItemsSource="{Binding Ports}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
-                        <DataGridTextColumn Header="Устройство" Binding="{Binding Device.Name}" Width="*"/>
-                        <DataGridTextColumn Header="Порт" Binding="{Binding PortName}" Width="*"/>
-                        <DataGridTextColumn Header="Uplink" Binding="{Binding IsUplink}" Width="60">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextAlignment" Value="Center"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsUplink}" Value="True">
-                                            <Setter Property="Foreground" Value="#F59E0B"/>
-                                            <Setter Property="Text" Value="Да"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding IsUplink}" Value="False">
-                                            <Setter Property="Foreground" Value="#6B7280"/>
-                                            <Setter Property="Text" Value="—"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="Клиент" Binding="{Binding Connection.Client.GetFullName}" Width="*"/>
-                        <DataGridTextColumn Header="Тариф" Binding="{Binding Connection.Tariff.Name}" Width="*"/>
-                        <DataGridTextColumn Header="Активен" Binding="{Binding Connection.IsActive}" Width="70">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextAlignment" Value="Center"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Connection.IsActive}" Value="True">
-                                            <Setter Property="Foreground" Value="#10B981"/>
-                                            <Setter Property="Text" Value="Да"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Connection.IsActive}" Value="False">
-                                            <Setter Property="Foreground" Value="#EF4444"/>
-                                            <Setter Property="Text" Value="Нет"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </TabItem>-->
-
-        </TabControl>
-    </Grid>
+                                </ui:DataGrid.InputBindings>
+                                <ui:DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
+                                    <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
+                                    <DataGridTextColumn Header="Тип" Binding="{Binding DeviceType.TypeName}" Width="*"/>
+                                    <DataGridTextColumn Header="IP" Binding="{Binding IpAddress}" Width="*"/>
+                                    <DataGridTextColumn Header="Точка монтажа" 
+                                                        Binding="{Binding MountingPoint.LocationDescription}" Width="*"/>
+                                </ui:DataGrid.Columns>
+                            </ui:DataGrid>
+                        </ui:Card>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Border>
 </UserControl>

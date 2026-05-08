@@ -12,6 +12,7 @@ class NetworkDeviceService
 {
     // === Network Devices ===
 
+    // Добавить устройство
     public void AddDevice(NetworkDevice device)
     {
         ArgumentNullException.ThrowIfNull(device);
@@ -22,6 +23,7 @@ class NetworkDeviceService
         db.SaveChanges();
     }
 
+    // Редактировать устройство
     public void EditDevice(NetworkDevice device)
     {
         ArgumentNullException.ThrowIfNull(device);
@@ -58,7 +60,7 @@ class NetworkDeviceService
                 if (existingPort == null) continue;
                 
                 existingPort.PortName = port.PortName;
-                existingPort.VlanId = port.VlanId;
+                //existingPort.VlanId = port.VlanId;
                 existingPort.IsUplink = port.IsUplink;
             }
         }
@@ -66,6 +68,7 @@ class NetworkDeviceService
         db.SaveChanges();
     }
 
+    // Удалить устройство
     public void RemoveDevice(NetworkDevice device)
     {
         ArgumentNullException.ThrowIfNull(device);
@@ -85,6 +88,8 @@ class NetworkDeviceService
     }
 
     // === Getters ===
+
+    // Получить устройство по ID
     public NetworkDevice? GetDeviceById(int id)
     {
         using (var db = new TelecomDbContext())
@@ -106,8 +111,7 @@ class NetworkDeviceService
         }
     }
 
-
-
+    // Получить все устройства
     public List<NetworkDevice> GetAllDevices()
     {
         using (var db = new TelecomDbContext())
@@ -126,6 +130,7 @@ class NetworkDeviceService
         }
     }
 
+    // Получить устройства по ID адреса
     public List<NetworkDevice> GetDevicesByAddressId(int addressId)
     {
         using (var db = new TelecomDbContext())
@@ -137,41 +142,7 @@ class NetworkDeviceService
         }
     }
 
-    public List<DevicePort> GetDevicePorts(int deviceId)
-    {
-        using (var db = new TelecomDbContext())
-        {
-            return db.DevicePorts
-                .Where(p => p.DeviceId == deviceId)
-                .OrderBy(p => p.Id)
-                .ToList();
-        }
-    }
-
-    public List<DevicePort> GetDevicePortsWithConnections(int deviceId)
-    {
-        using (var db = new TelecomDbContext())
-        {
-            return db.DevicePorts
-                .Where(p => p.DeviceId == deviceId)
-                .Include(p => p.Connection)
-                    .ThenInclude(c => c.Client)
-                .OrderBy(p => p.Id)
-                .ToList();
-        }
-    }
-
-    public DevicePort? GetDevicePortById(int portId)
-    {
-        using (var db = new TelecomDbContext())
-        {
-            return db.DevicePorts
-                .Include(p => p.Connection)
-                    .ThenInclude(c => c.Client)
-                .FirstOrDefault(p => p.Id == portId);
-        }
-    }
-
+    // Получить типы устройств
     public List<DeviceType> GetDeviceTypes()
     {
         using (var db = new TelecomDbContext())
@@ -180,6 +151,7 @@ class NetworkDeviceService
         }
     }
 
+    // Получить монтажные точки с адресами
     public List<MountingPoint> GetMountingPointsWithAddress()
     {
         using (var db = new TelecomDbContext())
@@ -194,6 +166,7 @@ class NetworkDeviceService
         }
     }
 
+    // Получить устройства, которые могут быть родителями (исключая текущее устройство и его потомков)
     public List<NetworkDevice> GetParentCandidates(int? excludeDeviceId)
     {
         using (var db = new TelecomDbContext())
@@ -205,7 +178,124 @@ class NetworkDeviceService
         }
     }
 
+    // === Device Ports ===
+
+    // Получить порты по ID устройства
+    public List<DevicePort> GetDevicePorts(int deviceId)
+    {
+        using (var db = new TelecomDbContext())
+        {
+            return db.DevicePorts
+                .Where(p => p.DeviceId == deviceId)
+                .OrderBy(p => p.Id)
+                .ToList();
+        }
+    }
+
+    // Получить список портов с подключениями по ID устройства
+    public List<DevicePort> GetDevicePortsWithConnections(int deviceId)
+    {
+        using (var db = new TelecomDbContext())
+        {
+            return db.DevicePorts
+                .Where(p => p.DeviceId == deviceId)
+                .Include(p => p.Connection)
+                    .ThenInclude(c => c.Client)
+                .OrderBy(p => p.Id)
+                .ToList();
+        }
+    }
+
+    // Получить порт с подключением по ID порта
+    public DevicePort? GetDevicePortById(int portId)
+    {
+        using (var db = new TelecomDbContext())
+        {
+            return db.DevicePorts
+                .Include(p => p.Connection)
+                    .ThenInclude(c => c.Client)
+                .FirstOrDefault(p => p.Id == portId);
+        }
+    }
+
+    // === SNMP ===
+
+    // Добавить SNMP профиль
+    public void AddSnmpProfile(SnmpProfile profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        using (var db = new TelecomDbContext())
+        {
+            db.SnmpProfiles.Add(profile);
+            db.SaveChanges();
+        }
+    }
+
+    // Редактировать SNMP профиль
+    public void EditSnmpProfile(SnmpProfile profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        using (var db = new TelecomDbContext())
+        {
+            var existing = db.SnmpProfiles.FirstOrDefault(p => p.Id == profile.Id) ?? throw new Exception("Профиль не найден");
+            existing.Name = profile.Name;
+            existing.Community = profile.Community;
+            existing.Version = profile.Version;
+            existing.Port = profile.Port;
+            db.SaveChanges();
+        }
+    }
+
+    // Удалить SNMP профиль
+    public void DeleteSnmpProfile(SnmpProfile profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        using (var db = new TelecomDbContext())
+        {
+            var existing = db.SnmpProfiles.FirstOrDefault(p => p.Id == profile.Id) ?? throw new Exception("Профиль не найден");
+            var devices = db.NetworkDevices.Where(d => d.SnmpProfileId == profile.Id).ToList();
+            foreach (var d in devices)
+                d.SnmpProfileId = null;
+            
+            db.SnmpProfiles.Remove(existing);
+            db.SaveChanges();
+        }
+    }
+
+    // === Getters ===
+
+    // Получить SNMP профиль по ID
+    public List<SnmpProfile> GetSnmpProfilesById(int id)
+    {
+        using (var db = new TelecomDbContext())
+        {
+            return db.SnmpProfiles.Where(p => p.Id == id).OrderBy(p => p.Id).ToList();
+        }
+    }
+
+    // Получить все SNMP профили
+    public List<SnmpProfile> GetSnmpProfiles()
+    {
+        using (var db = new TelecomDbContext())
+        {
+            return db.SnmpProfiles.OrderBy(p => p.Name).ToList();
+        }
+    }
+
     #region Others Getters
+
+    //public void SetSnmpProfile(int deviceId, int? snmpProfileId)
+    //{
+    //    using (var db = new TelecomDbContext())
+    //    {
+    //        var device = db.NetworkDevices.FirstOrDefault(d => d.Id == deviceId) ?? throw new Exception("Устройство не найдено");
+    //        device.SnmpProfileId = snmpProfileId;
+    //        db.SaveChanges();
+    //    }
+    //}
 
     //public List<NetworkDevice> GetDevicesByMountingPoint(int mountingPointId)
     //{
@@ -245,76 +335,4 @@ class NetworkDeviceService
     //}
 
     #endregion
-
-    // === SNMP ===
-
-    public void SetSnmpProfile(int deviceId, int? snmpProfileId)
-    {
-        using (var db = new TelecomDbContext())
-        {
-            var device = db.NetworkDevices.FirstOrDefault(d => d.Id == deviceId) ?? throw new Exception("Устройство не найдено");
-            device.SnmpProfileId = snmpProfileId;
-            db.SaveChanges();
-        }
-    }
-
-    public void AddSnmpProfile(SnmpProfile profile)
-    {
-        ArgumentNullException.ThrowIfNull(profile);
-
-        using (var db = new TelecomDbContext())
-        {
-            db.SnmpProfiles.Add(profile);
-            db.SaveChanges();
-        }
-    }
-
-    public void EditSnmpProfile(SnmpProfile profile)
-    {
-        ArgumentNullException.ThrowIfNull(profile);
-
-        using (var db = new TelecomDbContext())
-        {
-            var existing = db.SnmpProfiles.FirstOrDefault(p => p.Id == profile.Id) ?? throw new Exception("Профиль не найден");
-            existing.Name = profile.Name;
-            existing.Community = profile.Community;
-            existing.Version = profile.Version;
-            existing.Port = profile.Port;
-            db.SaveChanges();
-        }
-    }
-
-    public void DeleteSnmpProfile(SnmpProfile profile)
-    {
-        ArgumentNullException.ThrowIfNull(profile);
-
-        using (var db = new TelecomDbContext())
-        {
-            var existing = db.SnmpProfiles.FirstOrDefault(p => p.Id == profile.Id) ?? throw new Exception("Профиль не найден");
-            var devices = db.NetworkDevices.Where(d => d.SnmpProfileId == profile.Id).ToList();
-            foreach (var d in devices)
-                d.SnmpProfileId = null;
-            
-            db.SnmpProfiles.Remove(existing);
-            db.SaveChanges();
-        }
-    }
-
-    // === Getters ===
-
-    public List<SnmpProfile> GetSnmpProfilesById(int id)
-    {
-        using (var db = new TelecomDbContext())
-        {
-            return db.SnmpProfiles.Where(p => p.Id == id).OrderBy(p => p.Id).ToList();
-        }
-    }
-
-    public List<SnmpProfile> GetSnmpProfiles()
-    {
-        using (var db = new TelecomDbContext())
-        {
-            return db.SnmpProfiles.OrderBy(p => p.Name).ToList();
-        }
-    }
 }

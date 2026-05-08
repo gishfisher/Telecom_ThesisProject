@@ -25,6 +25,10 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         #region Properties
 
+        public Connection? Connection { get; set; }
+
+        public string PageTitle { get; private set; } = "Подключение";
+
         private string _apartmentNumber = string.Empty;
         public string ApartmentNumber
         {
@@ -160,7 +164,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         #endregion
 
-        public Connection Connection { get; set; }
+        #region Observable Collections
 
         public ObservableCollection<Apartment> Apartments { get; } = new();
         public ObservableCollection<Address> Addresses { get; } = new();
@@ -172,17 +176,28 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public ObservableCollection<DevicePortDto> AvailableDevicePorts { get; } = new();
         public ObservableCollection<Tariff> Tariffs { get; } = new();
 
-        public RelayCommand SaveCommand { get; }
-        public RelayCommand CancelCommand { get; }
-        public RelayCommand AddClientCommand { get; }
-        public RelayCommand OpenAddressesCommand { get; }
+        #endregion
 
-        public Action? GoBack { get; set; }
+        #region Relay Commands
+
+        public RelayCommand? SaveCommand { get; }
+        public RelayCommand? CancelCommand { get; }
+        //public RelayCommand? AddClientCommand { get; }
+        //public RelayCommand? OpenAddressesCommand { get; }
+
+        #endregion
+
+        #region Actions
+
         public Action? NavigateToAdresses { get; set; }
+        public Action? GoBack { get; set; }
         public Action? NavigateToAddClient { get; set; }
 
-        public ConnectionAddEditViewModel(Connection? connection, int? targetPortId = null)
+        #endregion
+
+        public ConnectionAddEditViewModel(Connection connection, int? targetPortId = null)
         {
+            // Инициализация сервисов
             _addressService = new AddressService();
             _clientService = new ClientService();
             _networkDeviceService = new NetworkDeviceService();
@@ -190,6 +205,10 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             _tariffService = new TariffService();
             _messageService = new MessageService();
 
+            // Построение заголовка страницы в зависимости от наличия данных о подключении
+            PageTitle = BuildPageTitle(connection ?? new Connection());
+
+            // Если передано существующее подключение, создаем его копию для редактирования, иначе инициализируем новое подключение
             if (connection != null)
             {
                 Connection = CreateEditableObject(connection);
@@ -202,6 +221,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 };
             }
 
+            // Если создается новое подключение и передан ID порта, пытаемся предзаполнить данные на основе этого порта
             if (Connection.Id == 0 && targetPortId.HasValue)
             {
                 var port = _networkDeviceService.GetDevicePortById(targetPortId.Value);
@@ -210,7 +230,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
                 var device = _networkDeviceService.GetDeviceById(port.DeviceId);
 
-                if (device?.MountingPoint.Address != null)
+                if (device?.MountingPoint?.Address != null)
                 {
                     SelectedCityId = device.MountingPoint.Address.Street.CityId;
                     SelectedStreetId = device.MountingPoint.Address.StreetId;
@@ -221,8 +241,9 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 SelectedDevicePortId = targetPortId.Value;
             }
 
-            LoadData();
+            LoadData(); // Вызов метода загрузки данных для заполнения коллекций
 
+            // Если редактируется существующее подключение, предзаполняем данные на основе его текущих значений
             if (Connection.Id != 0)
             {
                 SelectedCityId = Connection?.Apartment?.Address?.Street.CityId;
@@ -237,9 +258,11 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
             SaveCommand = new RelayCommand(_ => Save());
             CancelCommand = new RelayCommand(_ => GoBack?.Invoke());
-            AddClientCommand = new RelayCommand(_ => NavigateToAddClient?.Invoke());
-            OpenAddressesCommand = new RelayCommand(_ => NavigateToAdresses?.Invoke());
+            //AddClientCommand = new RelayCommand(_ => NavigateToAddClient?.Invoke());
+            //OpenAddressesCommand = new RelayCommand(_ => NavigateToAdresses?.Invoke());
         }
+
+        // Метод сохранения данных
 
         public void Save()
         {
@@ -265,7 +288,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                         .GetApartmentIdByAddressIdAndNumber(addressId, ApartmentNumber).Id;
                 }
 
-                if (Connection.Id == 0)
+                if (Connection?.Id == 0)
                 {
                     var newConnection = new Connection
                     {
@@ -281,11 +304,11 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 {
                     var editConnection = new Connection
                     {
-                        Id = Connection.Id,
+                        Id = Connection?.Id ?? 0,
                         ApartmentId = apartmentId,
                         ClientId = SelectedClientId ?? 0,
-                        TariffId = Connection.TariffId,
-                        StaticIp = Connection.StaticIp,
+                        TariffId = Connection?.TariffId ?? 0,
+                        StaticIp = Connection?.StaticIp ?? "0.0.0.0",
                         PortId = SelectedDevicePortId ?? 0,
                     };
                     _connectionService.EditConnection(editConnection);
@@ -299,38 +322,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 return;
             }
         }
-
-        public bool Validate()
-        {
-            var errors = new StringBuilder();
-            if (SelectedClientId == null)
-                errors.AppendLine("Клиент не выбран.");
-            if (SelectedCityId == null)
-                errors.AppendLine("Город не выбран.");
-            if (SelectedStreetId == null)
-                errors.AppendLine("Улица не выбрана.");
-            if (SelectedAddressId == null)
-                errors.AppendLine("Адрес не выбран.");
-            if (SelectedApartmentId == null && string.IsNullOrWhiteSpace(ApartmentNumber))
-                errors.AppendLine("Квартира не выбрана или не указан её номер.");
-            if (SelectedDeviceId == null)
-                errors.AppendLine("Устройство не выбрано.");
-            if (SelectedDevicePortId == null)
-                errors.AppendLine("Порт не выбран.");
-
-            if (errors.Length > 0)
-            {
-                _messageService.ShowError(errors.ToString());
-                return false;
-            }
-
-            return true;
-        }
-
-        public void Refresh()
-        {
-            LoadData();
-        }
+      
+        // === Метод загрузки данных ===
 
         private void LoadData()
         {
@@ -430,22 +423,61 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             }
         }
 
-        private void CheckAddressHaveDevices(int addressId)
-        {
-            var haveDevices = _networkDeviceService.GetDevicesByAddressId(addressId);
+        // === Вспомогательные методы ===
 
-            Devices.Clear();
-            foreach (var device in haveDevices)
+        private static string BuildPageTitle(Connection connection)
+        {
+            if (connection.Id == 0)
+                return "Создание подключения";
+
+            var created = connection.CreatedAt;
+            var datePart = created.HasValue
+                ? created.Value.ToString("dd.MM.yyyy HH:mm")
+                : "—";
+
+            return $"Подключение №{connection.Id:D4} от {datePart}";
+        }
+
+        public bool Validate()
+        {
+            var errors = new StringBuilder();
+            if (SelectedClientId == null)
+                errors.AppendLine("Клиент не выбран.");
+            if (SelectedCityId == null)
+                errors.AppendLine("Город не выбран.");
+            if (SelectedStreetId == null)
+                errors.AppendLine("Улица не выбрана.");
+            if (SelectedAddressId == null)
+                errors.AppendLine("Адрес не выбран.");
+            if (SelectedApartmentId == null && string.IsNullOrWhiteSpace(ApartmentNumber))
+                errors.AppendLine("Квартира не выбрана или не указан её номер.");
+            if (SelectedDeviceId == null)
+                errors.AppendLine("Устройство не выбрано.");
+            if (SelectedDevicePortId == null)
+                errors.AppendLine("Порт не выбран.");
+
+            if (errors.Length > 0)
             {
-                Devices.Add(device);
+                _messageService.ShowError(errors.ToString());
+                return false;
             }
+
+            return true;
+        }
+
+        public void Refresh()
+        {
+            LoadData();
         }
 
         private Connection CreateEditableObject(Connection connection)
         {
             if (connection == null)
             {
-                return new Connection();
+                return new Connection
+                {
+                    CreatedAt = DateTime.Now,
+                };
             }
 
             return new Connection
@@ -460,9 +492,20 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 Port = connection.Port,
                 Apartment = connection.Apartment,
                 Client = connection.Client,
-                Requests = connection.Requests,
                 Tariff = connection.Tariff,
+                CreatedAt = connection.CreatedAt,
             };
+        }
+
+        private void CheckAddressHaveDevices(int addressId)
+        {
+            var haveDevices = _networkDeviceService.GetDevicesByAddressId(addressId);
+
+            Devices.Clear();
+            foreach (var device in haveDevices)
+            {
+                Devices.Add(device);
+            }
         }
     }
 }

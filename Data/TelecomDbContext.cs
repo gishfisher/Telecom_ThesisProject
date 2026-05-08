@@ -45,10 +45,6 @@ public partial class TelecomDbContext : DbContext
 
     public virtual DbSet<Employee> Employees { get; set; }
 
-    public virtual DbSet<MonitoringEvent> MonitoringEvents { get; set; }
-
-    public virtual DbSet<MonitoringEventType> MonitoringEventTypes { get; set; }
-
     public virtual DbSet<MountingPoint> MountingPoints { get; set; }
 
     public virtual DbSet<MountingPointType> MountingPointTypes { get; set; }
@@ -77,8 +73,6 @@ public partial class TelecomDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<Vlan> Vlans { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Address>(entity =>
@@ -98,7 +92,6 @@ public partial class TelecomDbContext : DbContext
 
             entity.HasOne(d => d.Address).WithMany(p => p.Apartments)
                 .HasForeignKey(d => d.AddressId)
-                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Apartments_Addresses");
         });
 
@@ -127,6 +120,7 @@ public partial class TelecomDbContext : DbContext
 
             entity.HasIndex(e => e.PortId, "UQ__Connections_Ports").IsUnique();
 
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.StaticIp).HasMaxLength(45);
 
@@ -158,10 +152,6 @@ public partial class TelecomDbContext : DbContext
             entity.HasOne(d => d.Device).WithMany(p => p.DevicePorts)
                 .HasForeignKey(d => d.DeviceId)
                 .HasConstraintName("FK__DevicePor__Devic__656C112C");
-
-            entity.HasOne(d => d.Vlan).WithMany(p => p.DevicePorts)
-                .HasForeignKey(d => d.VlanId)
-                .HasConstraintName("FK_DevicePorts_Vlans");
         });
 
         modelBuilder.Entity<DeviceType>(entity =>
@@ -185,27 +175,6 @@ public partial class TelecomDbContext : DbContext
                 .HasForeignKey<Employee>(d => d.UserId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Employees__UserI__71D1E811");
-        });
-
-        modelBuilder.Entity<MonitoringEvent>(entity =>
-        {
-            entity.HasIndex(e => new { e.CheckedAt, e.DeviceId }, "IX_MonitoringEvents_Device_Time").IsDescending(true, false);
-
-            entity.Property(e => e.CheckedAt).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Device).WithMany(p => p.MonitoringEvents)
-                .HasForeignKey(d => d.DeviceId)
-                .HasConstraintName("FK_MonitoringEvents_NetworkDevices");
-
-            entity.HasOne(d => d.EventType).WithMany(p => p.MonitoringEvents)
-                .HasForeignKey(d => d.EventTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_MonitoringEvents_MonitoringEventTypes");
-        });
-
-        modelBuilder.Entity<MonitoringEventType>(entity =>
-        {
-            entity.Property(e => e.Name).HasMaxLength(50);
         });
 
         modelBuilder.Entity<MountingPoint>(entity =>
@@ -285,18 +254,8 @@ public partial class TelecomDbContext : DbContext
                 .HasForeignKey(d => d.ClientId)
                 .HasConstraintName("FK__Requests__Client__0C85DE4D");
 
-            entity.HasOne(d => d.Connection).WithMany(p => p.Requests)
-                .HasForeignKey(d => d.ConnectionId)
-                .HasConstraintName("FK_Requests_Connections");
-
-            entity.HasOne(d => d.Device).WithMany(p => p.Requests)
-                .HasForeignKey(d => d.DeviceId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("FK__Requests__Device__0D7A0286");
-
             entity.HasOne(d => d.Employee).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.EmployeeId)
-                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Requests__Employ__0E6E26BF");
 
             entity.HasOne(d => d.Status).WithMany(p => p.Requests)
@@ -415,14 +374,6 @@ public partial class TelecomDbContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Users__RoleId__6E01572D");
-        });
-
-        modelBuilder.Entity<Vlan>(entity =>
-        {
-            entity.HasIndex(e => e.VlanTag, "UQ_Vlans_VlanTag").IsUnique();
-
-            entity.Property(e => e.Description).HasMaxLength(255);
-            entity.Property(e => e.Name).HasMaxLength(50);
         });
 
         OnModelCreatingPartial(modelBuilder);

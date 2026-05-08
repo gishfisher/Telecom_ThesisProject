@@ -18,4 +18,7 @@ public partial class RequestComment
     public virtual Employee CreatedByNavigation { get; set; } = null!;
 
     public virtual Request Request { get; set; } = null!;
+
+    public string CommentTitle => $"Комментарий №{Id}, {CreatedByNavigation.GetFullName} в {CreatedAt}";
+
 }

@@ -17,16 +17,6 @@ class NetworkDeviceAddEditViewModel : ObservableObject
     private readonly NetworkDeviceService _networkDeviceService;
     private readonly INetworkDevicePoller _poller;
 
-    #region ObsevableCollections
-
-    public ObservableCollection<DeviceType> DeviceTypes { get; }
-    public ObservableCollection<SnmpProfile> SnmpProfiles { get; }
-    public ObservableCollection<MountingPoint> MountingPoints { get; }
-    public ObservableCollection<NetworkDevice> ParentCandidates { get; }
-    public ObservableCollection<NetworkDevice> Devices { get; }
-
-    #endregion
-
     #region Properties
 
     public NetworkDevice Device { get; }
@@ -118,6 +108,25 @@ class NetworkDeviceAddEditViewModel : ObservableObject
             GetPortsCommand.RaiseCanExecuteChanged();
         }
     }
+    
+    public string DeviceTitle => Device.Id == 0 ? "Добавление устройства" : $"Редактирование устройства «{Device.Name}»";
+
+    #endregion
+
+    #region ObsevableCollections
+
+    public ObservableCollection<DeviceType> DeviceTypes { get; }
+    public ObservableCollection<SnmpProfile> SnmpProfiles { get; }
+    public ObservableCollection<MountingPoint> MountingPoints { get; }
+    public ObservableCollection<NetworkDevice> ParentCandidates { get; }
+    public ObservableCollection<NetworkDevice> Devices { get; }
+
+    private ObservableCollection<DevicePortDto> _devicePorts = new ObservableCollection<DevicePortDto>();
+    public ObservableCollection<DevicePortDto> DevicePorts
+    {
+        get => _devicePorts;
+        set { _devicePorts = value; OnPropertyChanged(); }
+    }
 
     #endregion
 
@@ -136,21 +145,16 @@ class NetworkDeviceAddEditViewModel : ObservableObject
 
     #endregion
 
-    private ObservableCollection<DevicePortDto> _devicePorts = new ObservableCollection<DevicePortDto>();
-    public ObservableCollection<DevicePortDto> DevicePorts
-    {
-        get => _devicePorts;
-        set { _devicePorts = value; OnPropertyChanged(); }
-    }
-
-    public string DeviceTitle => Device.Id == 0 ? "Добавление устройства" : $"Редактирование устройства «{Device.Name}»";
+    #region Actions
 
     public Action? GoBack { get; set; }
-    public Action<SnmpProfile>? NavigateAddEditSnmpProfile { get; set; }
+    public Action<SnmpProfile?>? NavigateAddEditSnmpProfile { get; set; }
+
+    #endregion
 
     public NetworkDeviceAddEditViewModel(NetworkDevice? device)
     {
-        //_messageService = new MessageService();
+        // Инициализация сервисов
         _networkDeviceService = new NetworkDeviceService();
         _poller = new NetworkDevicePoller();
 
@@ -189,6 +193,7 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         PingCommand = new RelayCommand(_ => PollPingAsync(), _ => !string.IsNullOrWhiteSpace(Device.IpAddress) && !IsLoading);
         GetPortsCommand = new RelayCommand(_ => RefreshPortsBySnmp(), _ => (!string.IsNullOrWhiteSpace(Device.IpAddress) && SelectedSnmpProfile != null) && !IsLoading);
     }
+
 
     private void Save()
     {

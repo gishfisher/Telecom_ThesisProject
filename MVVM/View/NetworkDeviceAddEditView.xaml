@@ -7,11 +7,9 @@
              mc:Ignorable="d"
              d:DesignHeight="620" d:DesignWidth="720">
 
-    <Border Margin="10"
-            Padding="10"
+    <Border Padding="10"
             Background="White"
-            CornerRadius="10"
-            BorderBrush="{ui:ThemeResource ControlStrokeColorDefaultBrush}">
+            CornerRadius="10">
 
         <Grid>
             <Grid.RowDefinitions>
@@ -19,7 +17,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0"  Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -29,151 +27,148 @@
                 <StackPanel Orientation="Horizontal">
                     <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}"
                                Command="{Binding CancelCommand}"
-                               Margin="0,0,10,0"
+                               Margin="0,0,5,0"
                                Padding="10"/>
 
                     <ui:Button Icon="{ui:SymbolIcon Save16}"
                                Command="{Binding SaveCommand}"
-                               Padding="10"/>
+                               Padding="10"
+                               Appearance="Secondary"/>
                 </StackPanel>
 
                 <Separator Margin="5,2" Grid.Column="1"/>
                 
                 <ui:TextBlock Grid.Column="2"
-                          Text="{Binding DeviceTitle, FallbackValue=Добавление устройства}"
-                          VerticalAlignment="Center"/>
+                              Text="{Binding DeviceTitle, FallbackValue=Добавление устройства}"
+                              FontTypography="Subtitle"
+                              VerticalAlignment="Center"/>
             </Grid>
 
-            <TabControl Grid.Row="1" Margin="0,10,0,0">
-
+            <TabControl Grid.Row="1">
                 <TabItem Header="Общее">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="0,10,10,10">
+                    <StackPanel Margin="0,10,10,10">
 
-                            <Label Content="Имя устройства"/>
-                            <ui:TextBox PlaceholderText="Введите имя устройства"
+                        <Label Content="Имя устройства"/>
+                        <ui:TextBox PlaceholderText="Введите имя устройства"
                                     Text="{Binding Device.Name, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <Label Content="IP-Адрес" Margin="0,12,0,0"/>
-                            <ui:TextBox PlaceholderText="Введите IP-адрес"
+                        <Label Content="IP-Адрес" Margin="0,12,0,0"/>
+                        <ui:TextBox PlaceholderText="Введите IP-адрес"
                                     Text="{Binding Device.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <Label Content="SNMP Профиль" Margin="0,12,0,0"/>
+                        <Label Content="SNMP Профиль" Margin="0,12,0,0"/>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                                <ComboBox ItemsSource="{Binding SnmpProfiles}"
+                            <ComboBox ItemsSource="{Binding SnmpProfiles}"
                                           DisplayMemberPath="SnmpProfileString"
                                           SelectedItem="{Binding SelectedSnmpProfile, Mode=TwoWay}"
                                           VerticalAlignment="Center"/>
 
-                                <ui:Button Grid.Column="1"
+                            <ui:Button Grid.Column="1"
                                                     Margin="10,0,0,0"
                                                     Padding="5"
                                                     VerticalAlignment="Center"
                                                     Command="{Binding AddSnmpProfileCommand}">
-                                    <ui:Button.Icon>
-                                        <ui:SymbolIcon Symbol="Add24" Foreground="Green"/>
-                                    </ui:Button.Icon>
-                                    <TextBlock>
+                                <ui:Button.Icon>
+                                    <ui:SymbolIcon Symbol="Add24" Foreground="Green"/>
+                                </ui:Button.Icon>
+                                <TextBlock>
                                         Добавить
-                                    </TextBlock>
-                                </ui:Button>
-                            </Grid>
+                                </TextBlock>
+                            </ui:Button>
+                        </Grid>
 
-                            <ui:HyperlinkButton Icon="{ui:SymbolIcon Settings24}"
+                        <ui:HyperlinkButton Icon="{ui:SymbolIcon Settings24}"
                                             Margin="0,6,0,0"
                                             Padding="5"
                                             HorizontalAlignment="Left"
                                             Command="{Binding ManageSnmpProfilesCommand}">
-                                <TextBlock>
-                                <Underline>Управление SNMP профилями</Underline>
-                                </TextBlock>
-                            </ui:HyperlinkButton>
+                            <TextBlock>
+                                Управление SNMP профилями
+                            </TextBlock>
+                        </ui:HyperlinkButton>
 
-                            <CheckBox Content="Участвует в мониторинге (SNMP)"
+                        <!--<CheckBox Content="Участвует в мониторинге (SNMP)"
                                   IsChecked="{Binding Device.IsMonitored}"
-                                  Margin="0,14,0,0"/>
+                                  Margin="0,14,0,0"/>-->
 
-                            <Label Content="Тип устройства" Margin="0,12,0,0"/>
-                            <ComboBox ItemsSource="{Binding DeviceTypes}"
+                        <Label Content="Тип устройства" Margin="0,12,0,0"/>
+                        <ComboBox ItemsSource="{Binding DeviceTypes}"
                                   DisplayMemberPath="TypeName"
                                   SelectedValuePath="Id"
                                   SelectedValue="{Binding Device.DeviceTypeId, Mode=TwoWay}"
                                   Padding="5"/>
 
-                            <Label Content="Родительское устройство" Margin="0,12,0,0"/>
+                        <Label Content="Родительское устройство" Margin="0,12,0,0"/>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                                <ComboBox ItemsSource="{Binding ParentCandidates}"
+                            <ComboBox ItemsSource="{Binding ParentCandidates}"
                                       DisplayMemberPath="Name"
                                       SelectedItem="{Binding SelectedParent, Mode=TwoWay}"/>
 
-                                <ui:Button Grid.Column="1"
+                            <ui:Button Grid.Column="1"
                                        Icon="{ui:SymbolIcon ArrowReset24}"
                                        Content="Сбросить"
                                        Margin="10,0,0,0"
                                        Padding="10,5"
                                        Command="{Binding ClearParentCommand}"/>
-                            </Grid>
+                        </Grid>
 
-                            <Label Content="Дата и место установки"
+                        <Label Content="Дата и место установки"
                                Margin="0,12,0,0"/>
 
-                            <TextBlock Text="{Binding InstallDateAndMountingPoint}"
+                        <TextBlock Text="{Binding InstallDateAndMountingPoint}"
                                        TextWrapping="Wrap"
                                        Opacity="0.85"/>
 
 
-                            <TextBlock Text="{Binding ErrorMessage}"
+                        <TextBlock Text="{Binding ErrorMessage}"
                                        Foreground="Red"
                                        Margin="0,12,0,0"
                                        TextWrapping="Wrap"/>
-                            
-                        </StackPanel>
-                    </ScrollViewer>
+
+                    </StackPanel>
                 </TabItem>
 
                 <TabItem Header="Проверка связи">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel Margin="10">
+                    <StackPanel Margin="10">
 
-                            <Label Content="Диагностика устройства" Margin="0,0,0,10"/>
+                        <Label Content="Диагностика устройства" Margin="0,0,0,10"/>
 
-                            <WrapPanel>
-                                <ui:Button Content="Ping (ICMP)"
+                        <WrapPanel>
+                            <ui:Button Content="Ping (ICMP)"
                                                Command="{Binding PingCommand}"
                                                Padding="10"
                                                Margin="0,0,5,0"/>
 
-                                <ui:Button Content="Опрос SNMP"
+                            <ui:Button Content="Опрос SNMP"
                                                Command="{Binding PollSnmpCommand}"
                                                Padding="10"
                                                Margin="0,0,5,0"/>
 
-                                <ui:Button Content="Получить порты"
+                            <ui:Button Content="Получить порты"
                                                Command="{Binding GetPortsCommand}"
                                                Padding="10"
                                                Margin="0,0,5,0"/>
 
-                                <ui:Button Content="Проверить SSH"
+                            <ui:Button Content="Проверить SSH"
                                                Command="{Binding ProbeSshCommand}"
                                                Padding="10"
                                                Margin="0,0,5,0"/>
-                            </WrapPanel>
+                        </WrapPanel>
 
-                            <Label Content="Результат выполнения" Margin="0,10,0,10"/>
-                            <ui:TextBox Text="{Binding LastPollResult}"
+                        <Label Content="Результат выполнения" Margin="0,10,0,10"/>
+                        <ui:TextBox Text="{Binding LastPollResult}"
                                         IsReadOnly="True"
                                         TextWrapping="Wrap"
                                         AcceptsReturn="True"
@@ -182,55 +177,54 @@
                                         PlaceholderText="Здесь появится результат опроса..."
                                         VerticalScrollBarVisibility="Auto"/>
 
-                            <Expander Header="Состояние портов" Margin="0,12,0,0" IsExpanded="True">
-                                <ui:DataGrid ItemsSource="{Binding DevicePorts}"
+                        <Expander Header="Состояние портов" Margin="0,12,0,0" IsExpanded="True">
+                            <ui:DataGrid ItemsSource="{Binding DevicePorts}"
                                              AutoGenerateColumns="False"
                                              IsReadOnly="True">
-                                    <ui:DataGrid.Columns>
-                                        <DataGridTextColumn Header="Порт"
+                                <ui:DataGrid.Columns>
+                                    <DataGridTextColumn Header="Порт"
                                                             Binding="{Binding PortName}"
                                                             Width="100"/>
 
-                                        <DataGridTemplateColumn Header="Uplink" Width="80">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <CheckBox IsChecked="{Binding IsUplink, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                    <DataGridTemplateColumn Header="Uplink" Width="80">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding IsUplink, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                               HorizontalAlignment="Center" 
                                                               VerticalAlignment="Center"/>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
 
 
-                                        <DataGridTextColumn Header="Статус"
+                                    <DataGridTextColumn Header="Статус"
                                                             Binding="{Binding OperationalStatus}"
                                                             Width="80">
-                                            <DataGridTextColumn.ElementStyle>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="TextAlignment" Value="Center"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding OperationalStatus}" Value="Активен">
-                                                            <Setter Property="Foreground" Value="#10B981"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding OperationalStatus}" Value="Неактивен">
-                                                            <Setter Property="Foreground" Value="#EF4444"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding OperationalStatus}" Value="Тестирование">
-                                                            <Setter Property="Foreground" Value="#FF2D4DFF"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </DataGridTextColumn.ElementStyle>
-                                        </DataGridTextColumn>
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding OperationalStatus}" Value="Активен">
+                                                        <Setter Property="Foreground" Value="#10B981"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding OperationalStatus}" Value="Неактивен">
+                                                        <Setter Property="Foreground" Value="#EF4444"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding OperationalStatus}" Value="Тестирование">
+                                                        <Setter Property="Foreground" Value="#FF2D4DFF"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
 
-                                        <DataGridTextColumn Header="Статус (RFC 1213)"
+                                    <DataGridTextColumn Header="Статус (RFC 1213)"
                                                             Binding="{Binding StatusRawValue}"
                                                             Width="150"/>
-                                    </ui:DataGrid.Columns>
-                                </ui:DataGrid>
-                            </Expander>
-                        </StackPanel>
-                    </ScrollViewer>
+                                </ui:DataGrid.Columns>
+                            </ui:DataGrid>
+                        </Expander>
+                    </StackPanel>
                 </TabItem>
             </TabControl>
         </Grid>

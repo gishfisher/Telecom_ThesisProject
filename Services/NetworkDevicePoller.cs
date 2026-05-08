@@ -18,6 +18,7 @@ public class NetworkDevicePoller : INetworkDevicePoller
 
     public NetworkDevicePoller(NetworkLabOptions? options = null)
     {
+        // Загрузка настроек для конфигурирования запросов к сетевым устройствам
         _options = options ?? new NetworkLabOptions();
     }
 
@@ -348,7 +349,7 @@ public class NetworkDevicePoller : INetworkDevicePoller
             return NetworkDevicePollResult.PingFail($"{ex.Message}");
         }
     }
-
+    // Асинхронная версия метода для проверки доступности SSH-порта
     public async Task<NetworkDevicePollResult> ProbeSshPortAsync(NetworkDevice device)
     {
         if (string.IsNullOrWhiteSpace(device.IpAddress) || !IPAddress.TryParse(device.IpAddress.Trim(), out var ip))
@@ -376,7 +377,6 @@ public class NetworkDevicePoller : INetworkDevicePoller
             return NetworkDevicePollResult.SshFail($"{ex.Message}");
         }
     }
-
 
     // === Вспомогательные методы ===
 

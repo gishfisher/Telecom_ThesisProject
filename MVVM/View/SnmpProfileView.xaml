@@ -4,37 +4,66 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="500"
-             Background="White">
-    <Grid Margin="20">
-        <StackPanel>
-            <TextBlock Text="SNMP Профиль" FontSize="14pt" FontWeight="DemiBold" Margin="0,0,0,15"/>
+             d:DesignHeight="350" d:DesignWidth="500">
+    <Border Background="White" 
+            Padding="10" CornerRadius="10">
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            <Label Content="Наименование"/>
-            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-            <Label Content="Community-Строка"/>
-            <TextBox Text="{Binding CommunityString, UpdateSourceTrigger=PropertyChanged}"/>
+                <StackPanel Orientation="Horizontal">
+                    <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}"
+                               Command="{Binding CancelCommand}"
+                               Margin="0,0,5,0"
+                               Padding="10"/>
 
-            <Label Content="Порт"/>
-            <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"/>
+                    <ui:Button Icon="{ui:SymbolIcon Save16}"
+                               Command="{Binding SaveCommand}"
+                               Padding="10"
+                               Appearance="Secondary"/>
+                </StackPanel>
 
-            <Label Content="Версия"/>
-            <ComboBox ItemsSource="{Binding SnmpVersions}"
-                      SelectedValuePath="Id"
-                      SelectedValue="{Binding SelectedSnmpVersionId}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding VersionName}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+                <Separator Margin="5,2" Grid.Column="1"/>
 
-            <!--<TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,10,0,0" TextWrapping="Wrap"/>-->
+                <ui:TextBlock Grid.Column="2"
+                      Text="{Binding PageTitle, FallbackValue=Управление SNMP профилем}"
+                      FontTypography="Subtitle"
+                      VerticalAlignment="Center"/>
+            </Grid>
 
-            <Button Content="Сохранить" Command="{Binding SaveCommand}" Margin="0,15,0,5"/>
-            <Button Content="Назад" Command="{Binding CancelCommand}"/>
-        </StackPanel>
-    </Grid>
+            <StackPanel Grid.Row="1">
+                <Label Content="Наименование"/>
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Label Content="Community-Строка"/>
+                <TextBox Text="{Binding CommunityString, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Label Content="Порт"/>
+                <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Label Content="Версия"/>
+                <ComboBox ItemsSource="{Binding SnmpVersions}"
+                              SelectedValuePath="Id"
+                              SelectedValue="{Binding SelectedSnmpVersionId}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding VersionName}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+    </Border>
 </UserControl>

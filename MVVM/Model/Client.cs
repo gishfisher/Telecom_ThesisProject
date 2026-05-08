@@ -24,4 +24,7 @@ public partial class Client
 
     public string GetFullNameIn =>
         $"{LastName} {FirstName[0]}.{MiddleName?[0]}.";
+
+    public string FormattedPhone => string.IsNullOrEmpty(PhoneNumber) ? string.Empty
+    : $"+{PhoneNumber[0]} ({PhoneNumber[1..4]}) {PhoneNumber[4..7]}-{PhoneNumber[7..9]}-{PhoneNumber[9..11]}";
 }

@@ -19,13 +19,13 @@ public partial class Connection
 
     public bool IsActive { get; set; }
 
+    public DateTime? CreatedAt { get; set; }
+
     public virtual Apartment Apartment { get; set; } = null!;
 
     public virtual Client Client { get; set; } = null!;
 
     public virtual DevicePort Port { get; set; } = null!;
-
-    public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
 
     public virtual Tariff Tariff { get; set; } = null!;
 
@@ -36,5 +36,4 @@ public partial class Connection
             return $"Подключение №{Id}, {Client.GetFullNameIn}";
         }
     }
-
 }

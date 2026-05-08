@@ -11,6 +11,7 @@ namespace Telecom_ThesisProject.Services
     {
         // === Cities ===
 
+        // Добавить город
         public void AddCity(City city)
         {
             ArgumentNullException.ThrowIfNull(city);
@@ -21,6 +22,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Редактировать город
         public void EditCity(City city)
         {
             ArgumentNullException.ThrowIfNull(city);
@@ -33,6 +35,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Удалить город
         public void RemoveCity(City city)
         {
             ArgumentNullException.ThrowIfNull(city);
@@ -50,6 +53,7 @@ namespace Telecom_ThesisProject.Services
 
         // === Getters ===
 
+        // Получить все города с их улицами, адресами и квартирами
         public List<City> GetAllCities()
         {
             using (var db = new TelecomDbContext())
@@ -63,6 +67,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Получить все города для отображения в комбобоксе
         public List<City> GetCitiesForCombo()
         {
             using (var db = new TelecomDbContext())
@@ -71,6 +76,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Получить города по id
         public List<City> GetCitiesById(int id)
         {
             using (var db = new TelecomDbContext())
@@ -81,6 +87,7 @@ namespace Telecom_ThesisProject.Services
 
         // === Streets ===
 
+        // Добавить улицу
         public void AddStreet(Street street)
         {
             ArgumentNullException.ThrowIfNull(street);
@@ -91,6 +98,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Редактировать улицу
         public void EditStreet(Street street)
         {
             ArgumentNullException.ThrowIfNull(street);
@@ -104,6 +112,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Удалить улицу
         public void RemoveStreet(Street street)
         {
             ArgumentNullException.ThrowIfNull(street);
@@ -121,6 +130,7 @@ namespace Telecom_ThesisProject.Services
 
         // === Getters ===
 
+        // Получить все улицы по id города
         public List<Street> GetStreetsByCityId(int cityId)
         {
             using (var db = new TelecomDbContext())
@@ -134,6 +144,7 @@ namespace Telecom_ThesisProject.Services
 
         // === Addreses ===
 
+        // Добавить адрес
         public void AddAddress(Address address)
         {
             ArgumentNullException.ThrowIfNull(address);
@@ -144,6 +155,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Редактировать адрес
         public void EditAddress(Address address)
         {
             ArgumentNullException.ThrowIfNull(address);
@@ -157,6 +169,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Удалить адрес
         public void RemoveAddress(Address address)
         {
             ArgumentNullException.ThrowIfNull(address);
@@ -168,17 +181,31 @@ namespace Telecom_ThesisProject.Services
 
                 // хз
 
-                //bool hasClients = db.Clients.Any(c => c.Connections.FirstOrDefault().ApartmentId == existing.Apartments.FirstOrDefault().Id);
-                //if (hasClients)
-                //    throw new InvalidOperationException("Есть клиенты, привязанные к адресу.");
+                bool hasClients = db.Clients.Any(c => c.Connections.FirstOrDefault().ApartmentId == existing.Apartments.FirstOrDefault().Id);
+                if (hasClients)
+                    throw new InvalidOperationException("Есть клиенты, привязанные к адресу.");
 
                 db.Addresses.Remove(existing);
                 db.SaveChanges();
             }
         }
 
+        // === Getters ===
+
+        // Получить все адреса по id улицы
+        public List<Address> GetAddressesByStreetId(int streetId)
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Addresses.Where(s => s.StreetId == streetId)
+                                   .OrderBy(s => s.HouseNumber)
+                                   .ToList();
+            }
+        }
+
         // === Apartments ===
 
+        // Добавить квартиру
         public void AddApartment(Apartment apartment)
         {
             ArgumentNullException.ThrowIfNull(apartment);
@@ -189,6 +216,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Редактировать квартиру
         public void EditApartment(Apartment apartment)
         {
             ArgumentNullException.ThrowIfNull(apartment);
@@ -202,6 +230,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Удалить квартиру
         public void RemoveApartment(Apartment apartment)
         {
             ArgumentNullException.ThrowIfNull(apartment);
@@ -219,16 +248,7 @@ namespace Telecom_ThesisProject.Services
 
         // === Getters ===
 
-        public List<Address> GetAddressesByStreetId(int streetId)
-        {
-            using (var db = new TelecomDbContext())
-            {
-                return db.Addresses.Where(s => s.StreetId == streetId)
-                                   .OrderBy(s => s.HouseNumber)
-                                   .ToList();
-            }
-        }
-
+        // Получить квартиру по id адреса и номеру
         public Apartment GetApartmentIdByAddressIdAndNumber(int addressId, string number)
         {
             using (var db = new TelecomDbContext())
@@ -238,6 +258,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Получить все квартиры по id адреса
         public List<Apartment> GetApartmentsByAddressId(int addressId)
         {
             using (var db = new TelecomDbContext())
@@ -248,6 +269,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Получить все квартиры по id улицы
         public bool ApartamentIsExist(int addressId, string number)
         {
             using (var db = new TelecomDbContext())
@@ -256,6 +278,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Получить все адреса с их улицами, городами и квартирами
         public List<Address> GetAllWithLocation()
         {
             using (var db = new TelecomDbContext())
@@ -270,6 +293,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Получить все адреса с их улицами, городами, квартирами и точками монтажа
         public List<Address> GetAddressesWithInclude()
         {
             using (var db = new TelecomDbContext())
@@ -293,6 +317,7 @@ namespace Telecom_ThesisProject.Services
 
         // === Mounting Point ===
 
+        // Добавить точку монтажа
         public void AddMountingPoint(MountingPoint mp)
         {
             ArgumentNullException.ThrowIfNull(mp);
@@ -304,6 +329,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Редактировать точку монтажа
         public void EditMountingPoint(MountingPoint mp)
         {
             ArgumentNullException.ThrowIfNull(mp);
@@ -318,6 +344,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Удалить точку монтажа
         public void RemoveMountingPoint(MountingPoint mp)
         {
             ArgumentNullException.ThrowIfNull(mp);
@@ -347,6 +374,7 @@ namespace Telecom_ThesisProject.Services
 
         // === Getters ===
 
+        // Получить все точки монтажа по id адреса
         public List<MountingPointType> GetMountingPointTypes()
         {
             using (var db = new TelecomDbContext())
@@ -355,6 +383,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
+        // Получить точку монтажа по id
         public MountingPoint? GetMountingPointsById(int id)
         {
             using (var db = new TelecomDbContext())

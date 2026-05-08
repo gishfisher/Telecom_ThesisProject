@@ -29,13 +29,9 @@ public partial class NetworkDevice
 
     public virtual ICollection<NetworkDevice> InverseParentDevice { get; set; } = new List<NetworkDevice>();
 
-    public virtual ICollection<MonitoringEvent> MonitoringEvents { get; set; } = new List<MonitoringEvent>();
-
     public virtual MountingPoint? MountingPoint { get; set; }
 
     public virtual NetworkDevice? ParentDevice { get; set; }
-
-    public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
 
     public virtual SnmpProfile? SnmpProfile { get; set; }
 }

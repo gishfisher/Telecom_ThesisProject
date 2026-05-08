@@ -15,10 +15,6 @@ public partial class Request
 
     public int ClientId { get; set; }
 
-    public int? ConnectionId { get; set; }
-
-    public int? DeviceId { get; set; }
-
     public int? EmployeeId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
@@ -26,10 +22,6 @@ public partial class Request
     public DateTime? ClosedAt { get; set; }
 
     public virtual Client Client { get; set; } = null!;
-
-    public virtual Connection? Connection { get; set; }
-
-    public virtual NetworkDevice? Device { get; set; }
 
     public virtual Employee? Employee { get; set; }
 

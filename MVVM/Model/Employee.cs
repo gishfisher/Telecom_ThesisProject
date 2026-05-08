@@ -23,4 +23,7 @@ public partial class Employee
 
     public string GetFullName =>
         string.Join(" ", new[] { LastName, FirstName, MiddleName }.Where(s => !string.IsNullOrWhiteSpace(s))).Trim();
+
+    public string GetShortNameWithRole =>
+        $"{LastName} {FirstName[0]}.{(string.IsNullOrEmpty(MiddleName) ? string.Empty : MiddleName[0].ToString() + ".")} {User?.Role.Name}";
 }

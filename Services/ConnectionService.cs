@@ -86,15 +86,5 @@ namespace Telecom_ThesisProject.Services
                     .ToList();
             }
         }
-
-        //public List<Connection> GetConnectionsByApartmentId(int apartmentId)
-        //{
-        //    using (var context = new TelecomDbContext())
-        //    {
-        //        return context.Connections
-        //            .Where(c => c.ApartmentId == apartmentId)
-        //            .ToList();
-        //    }
-        //}
     }
 }

@@ -4,12 +4,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.Data;
 using Telecom_ThesisProject.MVVM.Model;
 using Telecom_ThesisProject.Services;
 using Telecom_ThesisProject.Utilities.Interfaces;
+using Wpf.Ui.Controls;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel
 {
@@ -48,7 +48,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
             Employee = CreateEditableEmployee(selectedEmployee);
 
-            SaveCommand = new RelayCommand(o => Save(o));
+            SaveCommand = new RelayCommand(ps => Save(ps));
             CancelCommand = new RelayCommand(o => GoBack?.Invoke());
         }
 

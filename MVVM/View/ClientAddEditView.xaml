@@ -1,87 +1,132 @@
 <UserControl x:Class="Telecom_ThesisProject.MVVM.View.ClientAddEditView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-             mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="800"
-             Background="White">
-    <ScrollViewer>
-        <Grid Margin="10">
-            <StackPanel>
+             mc:Ignorable="d"
+             d:DesignHeight="700"
+             d:DesignWidth="900"
+             Background="Transparent">
 
-                <ui:Card>
-                    <StackPanel Orientation="Horizontal">
-                        <ui:Button Content="Назад" Icon="{ui:SymbolIcon ArrowStepBack20}"
-                       Command="{Binding CancelCommand}" Margin="0,0,10,0"/>
-                        <ui:Button Content="Сохранить" Icon="{ui:SymbolIcon Add24}"
-                       Command="{Binding SaveCommand}" Margin="0,0,10,0"/>
+    <Border Padding="10"
+            CornerRadius="10"
+            Background="White">
 
-                        <ui:TextBlock Text="{Binding Title}" 
-                          FontTypography="Subtitle"/>
-                    </StackPanel>
-                </ui:Card>
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                <ui:Card Margin="0,10,0,0">
-                    <StackPanel>
-                        <ui:TextBlock FontTypography="BodyStrong"
-                                      Margin="10,10">
-                            <Run Text="Общая информация"/>
-                            <!--<LineBreak/>-->
-                            <!--<Run Text="Контактная информация клиента" 
-                                 FontStyle="Italic" FontWeight="Normal" Foreground="#94A3B8"/>-->
-                        </ui:TextBlock>
-                        <ui:Card>
+                <StackPanel Grid.Row="0"
+                            Orientation="Horizontal"
+                            Margin="0,0,0,10">
+
+                    <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}"
+                               Command="{Binding CancelCommand}"
+                               Padding="10"
+                               Margin="0,0,5,0"
+                               ToolTip="Назад"/>
+
+                    <ui:Button Icon="{ui:SymbolIcon Save20}"
+                               Command="{Binding SaveCommand}"
+                               Padding="10"
+                               ToolTip="Сохранить"/>
+
+                    <Separator Margin="10,2"/>
+
+                    <ui:TextBlock Text="{Binding Title}"
+                                  VerticalAlignment="Center"
+                                  FontTypography="Subtitle"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1">
+
+                    <ui:CardExpander IsExpanded="True"
+                                     Padding="10">
+
+                        <ui:CardExpander.Header>
+                            <ui:TextBlock FontTypography="BodyStrong">
+                                Общая информация
+                            </ui:TextBlock>
+                        </ui:CardExpander.Header>
+
+                        <Grid Margin="0,10,0,0">
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="220"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ui:TextBlock Text="Фамилия"
+                                          VerticalAlignment="Center"/>
+
+                            <ui:TextBox Grid.Column="1"
+                                        Text="{Binding Client.LastName, UpdateSourceTrigger=PropertyChanged}"
+                                        PlaceholderText="Введите фамилию"/>
+
+                            <ui:TextBlock Grid.Row="1"
+                                          Text="Имя"
+                                          Margin="0,12,0,0"
+                                          VerticalAlignment="Center"/>
+
+                            <ui:TextBox Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="0,12,0,0"
+                                        Text="{Binding Client.FirstName, UpdateSourceTrigger=PropertyChanged}"
+                                        PlaceholderText="Введите имя"/>
+
+                            <ui:TextBlock Grid.Row="2"
+                                          Text="Отчество"
+                                          Margin="0,12,0,0"
+                                          VerticalAlignment="Center"/>
+
+                            <ui:TextBox Grid.Row="2"
+                                        Grid.Column="1"
+                                        Margin="0,12,0,0"
+                                        Text="{Binding Client.MiddleName, UpdateSourceTrigger=PropertyChanged}"
+                                        PlaceholderText="Введите отчество"/>
+
+                            <ui:TextBox Grid.Row="3"
+                                        Grid.Column="1"
+                                        Margin="0,12,0,0"
+                                        Text="{Binding Client.PhoneNumber, UpdateSourceTrigger=PropertyChanged}"
+                                        PlaceholderText="+7 (___) ___-__-__"/>
+
+                            <ui:TextBlock Grid.Row="3"
+                                          Text="Номер телефона"
+                                          Margin="0,12,0,0"
+                                          VerticalAlignment="Center"/>
+
+                        </Grid>
+
+                    </ui:CardExpander>
+
+                    <ui:CardExpander Margin="0,10,0,0"
+                                     IsExpanded="True"
+                                     Padding="10">
+
+                        <ui:CardExpander.Header>
                             <StackPanel>
-                                <Label Content="Фамилия"/>
-                                <TextBox Text="{Binding Client.LastName, UpdateSourceTrigger=PropertyChanged}"/>
-
-                                <Label Content="Имя"/>
-                                <TextBox Text="{Binding Client.FirstName, UpdateSourceTrigger=PropertyChanged}"/>
-
-                                <Label Content="Отчество"/>
-                                <TextBox Text="{Binding Client.MiddleName, UpdateSourceTrigger=PropertyChanged}"/>
-                            </StackPanel>
-                        </ui:Card>
-
-                        <!--<Expander Margin="0,10,0,0" IsExpanded="True">
-                            <Expander.Header>
                                 <ui:TextBlock FontTypography="BodyStrong">
-                                    <Run Text="Адрес проживания"/>
-                                    <LineBreak/>
-                                    <Run Text="(необязательно, если клиент уже привязан к адресу)" 
-         FontStyle="Italic" FontWeight="Normal" Foreground="#94A3B8"/>
+                                    Список подключений
                                 </ui:TextBlock>
-                            </Expander.Header>
-                            <StackPanel>
-                                <Label Content="Город"/>
-                                <ComboBox ItemsSource="{Binding Cities}"
-          DisplayMemberPath="Name"
-          SelectedValuePath="Id"
-          SelectedValue="{Binding SelectedCityId}"/>
-
-                                <Label Content="Улица"/>
-                                <ComboBox ItemsSource="{Binding Streets}"
-          DisplayMemberPath="Name"
-          SelectedValuePath="Id"
-          SelectedValue="{Binding SelectedStreetId}"/>
-
-                                <Label Content="Дом"/>
-                                <ComboBox ItemsSource="{Binding Addresses}"
-          DisplayMemberPath="HouseNumber"
-          SelectedValuePath="Id"
-          SelectedValue="{Binding SelectedAddressId}"/>
-
-                                <Label Content="Номер квартиры"/>
-                                <TextBox Text="{Binding ApartmentNumber, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
-                        </Expander>-->
-                    </StackPanel>
-                </ui:Card>
+                        </ui:CardExpander.Header>
 
-            </StackPanel>
-        </Grid>
-    </ScrollViewer>
+                    </ui:CardExpander>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Border>
 </UserControl>

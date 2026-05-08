@@ -19,6 +19,7 @@ public partial class Address
 
     public string GetFullAddress =>
         string.Join(", ", new[] { Street.City.Name, Street.Name, HouseNumber }.Where(s => !string.IsNullOrWhiteSpace(s))).Trim();
+
     public string GetFullAddressWithApartment =>
         string.Join(", ", new[] { Street.City.Name, Street.Name, HouseNumber, Apartments.FirstOrDefault()?.Number }.Where(s => !string.IsNullOrWhiteSpace(s))).Trim();
 }

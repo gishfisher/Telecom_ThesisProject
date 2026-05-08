@@ -6,9 +6,11 @@
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Border Padding="10" Margin="10" 
+
+    <Border Padding="10"
             CornerRadius="10"
             Background="White">
+        
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -35,9 +37,8 @@
                     <ui:Button Icon="{ui:SymbolIcon Delete24}" 
                                Command="{Binding DeleteCommand}" 
                                Margin="0,0,5,0"/>
-                    <ui:Button Icon="{ui:SymbolIcon ArrowClockwise24}" 
-                               Command="{Binding RefreshCommand}" 
-                               Margin="0,0,5,0"/>
+
+                    <Separator Margin="5,2"/>
                     
                     <ui:TextBox PlaceholderText="Поиск по имени или IP" Icon="{ui:SymbolIcon Search24}" Width="300" 
                                 Margin="5,0" Padding="5"
@@ -52,7 +53,7 @@
                              IsReadOnly="True">
                     <ui:DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                        <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="2*"/>
+                        <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="*"/>
                         <DataGridTextColumn Header="IP" Binding="{Binding IpAddress}" Width="*"/>
                         <DataGridTextColumn Header="Тип" Binding="{Binding DeviceType.TypeName}" Width="*"/>
                         <DataGridTextColumn Header="Родитель" Binding="{Binding ParentDevice.Name}" Width="*"/>

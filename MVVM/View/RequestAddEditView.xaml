@@ -4,117 +4,147 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              mc:Ignorable="d" 
-             d:DesignHeight="550" d:DesignWidth="800"
-             Background="#FFFFFF">
+             d:DesignHeight="500
+             " d:DesignWidth="800">
 
-    <Border Margin="10">
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-            <Grid Margin="15">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+    <Border Padding="10" 
+            CornerRadius="10" 
+            Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-                <Label Content="{Binding PageTitle}"
-                       FontSize="14pt"
-                       Padding="5"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}"
+                           Command="{Binding CancelCommand}"
+                           Margin="0,0,5,0"
+                           Padding="10"/>
 
-                <DockPanel Grid.Row="1">
-                    <Button Content="Назад"
-                            Command="{Binding CancelCommand}"/>
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="Добавить заявку"
-                                Cursor="Hand"
-                                Command="{Binding SaveCommand}">
-                        </Button>
+                <ui:Button Icon="{ui:SymbolIcon Save16}"
+                           Command="{Binding SaveCommand}"
+                           Padding="10"
+                           Margin="0,0,5,0"
+                           Appearance="Secondary"/>
 
-                        <Button Content="Редактировать заявку"
-                                Cursor="Hand"
-                                Command="{Binding SaveCommand}">
-                        </Button>
+                <Separator Margin="5,2" Grid.Column="1"/>
+
+                <ui:TextBlock Text="{Binding PageTitle, FallbackValue=Заявка}"
+                              FontTypography="Subtitle"
+                              VerticalAlignment="Center"/>
+            </StackPanel>
+            
+            <ui:CardExpander Grid.Row="1" VerticalAlignment="Top"
+                             IsExpanded="True" Padding="10">
+
+                <ui:CardExpander.Header>
+                    <ui:TextBlock FontTypography="BodyStrong">
+                        Общая информация
+                    </ui:TextBlock>
+                </ui:CardExpander.Header>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="1" Margin="0,0,15,10">
+                        <Label Content="Статус"/>
+                        <ComboBox ItemsSource="{Binding Statuses}"
+                                  DisplayMemberPath="Name"
+                                  SelectedValuePath="Id"
+                                  SelectedValue="{Binding Request.StatusId, Mode=TwoWay}"
+                                  Grid.Column="1"/>
                     </StackPanel>
-                </DockPanel>
 
-                <StackPanel Grid.Row="3" HorizontalAlignment="Left">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="350"/>
-                            <ColumnDefinition Width="350"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                    <StackPanel Grid.Column="0" Grid.Row="2">
+                        <Grid Margin="0,0,15,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="1.25*"/>
+                            </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Row="0" Margin="0,0,15,10">
-                            <Label Content="Статус"/>
-                            <ComboBox ItemsSource="{Binding Statuses}"
-                                      DisplayMemberPath="Name"
-                                      SelectedValuePath="Id"
-                                      SelectedValue="{Binding Request.StatusId, Mode=TwoWay}"
-                                      Grid.Column="1"/>
-                        </StackPanel>
+                            <StackPanel  Grid.Column="0" Grid.Row="0">
+                                <Label Content="Номер заявки"/>
+                                <TextBox IsReadOnly="True"
+                                         Margin="0,0,15,0"
+                                         Text="{Binding Request.Id, StringFormat=\{0:D4\}}"/>
+                            </StackPanel>
 
-                        <StackPanel Grid.Column="0" Grid.Row="1">
-                            <Grid Margin="0,0,15,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="1.25*"/>
-                                </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="1">
+                                <Label Content="Дата"/>
+                                <TextBox IsReadOnly="True"
+                                         Text="{Binding Request.CreatedAt, StringFormat=dd.MM.yyyy HH:mm}"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
 
-                                <StackPanel  Grid.Column="0" Grid.Row="0">
-                                    <Label Content="Номер заявки"/>
-                                    <TextBox IsReadOnly="True"
-                                             Margin="0,0,15,0"
-                                             Text="{Binding Request.Id, StringFormat=\{0:D4\}}"/>
-                                </StackPanel>
+                    <StackPanel Grid.Column="0" Grid.Row="3" Margin="0,0,15,0">
+                        <Grid>
 
-                                <StackPanel Grid.Column="1">
-                                    <Label Content="Дата"/>
-                                    <TextBox IsReadOnly="True"
-                                             Text="{Binding Request.CreatedAt, StringFormat=dd.MM.yyyy HH:mm}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="0" Grid.Row="2" Margin="0,0,15,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
                             <Label Content="Клиент"/>
                             <ComboBox ItemsSource="{Binding Clients}"
+                                      Grid.Row="1"
                                       DisplayMemberPath="GetFullName"
                                       SelectedValuePath="Id"
-                                      SelectedValue="{Binding Request.ClientId, Mode=TwoWay}"/>
-                        </StackPanel>
+                                      SelectedValue="{Binding Request.ClientId, Mode=TwoWay}"
+                                      Margin="0,0,5,0"/>
+                            
+                            <ui:Button Grid.Column="1" Grid.Row="1"
+                                       Command="{Binding AddSnmpProfileCommand}"
+                                       Padding="9">
+                                <ui:Button.Icon>
+                                    <ui:SymbolIcon Symbol="Add24" Foreground="Green"/>
+                                </ui:Button.Icon>
+                            </ui:Button>
+                        </Grid>
+                        
+                    </StackPanel>
 
-                        <StackPanel Grid.Column="1" Grid.Row="1">
-                            <Label Content="Тип обращения"/>
-                            <ComboBox ItemsSource="{Binding RequestTypes}"
-                                      SelectedValue="{Binding Request.TypeId, Mode=TwoWay}"
-                                      DisplayMemberPath="Name"
-                                      SelectedValuePath="Id" />
-                        </StackPanel>
+                    <StackPanel Grid.Column="1" Grid.Row="2">
+                        <Label Content="Тип заявки"/>
+                        <ComboBox ItemsSource="{Binding RequestTypes}"
+                                          SelectedValue="{Binding Request.TypeId, Mode=TwoWay}"
+                                          DisplayMemberPath="Name"
+                                          SelectedValuePath="Id" />
+                    </StackPanel>
 
-                        <StackPanel Grid.Column="1" Grid.Row="2">
-                            <Label Content="Назначенный сотрудник"/>
-                            <ComboBox ItemsSource="{Binding Employees}"
-                                      DisplayMemberPath="GetFullName"
-                                      SelectedValuePath="Id"
-                                      SelectedValue="{Binding Request.EmployeeId, Mode=TwoWay}"/>
-                        </StackPanel>
+                    <StackPanel Grid.Column="1" Grid.Row="3">
+                        <Label Content="Ответственный"/>
+                        <ComboBox ItemsSource="{Binding Employees}"
+                                          DisplayMemberPath="GetFullName"
+                                          SelectedValuePath="Id"
+                                          SelectedValue="{Binding Request.EmployeeId, Mode=TwoWay}"/>
+                    </StackPanel>
 
-                        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Margin="0,8,0,0">
-                            <Label Content="Описание"/>
-                            <TextBox TextWrapping="Wrap"
-                                     Text="{Binding Request.Description}"
-                                     Height="80"/>
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-            </Grid>
-        </ScrollViewer>
+                    <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" Margin="0,8,0,0">
+                        <Label Content="Дополнительная информация"/>
+                        <TextBox TextWrapping="Wrap"
+                                         Text="{Binding Request.Description}"
+                                         Height="80"/>
+                    </StackPanel>
+                </Grid>
+            </ui:CardExpander>
+        </Grid>
     </Border>
 </UserControl>

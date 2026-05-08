@@ -12,7 +12,6 @@ namespace Telecom_ThesisProject.Services
         public void AddClient(Client client)
         {
             ArgumentNullException.ThrowIfNull(client);
-            //DetachNavigations(client);
 
             using (var db = new TelecomDbContext())
             {
@@ -60,12 +59,5 @@ namespace Telecom_ThesisProject.Services
                        .ToList();
             }
         }
-
-        // === Helpers ===
-
-        //private static void DetachNavigations(Client client)
-        //{
-        //    client.Address = null!;
-        //}
     }
 }
