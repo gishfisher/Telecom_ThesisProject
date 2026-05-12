@@ -28,8 +28,8 @@ class NetworkDeviceViewModel : ObservableObject
         }
     }
 
-    private NetworkDevice? _selectedDevice;
-    public NetworkDevice? SelectedDevice
+    private NetworkDevice _selectedDevice;
+    public NetworkDevice SelectedDevice
     {
         get => _selectedDevice;
         set 
@@ -66,9 +66,10 @@ class NetworkDeviceViewModel : ObservableObject
 
     public NetworkDeviceViewModel()
     {
-        Devices = new ObservableCollection<NetworkDevice>();
         _networkDeviceService = new NetworkDeviceService();
         _messageService = new MessageService();
+       
+        Devices = new ObservableCollection<NetworkDevice>();
 
         LoadDevices();
 
@@ -81,17 +82,21 @@ class NetworkDeviceViewModel : ObservableObject
     private void DeleteDevice()
     {
         if (SelectedDevice == null) return;
-        try
-        {
-            _networkDeviceService.RemoveDevice(SelectedDevice);
-        }
-        catch (Exception ex)
-        {
-            _messageService.Show("Невозможно удалить устройство: " + ex.Message);
-            return;
-        }
 
-        Refresh();
+        if (_messageService.Confirm($"Удалить устройство №{SelectedDevice.Id}, {SelectedDevice.Name} - {SelectedDevice.IpAddress}?"))
+        {
+            try
+            {
+                _networkDeviceService.RemoveDevice(SelectedDevice);
+            }
+            catch (Exception ex)
+            {
+                _messageService.ShowError(ex.Message);
+                return;
+            }
+
+            Refresh();
+        }
     }
 
     private void LoadDevices()

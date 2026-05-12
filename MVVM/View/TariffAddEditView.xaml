@@ -13,7 +13,7 @@
             CornerRadius="10"
             Background="White">
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Disabled">
 
             <Grid>
@@ -35,7 +35,7 @@
                     <ui:Button Icon="{ui:SymbolIcon Save20}"
                                Command="{Binding SaveCommand}"
                                Padding="10"
-                               ToolTip="Сохранить"/>
+                               ToolTip="Сохранить" Appearance="Primary"/>
 
                     <Separator Margin="10,2"/>
 
@@ -106,21 +106,28 @@
                             </StackPanel>
                         </ui:CardExpander.Header>
 
-                        <StackPanel Margin="0,10,0,0">
-
+                        <StackPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Label Content="Услуги"/>
 
                                 <ComboBox Grid.Column="0"
+                                          Grid.Row="1"
                                           Height="35"
                                           ItemsSource="{Binding AvailableServices}"
                                           SelectedItem="{Binding SelectedServiceToAdd}"
                                           DisplayMemberPath="Name"/>
 
                                 <ui:Button Grid.Column="1"
+                                           Grid.Row="1"
                                            Margin="10,0,0,0"
                                            Padding="10,5"
                                            Icon="{ui:SymbolIcon Add24}"

@@ -2,17 +2,19 @@ using System.Collections.ObjectModel;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.MVVM.Model;
 using Telecom_ThesisProject.Services;
+using Telecom_ThesisProject.Utilities.Interfaces;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel;
 
 class ConnectionsViewModel : ObservableObject
 {
-    private ConnectionService _connectionService;
+    private readonly ConnectionService _connectionService;
+    private readonly IMessageService _messageService;
 
     #region Properties
 
-    private Connection? _selectedConnection = null;
-    public Connection? SelectedConnection
+    private Connection _selectedConnection;
+    public Connection SelectedConnection
     {
         get => _selectedConnection;
         set
@@ -34,9 +36,10 @@ class ConnectionsViewModel : ObservableObject
 
     public ConnectionsViewModel()
     {
-        Connections = new ObservableCollection<Connection>();
-
         _connectionService = new ConnectionService();
+        _messageService = new MessageService();
+
+        Connections = new ObservableCollection<Connection>();
 
         LoadData();
 
@@ -47,10 +50,19 @@ class ConnectionsViewModel : ObservableObject
 
     public void DeleteSelected()
     {
-        if (SelectedConnection != null)
+        if (SelectedConnection == null) return;
+
+        if (_messageService.Confirm($"Удалить подключение №{SelectedConnection.Id}, {SelectedConnection.Client.GetFullNameIn}?"))
         {
-            _connectionService.DeleteConnection(SelectedConnection);
-            LoadData();
+            try
+            {
+                _connectionService.DeleteConnection(SelectedConnection);
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                _messageService.ShowError(ex.Message);                
+            }
         }
     }
 

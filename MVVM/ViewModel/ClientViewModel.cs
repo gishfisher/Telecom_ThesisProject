@@ -1,4 +1,3 @@
-using Telecom_ThesisProject.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,12 +9,15 @@ using Telecom.Utilities;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.Data;
 using Telecom_ThesisProject.MVVM.Model;
+using Telecom_ThesisProject.Services;
+using Telecom_ThesisProject.Utilities.Interfaces;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel
 {
     class ClientViewModel : ObservableObject
     {
         private readonly ClientService _clientService;
+        private readonly IMessageService _messageService;
 
         public ObservableCollection<Client> Clients { get; set; }
 
@@ -31,8 +33,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             }
         }
 
-        private Client? _selectedClient = null;
-        public Client? SelectedClient
+        private Client _selectedClient;
+        public Client SelectedClient
         {
             get => _selectedClient;
             set { _selectedClient = value; OnPropertyChanged(); }
@@ -46,20 +48,21 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         public ClientViewModel()
         {
-            Clients = new ObservableCollection<Client>();
-
             _clientService = new ClientService();
+            _messageService = new MessageService();
+
+            Clients = new ObservableCollection<Client>();
 
             LoadClients();
 
             FilterClients();
 
             AddCommand = new RelayCommand(
-                o => Navigate.Invoke(null),
+                o => Navigate?.Invoke(null),
                 o => !CurrentSession.IsSysAdmin);
 
             EditCommand = new RelayCommand(
-                o => Navigate.Invoke(SelectedClient),
+                o => Navigate?.Invoke(SelectedClient),
                 o => SelectedClient != null && !CurrentSession.IsSysAdmin);
 
             DeleteCommand = new RelayCommand(
@@ -95,10 +98,22 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         private void DeleteClient()
         {
             if (SelectedClient == null) return;
-            _clientService.RemoveClient(SelectedClient);
-            LoadClients();
-            FilterClients();
+
+            if (_messageService.Confirm($"Удалить клиента {SelectedClient.GetFullName}?"))
+            {
+                try
+                {
+                    _clientService.RemoveClient(SelectedClient);
+                    LoadClients();
+                    FilterClients();
+                }
+                catch (Exception ex) 
+                {
+                    _messageService.ShowError(ex.Message);
+                }
+            }
         }
+
         public void Refresh()
         {
             LoadClients();

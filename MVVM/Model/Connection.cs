@@ -29,11 +29,5 @@ public partial class Connection
 
     public virtual Tariff Tariff { get; set; } = null!;
 
-    public string GetConnectionString
-    {
-        get
-        {
-            return $"Подключение №{Id}, {Client.GetFullNameIn}";
-        }
-    }
+    public string GetConnectionString => $"Подключение №{Id}, {Client.GetFullNameIn}";
 }

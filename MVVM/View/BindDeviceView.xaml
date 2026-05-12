@@ -13,7 +13,7 @@
             CornerRadius="10"
             Background="White">
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Disabled">
 
             <Grid>
@@ -35,7 +35,7 @@
                     <ui:Button Icon="{ui:SymbolIcon Link24}"
                                Command="{Binding BindCommand}"
                                Padding="10"
-                               ToolTip="Привязать оборудование"/>
+                               ToolTip="Привязать оборудование" Appearance="Primary"/>
 
                     <Separator Margin="10,2"/>
 

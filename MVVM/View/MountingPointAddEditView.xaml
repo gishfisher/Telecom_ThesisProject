@@ -13,7 +13,7 @@
             CornerRadius="10"
             Background="White">
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Disabled">
 
             <Grid>
@@ -35,7 +35,7 @@
                     <ui:Button Icon="{ui:SymbolIcon Save20}"
                                Command="{Binding SaveCommand}"
                                Padding="10"
-                               ToolTip="Сохранить"/>
+                               ToolTip="Сохранить" Appearance="Primary"/>
 
                     <Separator Margin="10,2"/>
 
@@ -60,7 +60,7 @@
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <!--<RowDefinition Height="Auto"/>-->
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
@@ -78,25 +78,25 @@
                                       SelectedValuePath="Id"
                                       SelectedValue="{Binding SelectedPointTypeId}"/>
 
-                            <ui:TextBlock Grid.Row="1"
+                            <!--<ui:TextBlock Grid.Row="1"
                                           Text="Тип точки размещения"
                                           Margin="0,12,0,0"
-                                          VerticalAlignment="Center"/>
+                                          VerticalAlignment="Center"/>-->
 
-                            <ComboBox Grid.Row="1"
+                            <!--<ComboBox Grid.Row="1"
                                       Grid.Column="1"
                                       Margin="0,12,0,0"
                                       ItemsSource="{Binding PlacementTypes}"
                                       DisplayMemberPath="Name"
                                       SelectedValuePath="Id"
-                                      SelectedValue="{Binding SelectedPlacementTypeId}"/>
+                                      SelectedValue="{Binding SelectedPlacementTypeId}"/>-->
 
-                            <ui:TextBlock Grid.Row="2"
+                            <ui:TextBlock Grid.Row="1"
                                           Text="Описание расположения"
                                           Margin="0,12,0,0"
                                           VerticalAlignment="Top"/>
 
-                            <ui:TextBox Grid.Row="2"
+                            <ui:TextBox Grid.Row="1"
                                         Grid.Column="1"
                                         Margin="0,12,0,0"
                                         Text="{Binding LocationDescription,

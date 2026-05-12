@@ -27,7 +27,7 @@
                     <ui:Button Icon="{ui:SymbolIcon Add24}" 
                                Content="Добавить устройство" 
                                Command="{Binding AddCommand}" 
-                               Margin="5,0"/>
+                               Margin="5,0" Appearance="Primary"/>
 
                     <Separator Margin="5,2"/>
 
@@ -52,12 +52,12 @@
                              AutoGenerateColumns="False"
                              IsReadOnly="True">
                     <ui:DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                        <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="*"/>
-                        <DataGridTextColumn Header="IP" Binding="{Binding IpAddress}" Width="*"/>
-                        <DataGridTextColumn Header="Тип" Binding="{Binding DeviceType.TypeName}" Width="*"/>
-                        <DataGridTextColumn Header="Родитель" Binding="{Binding ParentDevice.Name}" Width="*"/>
-                        <DataGridTemplateColumn Header="Точка монтажа" Width="2*">
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="100"/>
+                        <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="1.25*"/>
+                        <DataGridTextColumn Header="IP" Binding="{Binding IpAddress}" Width="0.8*"/>
+                        <DataGridTextColumn Header="Тип" Binding="{Binding DeviceType.TypeName}" Width="0.8*"/>
+                        <DataGridTextColumn Header="Родитель" Binding="{Binding ParentDevice.Name}" Width="1.25*"/>
+                        <DataGridTemplateColumn Header="Точка монтажа" Width="1.5*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock x:Name="TxtBlock" TextAlignment="Center" Text="{Binding MountingPoint.Address.GetFullAddress}"/>

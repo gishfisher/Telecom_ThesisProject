@@ -76,7 +76,14 @@ class NetworkDeviceService
         using (var db = new TelecomDbContext())
         {
             var existing = db.NetworkDevices
+                .Include(d => d.DevicePorts)
+                    .ThenInclude(d => d.Connection)
                 .FirstOrDefault(d => d.Id == device.Id) ?? throw new Exception("Устройство не найдено");
+
+            bool hasActiveClients = existing.DevicePorts
+                .Any(p => p.Connection != null);
+            if (hasActiveClients)
+                throw new InvalidOperationException("Нельзя удалить устройство: на нем есть активные подключения клиентов!");
 
             var children = db.NetworkDevices.Where(d => d.ParentDeviceId == existing.Id).ToList();
             foreach (var c in children)
@@ -94,6 +101,11 @@ class NetworkDeviceService
     {
         using (var db = new TelecomDbContext())
         {
+            var existing = db.NetworkDevices
+                .Include(t => t.DevicePorts)
+                .FirstOrDefault(d => d.Id == id)
+                ?? throw new Exception("Устройство не найдено");
+
             return db.NetworkDevices
                 .AsNoTracking()
                 .Include(d => d.MountingPoint)
@@ -106,7 +118,6 @@ class NetworkDeviceService
                 .Include(d => d.DeviceType)
                 .Include(d => d.SnmpProfile)
                 .Include(d => d.ParentDevice)
-                
                 .FirstOrDefault(d => d.Id == id);
         }
     }
@@ -198,6 +209,7 @@ class NetworkDeviceService
         using (var db = new TelecomDbContext())
         {
             return db.DevicePorts
+                .AsNoTracking()
                 .Where(p => p.DeviceId == deviceId)
                 .Include(p => p.Connection)
                     .ThenInclude(c => c.Client)
@@ -214,6 +226,8 @@ class NetworkDeviceService
             return db.DevicePorts
                 .Include(p => p.Connection)
                     .ThenInclude(c => c.Client)
+                .Include(p => p.Device)
+                    .ThenInclude(p => p.MountingPoint)
                 .FirstOrDefault(p => p.Id == portId);
         }
     }

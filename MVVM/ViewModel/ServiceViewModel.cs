@@ -8,12 +8,14 @@ using Telecom.Utilities;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.MVVM.Model;
 using Telecom_ThesisProject.Services;
+using Telecom_ThesisProject.Utilities.Interfaces;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel
 {
     class ServiceViewModel : ObservableObject
     {
         private readonly ServiceService _serviceService;
+        private readonly IMessageService _messageService;
 
         public ObservableCollection<Service> Service { get; set; }
 
@@ -44,9 +46,10 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         public ServiceViewModel()
         {
-            Service = new ObservableCollection<Service>();
-
             _serviceService = new ServiceService();
+            _messageService = new MessageService();
+
+            Service = new ObservableCollection<Service>();
 
             LoadServices();
             FilterServices();
@@ -93,9 +96,21 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         private void DeleteService()
         {
             if (SelectedService == null) return;
-            _serviceService.RemoveService(SelectedService);
-            LoadServices();
-            FilterServices();
+            
+            if (_messageService.Confirm($"Удалить услугу №{SelectedService.Id}, {SelectedService.Name}?"))
+            {
+                try
+                {
+                    _serviceService.RemoveService(SelectedService);
+                    LoadServices();
+                    FilterServices();
+
+                }
+                catch (Exception ex)
+                {
+                    _messageService.ShowError(ex.Message);
+                }
+            }
         }
 
         public void Refresh()

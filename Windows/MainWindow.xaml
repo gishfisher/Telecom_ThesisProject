@@ -31,7 +31,7 @@
                 <StackPanel Orientation="Horizontal" 
                             VerticalAlignment="Center"
                             Margin="5">
-                    
+
                     <Image Source="/Assets/logo_ic.png"
                            Width="25" 
                            Height="25" 
@@ -49,8 +49,6 @@
             </ui:TitleBar.Header>
         </ui:TitleBar>
 
-
-
         <view:TopMenuView Grid.Row="1" HorizontalAlignment="Stretch"/>
 
         <ContentControl Grid.Row="2" Grid.ColumnSpan="2"
@@ -59,6 +57,7 @@
                         Content="{Binding CurrentView}"/>
 
         <Grid Grid.Row="0" Grid.ColumnSpan="2" Panel.ZIndex="-1" Background="#FFFFFF"/>
-        <Grid Grid.Row="1" Grid.ColumnSpan="2" Panel.ZIndex="-1" Background="#2C3E50"/>
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" Panel.ZIndex="-1" Background="{DynamicResource AccentFillColorDefaultBrush}"/>
+        <ContentPresenter x:Name="RootContentDialogPresenter" Grid.RowSpan="3" />
     </Grid>
 </ui:FluentWindow>  

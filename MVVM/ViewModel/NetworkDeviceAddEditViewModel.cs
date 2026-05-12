@@ -16,6 +16,7 @@ class NetworkDeviceAddEditViewModel : ObservableObject
 {
     private readonly NetworkDeviceService _networkDeviceService;
     private readonly INetworkDevicePoller _poller;
+    private readonly IMessageService _messageService;
 
     #region Properties
 
@@ -157,6 +158,7 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         // Инициализация сервисов
         _networkDeviceService = new NetworkDeviceService();
         _poller = new NetworkDevicePoller();
+        _messageService = new MessageService();
 
         // Загрузить актуальные данные устройства из БД
         var sourceDevice = device?.Id > 0
@@ -219,10 +221,12 @@ class NetworkDeviceAddEditViewModel : ObservableObject
             if (Device.Id == 0)
             {
                 _networkDeviceService.AddDevice(Device);
+                _messageService.Show("Новый образец оборудования успешно добавлен в систему.");
             }
             else
             {
                 _networkDeviceService.EditDevice(Device);
+                _messageService.Show("Образец оборудования успешно отредактирован.");
             }
 
             GoBack?.Invoke();

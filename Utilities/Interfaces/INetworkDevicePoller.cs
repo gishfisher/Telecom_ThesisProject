@@ -10,6 +10,7 @@ public interface INetworkDevicePoller
     NetworkDevicePollResult PollPing(NetworkDevice device);
     NetworkDevicePollResult PollSnmpUpTime(NetworkDevice device);
     NetworkDevicePollResult GetSnmpPorts(NetworkDevice device);
+    bool TryProbeSshPort(string ipAddress, out string message);
 
     // Асинхронные методы
     Task<NetworkDevicePollResult> PollSnmpAsync(NetworkDevice device);
@@ -18,5 +19,4 @@ public interface INetworkDevicePoller
     Task<NetworkDevicePollResult> GetSnmpPortsAsync(NetworkDevice device);
     Task<NetworkDevicePollResult> ProbeSshPortAsync(NetworkDevice device);
 
-    bool TryProbeSshPort(string ipAddress, out string message);
 }

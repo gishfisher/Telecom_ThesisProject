@@ -8,12 +8,14 @@ using Telecom.Utilities;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.MVVM.Model;
 using Telecom_ThesisProject.Services;
+using Telecom_ThesisProject.Utilities.Interfaces;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel
 {
     class RequestViewModel : ObservableObject
     {
         private readonly RequestService _requestService;
+        private readonly IMessageService _messageService;
 
         #region Properties
 
@@ -29,8 +31,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             }
         }
 
-        private Request? _selectedRequest = null;
-        public Request? SelectedRequest
+        private Request _selectedRequest = null;
+        public Request SelectedRequest
         {
             get => _selectedRequest;
             set { _selectedRequest = value; OnPropertyChanged(); }
@@ -63,6 +65,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public RequestViewModel()
         {
             _requestService = new RequestService();
+            _messageService = new MessageService();
 
             Requests = new ObservableCollection<Request>();
 
@@ -103,10 +106,21 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         private void DeleteRequest()
         {
             if (SelectedRequest == null) return;
-            _requestService.RemoveRequest(SelectedRequest);
+
+            if (_messageService.Confirm($"Удалить заявку №{SelectedRequest.Id} от {SelectedRequest.CreatedAt}?"))
+            {
+                try
+                {
+                    _requestService.RemoveRequest(SelectedRequest);
            
-            LoadRequests();
-            FilterRequests();
+                    LoadRequests();
+                    FilterRequests();
+                }
+                catch (Exception ex)
+                {
+                    _messageService.ShowError(ex.Message);
+                }
+            }
         }
 
         public void Refresh()

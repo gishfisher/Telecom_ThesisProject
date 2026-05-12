@@ -25,7 +25,7 @@
                     <ui:Button Icon="{ui:SymbolIcon Add24}" 
                                Content="Добавить подключение" 
                                Command="{Binding AddCommand}" 
-                               Margin="5,0"/>
+                               Margin="5,0" Appearance="Primary"/>
                     
                     <Separator Margin="5,2"/>
 
@@ -45,11 +45,11 @@
                           IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
-                        <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullName}" Width="2*"/>
+                        <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullNameIn}" Width="2*"/>
                         <DataGridTextColumn Header="Адрес" Binding="{Binding Apartment.Address.GetFullAddressWithApartment}" Width="2*"/>
                         <DataGridTextColumn Header="Статический IP" Binding="{Binding StaticIp}" Width="2*"/>
                         <DataGridTextColumn Header="Порт" Binding="{Binding Port.PortName}" Width="1.5*"/>
-                        <DataGridTextColumn Header="Устройство" Binding="{Binding NetworkDevice.Name}" Width="2*"/>
+                        <DataGridTextColumn Header="Устройство" Binding="{Binding Port.Device.Name}" Width="2*"/>
                         <DataGridTextColumn Header="Тариф" Binding="{Binding Tariff.Name}" Width="*"/>
                     </DataGrid.Columns>
 

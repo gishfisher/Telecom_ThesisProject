@@ -61,10 +61,10 @@
 
             <ui:Card Grid.Row="1">
                 <StackPanel Orientation="Horizontal">
-                    <ui:Button Icon="{ui:SymbolIcon Add24}" Content="Город" Command="{Binding AddCityCommand}" Margin="5,0"/>
-                    <ui:Button Icon="{ui:SymbolIcon Location12}" Content="Улица" Command="{Binding AddStreetCommand}" Margin="0,0,5,0"/>
-                    <ui:Button Icon="{ui:SymbolIcon HomeAdd24}" Content="Дом" Command="{Binding AddAddressCommand}" Margin="0,0,5,0"/>
-                    <ui:Button Icon="{ui:SymbolIcon Door20}" Content="Квартира" Command="{Binding AddApartmentCommand}" Margin="0,0,5,0"/>
+                    <ui:Button Icon="{ui:SymbolIcon Add24}" Content="Город" Command="{Binding AddCityCommand}" Margin="5,0" Appearance="Primary"/>
+                    <ui:Button Icon="{ui:SymbolIcon Location12}" Content="Улица" Command="{Binding AddStreetCommand}" Margin="0,0,5,0" Appearance="Primary"/>
+                    <ui:Button Icon="{ui:SymbolIcon HomeAdd24}" Content="Дом" Command="{Binding AddAddressCommand}" Margin="0,0,5,0" Appearance="Primary"/>
+                    <ui:Button Icon="{ui:SymbolIcon Door20}" Content="Квартира" Command="{Binding AddApartmentCommand}" Margin="0,0,5,0" Appearance="Primary"/>
 
                     <Separator Margin="5,2"/>
 

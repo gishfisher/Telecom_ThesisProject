@@ -25,7 +25,7 @@
 
                 <ui:Button Icon="{ui:SymbolIcon Save20}"
                            Command="{Binding SaveCommand}"
-                           Padding="10"/>
+                           Padding="10" Appearance="Primary"/>
 
                 <Separator Margin="10,2"/>
 

@@ -1,7 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Net;
 using Telecom_ThesisProject.Data;
 using Telecom_ThesisProject.MVVM.Model;
 
@@ -39,16 +40,27 @@ namespace Telecom_ThesisProject.Services
         public void RemoveCity(City city)
         {
             ArgumentNullException.ThrowIfNull(city);
-            using (var db = new TelecomDbContext())
-            {
-                var existing = db.Cities
-                    .Include(c => c.Streets).ThenInclude(s => s.Addresses)
-                    .FirstOrDefault(c => c.Id == city.Id)
-                    ?? throw new Exception("Город не найден");
+            using var db = new TelecomDbContext();
 
-                db.Cities.Remove(existing);
-                db.SaveChanges();
-            }
+            var existing = db.Cities
+                .Include(c => c.Streets)
+                    .ThenInclude(s => s.Addresses)
+                        .ThenInclude(a => a.Apartments)
+                            .ThenInclude(ap => ap.Connections)
+                .FirstOrDefault(c => c.Id == city.Id)
+                ?? throw new Exception("Город не найден");
+
+            bool hasClients = existing.Streets
+                .SelectMany(s => s.Addresses)
+                .SelectMany(a => a.Apartments)
+                .SelectMany(ap => ap.Connections)
+                .Any();
+
+            if (hasClients)
+                throw new InvalidOperationException("В городе есть активные подключения.");
+
+            db.Cities.Remove(existing);
+            db.SaveChanges();
         }
 
         // === Getters ===
@@ -60,8 +72,9 @@ namespace Telecom_ThesisProject.Services
             {
                 return db.Cities
                     .Include(c => c.Streets)
-                    .ThenInclude(s => s.Addresses)
-                    .ThenInclude(a => a.Apartments)
+                        .ThenInclude(s => s.Addresses)
+                            .ThenInclude(a => a.Apartments)
+                                .ThenInclude(a => a.Connections)
                     .OrderBy(c => c.Name)
                     .ToList();
             }
@@ -116,17 +129,27 @@ namespace Telecom_ThesisProject.Services
         public void RemoveStreet(Street street)
         {
             ArgumentNullException.ThrowIfNull(street);
-            using (var db = new TelecomDbContext())
-            {
-                var existing = db.Streets
-                    .Include(s => s.Addresses)
-                    .FirstOrDefault(s => s.Id == street.Id)
-                    ?? throw new Exception("Улица не найдена");
 
-                db.Streets.Remove(existing);
-                db.SaveChanges();
-            }
+            using var db = new TelecomDbContext();
+            var existing = db.Streets
+                .Include(s => s.Addresses)
+                    .ThenInclude(a => a.Apartments)
+                        .ThenInclude(ap => ap.Connections)
+                .FirstOrDefault(s => s.Id == street.Id)
+                ?? throw new Exception("Улица не найдена");
+
+            bool hasClients = existing.Addresses
+                .SelectMany(a => a.Apartments)
+                .SelectMany(ap => ap.Connections)
+                .Any();
+
+            if (hasClients)
+                throw new InvalidOperationException("На данной улице есть подключенные клиенты.");
+
+            db.Streets.Remove(existing);
+            db.SaveChanges();
         }
+
 
         // === Getters ===
 
@@ -173,21 +196,23 @@ namespace Telecom_ThesisProject.Services
         public void RemoveAddress(Address address)
         {
             ArgumentNullException.ThrowIfNull(address);
-            using (var db = new TelecomDbContext())
-            {
-                var existing = db.Addresses
-                    .FirstOrDefault(a => a.Id == address.Id)
-                    ?? throw new Exception("Адрес не найден");
 
-                // хз
+            using var db = new TelecomDbContext();
+            var existing = db.Addresses
+                .Include(a => a.Apartments)
+                    .ThenInclude(ap => ap.Connections)
+                .FirstOrDefault(a => a.Id == address.Id)
+                ?? throw new Exception("Адрес не найден");
 
-                bool hasClients = db.Clients.Any(c => c.Connections.FirstOrDefault().ApartmentId == existing.Apartments.FirstOrDefault().Id);
-                if (hasClients)
-                    throw new InvalidOperationException("Есть клиенты, привязанные к адресу.");
+            bool hasClients = existing.Apartments
+                .SelectMany(ap => ap.Connections)
+                .Any();
 
-                db.Addresses.Remove(existing);
-                db.SaveChanges();
-            }
+            if (hasClients)
+                throw new InvalidOperationException("На адресе есть подключенные клиенты.");
+
+            db.Addresses.Remove(existing);
+            db.SaveChanges();
         }
 
         // === Getters ===
@@ -236,11 +261,14 @@ namespace Telecom_ThesisProject.Services
             ArgumentNullException.ThrowIfNull(apartment);
             using (var db = new TelecomDbContext())
             {
-                var existing = db.Apartments.FirstOrDefault(a => a.Id == apartment.Id)
+                var existing = db.Apartments.Include(c => c.Connections)
+                                            .FirstOrDefault(a => a.Id == apartment.Id)
                     ?? throw new Exception("Квартира не найдена");
-                bool hasClients = db.Clients.FirstOrDefault()?.Connections.Any(c => c.ApartmentId == existing.Id) ?? false;
+                
+                bool hasClients = existing.Connections.Any(c => c.ApartmentId == existing.Id);
                 if (hasClients)
                     throw new InvalidOperationException("Есть клиенты, привязанные к квартире.");
+
                 db.Apartments.Remove(existing);
                 db.SaveChanges();
             }
@@ -269,7 +297,7 @@ namespace Telecom_ThesisProject.Services
             }
         }
 
-        // Получить все квартиры по id улицы
+        // Проверить существует ли квартира
         public bool ApartamentIsExist(int addressId, string number)
         {
             using (var db = new TelecomDbContext())
@@ -306,8 +334,6 @@ namespace Telecom_ThesisProject.Services
                         .ThenInclude(s => s.City)
                     .Include(a => a.MountingPoints)
                         .ThenInclude(mp => mp.PointType)
-                    .Include(a => a.MountingPoints)
-                        .ThenInclude(mp => mp.SpotType)
                     .Include(a => a.MountingPoints)
                         .ThenInclude(mp => mp.NetworkDevices)
                             .ThenInclude(tp => tp.DeviceType)

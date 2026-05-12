@@ -56,7 +56,8 @@ namespace Telecom_ThesisProject.Services
             using (var db = new TelecomDbContext())
             {
                 return db.Clients
-                       .ToList();
+                    .Include(c => c.Connections)
+                    .ToList();
             }
         }
     }

@@ -8,12 +8,14 @@ using Telecom.Utilities;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.MVVM.Model;
 using Telecom_ThesisProject.Services;
+using Telecom_ThesisProject.Utilities.Interfaces;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel
 {
     class EmployeeViewModel : ObservableObject
     {
         private readonly EmployeeService _employeeService;
+        private readonly IMessageService _messageService;
 
         public ObservableCollection<Employee> Employee { get; set; }
 
@@ -44,9 +46,10 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         public EmployeeViewModel()
         {
-            Employee = new ObservableCollection<Employee>();
-
             _employeeService = new EmployeeService();
+            _messageService = new MessageService();
+            
+            Employee = new ObservableCollection<Employee>();
 
             LoadEmployees();
             FilterEmployees();
@@ -91,9 +94,21 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         private void DeleteEmployees()
         {
-            _employeeService.DeleteEmployee(SelectedEmployee);
-            LoadEmployees();
-            FilterEmployees();
+            if (SelectedEmployee == null) return;
+
+            if (_messageService.Confirm($"Удалить сотрудника {SelectedEmployee.GetFullName}?"))
+            {
+                try
+                {
+                    _employeeService.DeleteEmployee(SelectedEmployee);
+                    LoadEmployees();
+                    FilterEmployees();
+                }
+                catch (Exception ex) 
+                {
+                    _messageService.ShowError(ex.Message);
+                }
+            }    
         }
         public void Refresh()
         {

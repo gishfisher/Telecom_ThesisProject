@@ -26,4 +26,7 @@ public partial class Employee
 
     public string GetShortNameWithRole =>
         $"{LastName} {FirstName[0]}.{(string.IsNullOrEmpty(MiddleName) ? string.Empty : MiddleName[0].ToString() + ".")} {User?.Role.Name}";
+
+    public string GetFullNameIn =>
+    $"{LastName} {FirstName[0]}.{MiddleName?[0]}.";
 }

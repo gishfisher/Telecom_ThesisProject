@@ -82,8 +82,28 @@ namespace Telecom_ThesisProject.Services
             using (var db = new TelecomDbContext())
             {
                 return db.Connections
+                    .AsNoTracking()
+                    .AsQueryable()
+                    .Include(c => c.Port)
+                        .ThenInclude(c => c.Device)
+                    .Include(c => c.Apartment)
+                        .ThenInclude(c => c.Address)
+                            .ThenInclude(c => c.Street)
+                                .ThenInclude(c => c.City)
+                    .Include(c => c.Tariff)
                     .Where(c => c.ClientId == clientId)
                     .ToList();
+            }
+        }
+
+        public Connection GetConnectionById(int id)
+        {
+            using (var db = new TelecomDbContext())
+            {
+                var existing = db.Connections.FirstOrDefault(c => c.Id == id)
+                      ?? throw new Exception("Подключение не найдено");
+
+                return existing;
             }
         }
     }

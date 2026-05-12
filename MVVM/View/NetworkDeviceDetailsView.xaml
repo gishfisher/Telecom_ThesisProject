@@ -59,7 +59,8 @@
                 <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}" Command="{Binding GoBackCommand}"
                            Padding="10" Margin="0,0,5,0" ToolTip="Назад"/>
                 <ui:Button Icon="{ui:SymbolIcon Edit24}" Command="{Binding EditCommand}"
-                           Padding="10" Margin="0,0,5,0" ToolTip="Редактировать"/>
+                           Padding="10" Margin="0,0,5,0" ToolTip="Редактировать"
+                           Appearance="Primary"/>
                 <ui:Button Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding RefreshDeviceDetails}"
                            Padding="10" ToolTip="Обновить"/>
 

@@ -32,7 +32,7 @@
                     <ui:Button Icon="{ui:SymbolIcon Save16}"
                                Command="{Binding SaveCommand}"
                                Padding="10"
-                               Appearance="Secondary"/>
+                               Appearance="Primary"/>
                 </StackPanel>
 
                 <Separator Margin="5,2" Grid.Column="1"/>
@@ -43,27 +43,37 @@
                       VerticalAlignment="Center"/>
             </Grid>
 
-            <StackPanel Grid.Row="1">
-                <Label Content="Наименование"/>
-                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            <ui:CardExpander Grid.Row="1" VerticalAlignment="Top"
+                             IsExpanded="True" Padding="10">
 
-                <Label Content="Community-Строка"/>
-                <TextBox Text="{Binding CommunityString, UpdateSourceTrigger=PropertyChanged}"/>
+                <ui:CardExpander.Header>
+                    <ui:TextBlock FontTypography="BodyStrong">
+                        Общая информация
+                    </ui:TextBlock>
+                </ui:CardExpander.Header>
 
-                <Label Content="Порт"/>
-                <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"/>
+                <StackPanel Grid.Row="1">
+                    <Label Content="Наименование"/>
+                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <Label Content="Версия"/>
-                <ComboBox ItemsSource="{Binding SnmpVersions}"
-                              SelectedValuePath="Id"
-                              SelectedValue="{Binding SelectedSnmpVersionId}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding VersionName}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </StackPanel>
+                    <Label Content="Community-Строка"/>
+                    <TextBox Text="{Binding CommunityString, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Label Content="Порт"/>
+                    <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <Label Content="Версия"/>
+                    <ComboBox ItemsSource="{Binding SnmpVersions}"
+                                  SelectedValuePath="Id"
+                                  SelectedValue="{Binding SelectedSnmpVersionId}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding VersionName}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+            </ui:CardExpander>
         </Grid>
     </Border>
 </UserControl>

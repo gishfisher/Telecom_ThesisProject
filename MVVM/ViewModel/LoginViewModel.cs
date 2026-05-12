@@ -9,12 +9,14 @@ using Telecom.Utilities;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.MVVM.Model;
 using Telecom_ThesisProject.Services;
+using Telecom_ThesisProject.Utilities.Interfaces;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel
 {
     class LoginViewModel : ObservableObject
     {
         private readonly AuthService _authService;
+        private readonly IMessageService _messageService;
 
         public Action<User> OnLoginSuccess { get; set; }
 
@@ -38,16 +40,16 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public LoginViewModel()
         {
             _authService = new AuthService();
-            LoginCommand = new RelayCommand(
-                o => ExecuteLogin(o));
+            _messageService = new MessageService();
+
+            LoginCommand = new RelayCommand(o => ExecuteLogin(o));
         }
 
         private void ExecuteLogin(object parameter)
         {
             string password = null;
 
-            if (parameter is System.Windows.Controls.PasswordBox pb)
-                password = pb.Password;
+            if (parameter is PasswordBox pb) password = pb.Password;
             else if (parameter != null)
             {
                 var prop = parameter.GetType().GetProperty("Password");
@@ -57,6 +59,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             if (string.IsNullOrEmpty(password))
             {
                 ErrorMessage = "Введите пароль";
+                _messageService.ShowError(ErrorMessage);
                 return;
             }
 
@@ -69,6 +72,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             else
             {
                 ErrorMessage = "Неверный логин или пароль!";
+                _messageService.ShowError(ErrorMessage);
             }
         }
     }

@@ -59,6 +59,14 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding Request.Status.Name}" Value="Отменена">
+                    <Setter Property="Fill" Value="#EF4444"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#EF4444" BlurRadius="8" ShadowDepth="0" Opacity="0.6"/>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
@@ -83,7 +91,8 @@
                               Padding="10" Margin="0,0,5,0" ToolTip="Назад"/>
                    
                    <ui:Button Icon="{ui:SymbolIcon Edit24}" Command="{Binding EditCommand}"
-                              Padding="10" Margin="0,0,5,0" ToolTip="Редактировать"/>
+                              Padding="10" Margin="0,0,5,0" ToolTip="Редактировать"
+                              Appearance="Primary"/>
 
                     <Separator Margin="5,2" Grid.Column="1"/>
                    
@@ -141,6 +150,9 @@
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Request.Status.Name}" Value="Завершена">
                                                                 <Setter Property="Foreground" Value="#2ECC71"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Request.Status.Name}" Value="Отменена">
+                                                                <Setter Property="Foreground" Value="#EF4444"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -230,13 +242,14 @@
 
                                         <ui:TextBlock Text="Дополнительная информация"/>
 
-                                        <Border Grid.Row="1"
-                                            Margin="0,5,0,0" Padding="10"
-                                            CornerRadius="5" BorderThickness="1"
-                                            BorderBrush="#FFF0F0F0" Background="White"
-                                            HorizontalAlignment="Stretch">
+                                        <Border Background="#FAFAFA"
+                                                BorderBrush="#EEEEEE"
+                                                BorderThickness="1"
+                                                CornerRadius="5"
+                                                Padding="10"
+                                                Grid.Row="1">
 
-                                            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                            <ScrollViewer VerticalScrollBarVisibility="Hidden"
                                                       HorizontalScrollBarVisibility="Disabled"
                                                       MaxHeight="120">
 
@@ -315,11 +328,11 @@
                                            Icon="{ui:SymbolIcon PersonAvailable24}"
                                            Command="{Binding AssignedToRequestCommand}"/>
 
-                                <ui:Button Content="Печать акта" 
+                                <!--<ui:Button Content="Печать акта" 
                                            HorizontalAlignment="Stretch" 
                                            Margin="5,0,0,0"
                                            Icon="{ui:SymbolIcon Print24}"
-                                           Command="{Binding PrintDocumentCommand}"/>
+                                           Command="{Binding PrintDocumentCommand}"/>-->
                             </UniformGrid>
                         </StackPanel>
                     </ui:CardExpander>

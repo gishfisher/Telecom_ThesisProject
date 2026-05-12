@@ -189,7 +189,23 @@ public class NetworkDeviceDetailsViewModel : ObservableObject
     {
         if (selectedPort?.HasConnection == false)
         {
-            NavigateToAddEditConnection?.Invoke(null, selectedPort);
+            var existingPort = _networkDeviceService.GetDevicePortById(selectedPort.Id);
+
+            if (existingPort?.Device == null)
+                return;
+
+            if (existingPort.Device.MountingPoint == null)
+            {
+                _messageService.ShowError("Устройство не смонтировано, создать подключение нельзя.");
+                return;
+            }
+
+            string confirmMessage = $"Будет создано новое подключение на порту {selectedPort.PortName}, вы уверены?";
+
+            if (_messageService.Confirm(confirmMessage))
+            {
+                NavigateToAddEditConnection?.Invoke(null, selectedPort);
+            }
         }
 
         if (selectedPort?.HasConnection == true)

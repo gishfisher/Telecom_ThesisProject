@@ -49,8 +49,6 @@ public partial class TelecomDbContext : DbContext
 
     public virtual DbSet<MountingPointType> MountingPointTypes { get; set; }
 
-    public virtual DbSet<MountingSpotType> MountingSpotTypes { get; set; }
-
     public virtual DbSet<NetworkDevice> NetworkDevices { get; set; }
 
     public virtual DbSet<Request> Requests { get; set; }
@@ -107,6 +105,8 @@ public partial class TelecomDbContext : DbContext
         modelBuilder.Entity<Client>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Clients");
+
+            entity.HasIndex(e => e.PhoneNumber, "UQ_Clients_PhoneNumber").IsUnique();
 
             entity.Property(e => e.FirstName).HasMaxLength(50);
             entity.Property(e => e.LastName).HasMaxLength(50);
@@ -192,22 +192,12 @@ public partial class TelecomDbContext : DbContext
                 .HasForeignKey(d => d.PointTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__MountingP__Point__571DF1D5");
-
-            entity.HasOne(d => d.SpotType).WithMany(p => p.MountingPoints)
-                .HasForeignKey(d => d.SpotTypeId)
-                .HasConstraintName("FK_MountingPoints_MountingSpotTypes");
         });
 
         modelBuilder.Entity<MountingPointType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__MountingPointTypes");
 
-            entity.Property(e => e.Name).HasMaxLength(50);
-        });
-
-        modelBuilder.Entity<MountingSpotType>(entity =>
-        {
-            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Name).HasMaxLength(50);
         });
 

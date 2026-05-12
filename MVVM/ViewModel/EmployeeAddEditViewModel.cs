@@ -66,9 +66,13 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             try
             {
                 if (Employee.Id == 0)
+                {
                     _employeeService.RegisterEmployee(Employee, PlainPassword);
+                }
                 else
+                {
                     _employeeService.EditEmployee(Employee, PlainPassword);
+                }
 
                 GoBack?.Invoke();
             }

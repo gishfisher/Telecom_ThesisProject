@@ -26,7 +26,7 @@
                     <ui:Button Icon="{ui:SymbolIcon Add24}" 
                            Content="Добавить сотрудника" 
                            Command="{Binding AddCommand}" 
-                           Margin="5,0"/>
+                           Margin="5,0" Appearance="Primary"/>
 
                     <Separator Margin="5,2"/>
 
@@ -44,21 +44,25 @@
                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>-->
                 </StackPanel>
             </ui:Card>
-            <DataGrid ItemsSource="{Binding Employee}"
+            <ui:DataGrid ItemsSource="{Binding Employee}"
                       SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
                       AutoGenerateColumns="False"
                       Grid.Row="2" 
                       IsReadOnly="True">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                    <DataGridTextColumn Header="ФИО" Binding="{Binding GetFullName}" Width="*"/>
-                </DataGrid.Columns>
+                <ui:DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="100"/>
+                    <DataGridTextColumn Header="ФИО" Binding="{Binding GetFullNameIn}" Width="*"/>
+                    <DataGridTextColumn Header="Роль" Binding="{Binding User.Role.Name}" Width="0.8*"/>
+                    <DataGridTextColumn Header="Имя пользователя" Binding="{Binding User.Login}" Width="1.25*"/>
+                    <DataGridTextColumn Header="Дата создания" Binding="{Binding User.CreatedAt}" Width="*"/>
+                    <DataGridCheckBoxColumn Header="Активен" Binding="{Binding User.IsActive}" Width="0.8*"/>
+                </ui:DataGrid.Columns>
 
-                <DataGrid.InputBindings>
+                <ui:DataGrid.InputBindings>
                     <MouseBinding Gesture="LeftDoubleClick"
                           Command="{Binding EditCommand}" />
-                </DataGrid.InputBindings>
-            </DataGrid>
+                </ui:DataGrid.InputBindings>
+            </ui:DataGrid>
         </Grid>
     </Border>
 </UserControl>

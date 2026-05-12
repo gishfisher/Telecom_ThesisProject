@@ -13,7 +13,7 @@
             CornerRadius="10"
             Background="White">
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Disabled">
             <Grid>
                 <Grid.RowDefinitions>
@@ -34,11 +34,11 @@
                     <ui:Button Icon="{ui:SymbolIcon Save20}"
                                Command="{Binding SaveCommand}"
                                Padding="10"
-                               ToolTip="Сохранить"/>
+                               ToolTip="Сохранить" Appearance="Primary"/>
 
                     <Separator Margin="10,2"/>
 
-                    <ui:TextBlock Text="{Binding Title}"
+                    <ui:TextBlock Text="{Binding PageTitle}"
                                   VerticalAlignment="Center"
                                   FontTypography="Subtitle"/>
                 </StackPanel>
@@ -115,7 +115,6 @@
                     <ui:CardExpander Margin="0,10,0,0"
                                      IsExpanded="True"
                                      Padding="10">
-
                         <ui:CardExpander.Header>
                             <StackPanel>
                                 <ui:TextBlock FontTypography="BodyStrong">
@@ -123,7 +122,19 @@
                                 </ui:TextBlock>
                             </StackPanel>
                         </ui:CardExpander.Header>
-
+                        <DataGrid ItemsSource="{Binding Connections}"
+                                  SelectedItem="{Binding SelectedConnection, Mode=TwoWay}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                                <DataGridTextColumn Header="Адрес" Binding="{Binding Apartment.Address.GetFullAddressWithApartment}" Width="2*"/>
+                                <DataGridTextColumn Header="Статический IP" Binding="{Binding StaticIp}" Width="*"/>
+                                <DataGridTextColumn Header="Порт" Binding="{Binding Port.PortName}" Width="*"/>
+                                <DataGridTextColumn Header="Устройство" Binding="{Binding Port.Device.Name}" Width="*"/>
+                                <DataGridTextColumn Header="Тариф" Binding="{Binding Tariff.Name}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </ui:CardExpander>
                 </StackPanel>
             </Grid>

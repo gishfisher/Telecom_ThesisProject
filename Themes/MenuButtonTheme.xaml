@@ -3,32 +3,45 @@
     <Style BasedOn="{StaticResource {x:Type ToggleButton}}" 
            TargetType="{x:Type RadioButton}"
            x:Key="MenuButtonTheme">
-        
+
         <Style.Setters>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
                         <Grid VerticalAlignment="Stretch"
-                              HorizontalAlignment="Stretch" 
+                              HorizontalAlignment="Stretch"
                               Background="{TemplateBinding Background}">
 
-                            <TextBlock Text="{TemplateBinding Property=Content }"
-                                       VerticalAlignment="Center"
-                                       Margin="15,0,15,0"/>
+                            <ContentPresenter x:Name="MenuText"
+                                              HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"
+                                              Margin="15,0,15,0"/>
 
+                            <Border x:Name="Underline"
+                                    Height="3"
+                                    VerticalAlignment="Bottom"
+                                    Background="#F4F7F9"
+                                    Margin="10,0"
+                                    Opacity="0"
+                                    CornerRadius="5,5,0,0"/>
                         </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Underline" Property="Opacity" Value="1"/>
+                                <Setter TargetName="MenuText" Property="TextElement.FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#20FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
+
                 </Setter.Value>
             </Setter>
-            
+
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
         </Style.Setters>
-
-        <Style.Triggers>
-            <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Background" Value="#3DFFFFFF"/>
-            </Trigger>
-        </Style.Triggers>        
     </Style>
 </ResourceDictionary>

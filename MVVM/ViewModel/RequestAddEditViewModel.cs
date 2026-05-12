@@ -94,10 +94,12 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 if (IsNewRequest)
                 {
                     _requestService.AddRequest(Request);
+                    _messageService.Show("Заявка успешно добавлена!");
                 }
                 else
                 {
                     _requestService.EditRequest(Request);
+                    _messageService.Show("Заявка успешно отредактирована!");
                 }
 
                 GoBack?.Invoke();
@@ -164,7 +166,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
             if (Request.ClientId == 0)
                 errors.AppendLine("Укажите клиента.");
-
+            if (Request.TypeId == 0)
+                errors.AppendLine("Укажите тип заявки");
             if (!string.IsNullOrWhiteSpace(Request.Description) && Request.Description.Length > 300)
                 errors.AppendLine("Описание слишком длинное (максимум 300 символов).");
 

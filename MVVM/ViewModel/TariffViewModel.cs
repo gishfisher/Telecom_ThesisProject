@@ -8,12 +8,14 @@ using Telecom.Utilities;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.MVVM.Model;
 using Telecom_ThesisProject.Services;
+using Telecom_ThesisProject.Utilities.Interfaces;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel
 {
     class TariffViewModel : ObservableObject
     {
         private readonly TariffService _tariffService;
+        private readonly IMessageService _messageService;
 
         public ObservableCollection<Tariff> Tariff { get; set; }
 
@@ -29,8 +31,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             }
         }
 
-        private Tariff? _selectedTariff = null;
-        public Tariff? SelectedTariff
+        private Tariff _selectedTariff = null;
+        public Tariff SelectedTariff
         {
             get => _selectedTariff;
             set { _selectedTariff = value; OnPropertyChanged(); }
@@ -44,9 +46,10 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         public TariffViewModel()
         {
-            Tariff = new ObservableCollection<Tariff>();
-
             _tariffService = new TariffService();
+            _messageService = new MessageService();
+
+            Tariff = new ObservableCollection<Tariff>();
 
             LoadTariffs();
             FilterTariffs();
@@ -91,9 +94,20 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         private void DeleteTariff()
         {
             if (SelectedTariff == null) return;
-            _tariffService.RemoveTariff(SelectedTariff);
-            LoadTariffs();
-            FilterTariffs();
+            
+            if (_messageService.Confirm($"Удалить тариф №{SelectedTariff.Id}, {SelectedTariff.Name}?"))
+            {
+                try
+                {
+                    _tariffService.RemoveTariff(SelectedTariff);
+                    LoadTariffs();
+                    FilterTariffs();
+                }
+                catch (Exception ex)
+                {
+                    _messageService.ShowError(ex.Message);
+                }
+            }
         }
 
         public void Refresh()

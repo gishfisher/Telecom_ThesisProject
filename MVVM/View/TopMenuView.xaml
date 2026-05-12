@@ -11,97 +11,162 @@
     <DockPanel Grid.Row="1" Grid.ColumnSpan="2" 
                Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
 
-        <RadioButton Content="Главное"
-             Height="50" 
-             Foreground="#FFFFFF"
-             FontSize="14pt"
-             Style="{StaticResource MenuButtonTheme}"
-             IsChecked="True"
-             Command="{Binding HomeViewCommand}"/>
+        <RadioButton Height="50" 
+                     Foreground="#FFFFFF"
+                     FontSize="14pt"
+                     Style="{StaticResource MenuButtonTheme}"
+                     IsChecked="True"
+                     Command="{Binding HomeViewCommand}">
 
-        <RadioButton Content="Клиенты" 
-             Height="50" 
-             Foreground="#FFFFFF"
-             FontSize="14pt"
-             Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding ClientViewCommand}"/>
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <!--<ui:SymbolIcon Symbol="Home24" Margin="0,0,5,0"/>-->
+                    <ui:TextBlock>
+                        Главное
+                    </ui:TextBlock>
+                </StackPanel>
+            </RadioButton.Content>
+            
+        </RadioButton>
 
-        <RadioButton Content="Заявки" 
-             Height="50" 
-             Foreground="#FFFFFF"
-             FontSize="14pt"
-             Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding RequestViewCommand}"/>
+        <RadioButton Height="50" 
+                     Foreground="#FFFFFF"
+                     FontSize="14pt"
+                     Style="{StaticResource MenuButtonTheme}"
+                     Command="{Binding ClientViewCommand}">
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <!--<ui:SymbolIcon Symbol="ContactCard24" Margin="0,0,5,0"/>-->
+                    <ui:TextBlock>
+                        Клиенты
+                    </ui:TextBlock>
+                </StackPanel>
+            </RadioButton.Content>
+        </RadioButton>
 
-        <RadioButton Content="Сотрудники" 
-             Height="50" 
-             Foreground="#FFFFFF"
-             FontSize="14pt"
-             Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding EmployeeViewCommand}"
-             Visibility="{Binding CanSeeAdminMenu, 
-                Converter={StaticResource BoolToVisibilityConverter}}"/>
+        <RadioButton Height="50" 
+                     Foreground="#FFFFFF"
+                     FontSize="14pt"
+                     Style="{StaticResource MenuButtonTheme}"
+                     Command="{Binding RequestViewCommand}">
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <!--<ui:SymbolIcon Symbol="ClipboardTask24" Margin="0,0,5,0"/>-->
+                    <ui:TextBlock>
+                        Заявки
+                    </ui:TextBlock>
+                </StackPanel>
+            </RadioButton.Content>
+        </RadioButton>
 
-        <!--<ui:DropDownButton Content="Tariffs" Icon="{ui:SymbolIcon Tag24}">
-            <ui:DropDownButton.Flyout>
-                <ContextMenu>
-                    <ui:MenuItem Header="Tariffs" 
-                         FontSize="14"
-                         Icon="{ui:SymbolIcon Tag24}"
-                         Command="{Binding TariffViewCommand}" />
+        <RadioButton Height="50" 
+                     Foreground="#FFFFFF"
+                     FontSize="14pt"
+                     Style="{StaticResource MenuButtonTheme}"
+                     Command="{Binding EmployeeViewCommand}"
+                     Visibility="{Binding CanSeeAdminMenu, Converter={StaticResource BoolToVisibilityConverter}}">
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <!--<ui:SymbolIcon Symbol="PersonStar24" Margin="0,0,5,0"/>-->
+                    <ui:TextBlock>
+                        Сотрудники
+                    </ui:TextBlock>
+                </StackPanel>
+            </RadioButton.Content>
+        </RadioButton>
 
-                    <ui:MenuItem Header="Services" 
-                         FontSize="14"
-                         Icon="{ui:SymbolIcon Apps24}"
-                         Command="{Binding ServiceViewCommand}" />
-                </ContextMenu>
-            </ui:DropDownButton.Flyout>
-        </ui:DropDownButton>-->
+        <RadioButton Height="50" 
+                     Foreground="#FFFFFF"     
+                     FontSize="14pt"
+                     Style="{StaticResource MenuButtonTheme}"
+                     Command="{Binding TariffViewCommand}">
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <!--<ui:SymbolIcon Symbol="Archive24" Margin="0,0,5,0"/>-->
+                    <ui:TextBlock>
+                        Тарифы
+                    </ui:TextBlock>
+                </StackPanel>
+            </RadioButton.Content>
+        </RadioButton>
 
-        <RadioButton Content="Тарифы" 
-             Height="50" 
-             Foreground="#FFFFFF"
-             FontSize="14pt"
-             Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding TariffViewCommand}"/>
+        <RadioButton Height="50" 
+                     Foreground="#FFFFFF"
+                     FontSize="14pt"
+                     Style="{StaticResource MenuButtonTheme}"
+                     Command="{Binding ServiceViewCommand}">
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <!--<ui:SymbolIcon Symbol="Handshake24" Margin="0,0,5,0"/>-->
+                    <ui:TextBlock>
+                        Услуги
+                    </ui:TextBlock>
+                </StackPanel>
+            </RadioButton.Content>
+        </RadioButton>
 
-        <RadioButton Content="Услуги" 
-             Height="50" 
-             Foreground="#FFFFFF"
-             FontSize="14pt"
-             Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding ServiceViewCommand}"/>
+        <RadioButton Height="50"
+                     Foreground="#FFFFFF"
+                     FontSize="14pt"
+                     Style="{StaticResource MenuButtonTheme}"
+                     Command="{Binding ConnectionsViewCommand}">
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <!--<ui:SymbolIcon Symbol="Connector24" Margin="0,0,5,0"/>-->
+                    <ui:TextBlock>
+                        Журнал подключений
+                    </ui:TextBlock>
+                </StackPanel>
+            </RadioButton.Content>            
+        </RadioButton>
 
-        <RadioButton Content="Журнал подключений"
-             Height="50"
-             Foreground="#FFFFFF"
-             FontSize="14pt"
-             Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding ConnectionsViewCommand}"/>
+        <RadioButton Height="50"
+                     Foreground="#FFFFFF"
+                     FontSize="14pt"
+                     Style="{StaticResource MenuButtonTheme}"
+                     Command="{Binding AddressTreeViewCommand}">
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <!--<ui:SymbolIcon Symbol="Location24" Margin="0,0,5,0"/>-->
+                    <ui:TextBlock>
+                        Журнал адресов
+                    </ui:TextBlock>
+                </StackPanel>
+            </RadioButton.Content>
+        </RadioButton>
 
-        <RadioButton Content="Журнал адресов"
-             Height="50"
-             Foreground="#FFFFFF"
-             FontSize="14pt"
-             Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding AddressTreeViewCommand}"/>
+        <RadioButton Height="50" 
+                     Foreground="#FFFFFF"
+                     FontSize="14pt"
+                     Style="{StaticResource MenuButtonTheme}"
+                     Command="{Binding NetworkDevicesViewCommand}"
+                     Visibility="{Binding CanSeeNetworkMenu, 
+                        Converter={StaticResource BoolToVisibilityConverter}}">
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <!--<ui:SymbolIcon Symbol="Router24" Margin="0,0,5,0"/>-->
+                    <ui:TextBlock>
+                        Оборудование
+                    </ui:TextBlock>
+                </StackPanel>
+            </RadioButton.Content>
+        </RadioButton>
 
-        <RadioButton Content="Оборудование"
-             Height="50" 
-             Foreground="#FFFFFF"
-             FontSize="14pt"
-             Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding NetworkDevicesViewCommand}"
-             Visibility="{Binding CanSeeNetworkMenu, 
-                Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-        <RadioButton Content="Выйти" 
-             Height="50" 
-             Foreground="#FFFFFF"
-             FontSize="14pt"
-             HorizontalAlignment="Right"
-             Style="{StaticResource MenuButtonTheme}"
-             Command="{Binding LogoutCommand}"/>
+        <RadioButton Height="50" 
+                     Foreground="#FFFFFF"
+                     FontSize="14pt"
+                     HorizontalAlignment="Right"
+                     Style="{StaticResource MenuButtonTheme}"
+                     Command="{Binding LogoutCommand}">
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="SignOut24" Margin="0,0,5,0"/>
+                    <ui:TextBlock>
+                        Выход
+                    </ui:TextBlock>
+                </StackPanel>
+            </RadioButton.Content>
+        </RadioButton>
 
     </DockPanel>
 </UserControl>

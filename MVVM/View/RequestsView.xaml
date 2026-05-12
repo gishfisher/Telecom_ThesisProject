@@ -27,7 +27,7 @@
                     <ui:Button Icon="{ui:SymbolIcon Add24}" 
                            Content="Добавить заявку" 
                            Command="{Binding AddCommand}" 
-                           Margin="5,0"/>
+                           Margin="5,0" Appearance="Primary"/>
 
                     <Separator Margin="5,2"/>
 
@@ -56,8 +56,8 @@
                     <DataGridTextColumn Header="Дата создания" Binding="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy}}" Width="*"/>
                     <DataGridTextColumn Header="Статус" Binding="{Binding Status.Name}" Width="*"/>
                     <DataGridTextColumn Header="Тип" Binding="{Binding Type.Name}" Width="*"/>
-                    <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullName}" Width="*"/>
-                    <DataGridTextColumn Header="Сотрудник" Binding="{Binding Employee.GetFullName}" Width="*"/>
+                    <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullNameIn}" Width="*"/>
+                    <DataGridTextColumn Header="Сотрудник" Binding="{Binding Employee.GetFullNameIn}" Width="*"/>
                 </DataGrid.Columns>
 
                 <DataGrid.InputBindings>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TelecomCompany.ApplicationData.Crypt
 {
-    internal class MD5Hasher
+    public class MD5Hasher
     {
         public static string HashPassword(string password)
         {
