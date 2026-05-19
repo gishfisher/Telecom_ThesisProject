@@ -9,6 +9,7 @@ using Telecom.Utilities;
 using Telecom_ThesisProject.Core;
 using Telecom_ThesisProject.MVVM.Model;
 using Telecom_ThesisProject.Services;
+using Telecom_ThesisProject.Utilities.Interfaces;
 
 namespace Telecom_ThesisProject.MVVM.ViewModel
 {
@@ -22,6 +23,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             get => _currentView;
             set { _currentView = value; OnPropertyChanged(); }
         }
+
+        private IMessageService _messageService;
 
         // ViewModels
         public HomeViewModel HomeViewModel { get; }
@@ -62,6 +65,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             ConnectionsViewModel = new ConnectionsViewModel();
             AddressTreeViewModel = new AddressTreeViewModel();
             SnmpProfileViewModel = new SnmpProfileViewModel(null);
+
+            _messageService = new MessageService();
 
             // === Views ===
 
@@ -669,6 +674,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             LoginViewModel.OnLoginSuccess = user =>
             {
                 CurrentSession.Login(user);
+                _messageService.Show($"Добро пожаловать, {CurrentSession.CurrentUser?.Employee?.GetFullNameIn ?? "Пользователь"}");
                 CurrentView = HomeViewModel;
             };
 
@@ -677,7 +683,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 o => IsAuthenticated);
 
             LogoutCommand = new RelayCommand(
-                o => CurrentSession.Logout(),
+                o => CloseSession(),
                 o => IsAuthenticated);
 
             CurrentSession.SessionChanged += OnSessionChanged;
@@ -692,9 +698,22 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             OnPropertyChanged(nameof(CanSeeAdminMenu));
 
             if (IsAuthenticated)
+            {
                 CurrentView = HomeViewModel;
+            }
             else
+            {
                 CurrentView = LoginViewModel;
+            }    
+        }
+
+        private bool CloseSession()
+        {
+            _messageService.Confirm("Вы действительно хотите выйти? Текущая сессия будет закрыта.");
+            {
+                CurrentSession.Logout();
+                return true;
+            }
         }
 
         public bool IsAuthenticated => CurrentSession.IsAuthenticated;

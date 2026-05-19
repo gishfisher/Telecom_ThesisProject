@@ -11,7 +11,7 @@
                  Title="Telecom"
                  WindowStartupLocation="CenterScreen" 
                  MinHeight="550" MinWidth="800"
-                 Height="620" Width="1025"
+                 Height="620" Width="1050"
                  ExtendsContentIntoTitleBar="True"
                  WindowBackdropType="Mica">
 
@@ -49,7 +49,9 @@
             </ui:TitleBar.Header>
         </ui:TitleBar>
 
-        <view:TopMenuView Grid.Row="1" HorizontalAlignment="Stretch"/>
+        <Border Margin="10,5,10,5" CornerRadius="8" Grid.Row="1" Background="{DynamicResource AccentFillColorDefaultBrush}">
+            <view:TopMenuView HorizontalAlignment="Stretch"/>
+        </Border>
 
         <ContentControl Grid.Row="2" Grid.ColumnSpan="2"
                         Background="#FFFFFF"
@@ -57,7 +59,7 @@
                         Content="{Binding CurrentView}"/>
 
         <Grid Grid.Row="0" Grid.ColumnSpan="2" Panel.ZIndex="-1" Background="#FFFFFF"/>
-        <Grid Grid.Row="1" Grid.ColumnSpan="2" Panel.ZIndex="-1" Background="{DynamicResource AccentFillColorDefaultBrush}"/>
+        <!--<Grid Grid.Row="1" Grid.ColumnSpan="2" Panel.ZIndex="-1" Background="{DynamicResource AccentFillColorDefaultBrush}"/>-->
         <ContentPresenter x:Name="RootContentDialogPresenter" Grid.RowSpan="3" />
     </Grid>
 </ui:FluentWindow>  

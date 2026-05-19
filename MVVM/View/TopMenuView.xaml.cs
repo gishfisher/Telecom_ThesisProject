@@ -24,5 +24,12 @@ namespace Telecom_ThesisProject.MVVM.View
         {
             InitializeComponent();
         }
+
+        private void MenuScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var scrollViewer = (ScrollViewer)sender;
+            scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - e.Delta);
+            e.Handled = true;
+        }
     }
 }
