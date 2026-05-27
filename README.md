@@ -67,4 +67,4 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 
 ## Авторы
 
-* **Шумаков Вадим Евгеньевич** - *Дипломный проект* - [GitHub]((https://github.com/gishfisher))
+* **Шумаков Вадим Евгеньевич** - *Дипломный проект* - [GitHub](https://github.com/gishfisher)
