@@ -22,7 +22,7 @@ Windows 10 / 11 x64
 **Шаг 1.** Клонируйте репозиторий или скачайте ZIP из раздела [Releases](../../releases)
 
 ```bash
-git clone https://github.com/ваш-логин/Telecom_ThesisProject.git
+git clone https://github.com/gishfisher/Telecom_ThesisProject.git
 ```
 
 **Шаг 2.** Откройте SSMS, подключитесь к серверу и выполните скрипты из папки `database\` по порядку
@@ -67,4 +67,4 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 
 ## Авторы
 
-* **Шумаков Вадим Евгеньевич** - *Дипломный проект* - [GitHub](https://github.com/furryeleavator)
+* **Шумаков Вадим Евгеньевич** - *Дипломный проект* - [GitHub](https://github.com/gishfisher))
