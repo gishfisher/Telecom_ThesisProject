@@ -38,19 +38,19 @@
                 </StackPanel>
             </ui:Card>
 
-            <ui:Card Grid.Row="2" Padding="0" VerticalAlignment="Top" Margin="0,5,0,0">
+            <ui:Card Grid.Row="2" VerticalAlignment="Top" Margin="0,5,0,0">
                 <DataGrid ItemsSource="{Binding Connections}"
                           SelectedItem="{Binding SelectedConnection, Mode=TwoWay}"
                           AutoGenerateColumns="False"
                           IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
-                        <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullNameIn}" Width="2*"/>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="0.5*"/>
+                        <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullNameIn}" Width="*"/>
                         <DataGridTextColumn Header="Адрес" Binding="{Binding Apartment.Address.GetFullAddressWithApartment}" Width="2*"/>
-                        <DataGridTextColumn Header="Статический IP" Binding="{Binding StaticIp}" Width="2*"/>
-                        <DataGridTextColumn Header="Порт" Binding="{Binding Port.PortName}" Width="1.5*"/>
-                        <DataGridTextColumn Header="Устройство" Binding="{Binding Port.Device.Name}" Width="2*"/>
-                        <DataGridTextColumn Header="Тариф" Binding="{Binding Tariff.Name}" Width="*"/>
+                        <DataGridTextColumn Header="Статический IP" Binding="{Binding StaticIp}" Width="1.25*"/>
+                        <DataGridTextColumn Header="Порт" Binding="{Binding Port.PortName}" Width="*"/>
+                        <DataGridTextColumn Header="Устройство" Binding="{Binding Port.Device.Name}" Width="*"/>
+                        <DataGridTextColumn Header="Тариф" Binding="{Binding Tariff.Name}" Width="1.5*"/>
                     </DataGrid.Columns>
 
                     <DataGrid.InputBindings>

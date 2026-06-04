@@ -19,12 +19,24 @@ public partial class TelecomDbContext : DbContext
     {
     }
 
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //{
+    //    var config = new ConfigurationBuilder()
+    //                    .AddJsonFile("appsettings.json")
+    //                    .SetBasePath(Directory.GetCurrentDirectory())
+    //                    .Build();
+
+    //    optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+    //}
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        var basePath = AppContext.BaseDirectory;
+
         var config = new ConfigurationBuilder()
-                        .AddJsonFile("appsettings.json")
-                        .SetBasePath(Directory.GetCurrentDirectory())
-                        .Build();
+            .SetBasePath(basePath)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+            .Build();
 
         optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
     }

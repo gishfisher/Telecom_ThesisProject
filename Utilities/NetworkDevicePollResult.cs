@@ -33,7 +33,6 @@ public class NetworkDevicePollResult
         };
     }
 
-
     public static NetworkDevicePollResult SnmpOk(string sysUpTime)
     {
         return new NetworkDevicePollResult

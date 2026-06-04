@@ -44,25 +44,26 @@
                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>-->
                 </StackPanel>
             </ui:Card>
-            <ui:DataGrid ItemsSource="{Binding Employee}"
-                      SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
-                      AutoGenerateColumns="False"
-                      Grid.Row="2" 
-                      IsReadOnly="True">
-                <ui:DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="100"/>
-                    <DataGridTextColumn Header="ФИО" Binding="{Binding GetFullNameIn}" Width="*"/>
-                    <DataGridTextColumn Header="Роль" Binding="{Binding User.Role.Name}" Width="0.8*"/>
-                    <DataGridTextColumn Header="Имя пользователя" Binding="{Binding User.Login}" Width="1.25*"/>
-                    <DataGridTextColumn Header="Дата создания" Binding="{Binding User.CreatedAt}" Width="*"/>
-                    <DataGridCheckBoxColumn Header="Активен" Binding="{Binding User.IsActive}" Width="0.8*"/>
-                </ui:DataGrid.Columns>
+            <ui:Card Grid.Row="2" VerticalAlignment="Top" Margin="0,5,0,0">
+                <ui:DataGrid ItemsSource="{Binding Employee}"
+                          SelectedItem="{Binding SelectedEmployee, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True">
+                    <ui:DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="100"/>
+                        <DataGridTextColumn Header="ФИО" Binding="{Binding GetFullNameIn}" Width="*"/>
+                        <DataGridTextColumn Header="Роль" Binding="{Binding User.Role.Name}" Width="0.8*"/>
+                        <DataGridTextColumn Header="Имя пользователя" Binding="{Binding User.Login}" Width="1.25*"/>
+                        <DataGridTextColumn Header="Дата создания" Binding="{Binding User.CreatedAt}" Width="*"/>
+                        <DataGridCheckBoxColumn Header="Активен" Binding="{Binding User.IsActive}" Width="0.8*"/>
+                    </ui:DataGrid.Columns>
 
-                <ui:DataGrid.InputBindings>
-                    <MouseBinding Gesture="LeftDoubleClick"
-                          Command="{Binding EditCommand}" />
-                </ui:DataGrid.InputBindings>
-            </ui:DataGrid>
+                    <ui:DataGrid.InputBindings>
+                        <MouseBinding Gesture="LeftDoubleClick"
+                                      Command="{Binding EditCommand}" />
+                    </ui:DataGrid.InputBindings>
+                </ui:DataGrid>
+            </ui:Card>
         </Grid>
     </Border>
 </UserControl>

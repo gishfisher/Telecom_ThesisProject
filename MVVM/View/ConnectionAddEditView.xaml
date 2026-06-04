@@ -65,7 +65,7 @@
                                           SelectedValue="{Binding SelectedClientId, Mode=TwoWay}"
                                           VerticalAlignment="Center"/>
 
-                                <ui:Button Grid.Column="1"
+                                <!--<ui:Button Grid.Column="1"
                                            Margin="10,0,0,0"
                                            Appearance="Secondary"
                                            Command="{Binding AddClientCommand}"
@@ -74,7 +74,7 @@
                                         <ui:SymbolIcon Symbol="Add24" Foreground="Green" Margin="0,0,5,0"/>
                                         <TextBlock Text="Новый клиент"/>
                                     </StackPanel>
-                                </ui:Button>
+                                </ui:Button>-->
                             </Grid>
 
                             <!--<Border CornerRadius="10" 
@@ -151,11 +151,11 @@
                                 </Grid>
                             </Expander>
 
-                            <ui:HyperlinkButton Icon="{ui:SymbolIcon TextBulletListLtr24}"
+                            <!--<ui:HyperlinkButton Icon="{ui:SymbolIcon TextBulletListLtr24}"
                                                 Content="Перейти к журналу адресов"
                                                 Margin="0,10,0,0"
                                                 HorizontalAlignment="Left"
-                                                Command="{Binding OpenAddressesCommand}"/>
+                                                Command="{Binding OpenAddressesCommand}"/>-->
                         </StackPanel>
                     </ScrollViewer>
                 </TabItem>

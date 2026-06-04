@@ -207,7 +207,7 @@
                                         <TextBlock Text="Контактное лицо"/>
                                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                                             <TextBlock Text="{Binding Request.Client.GetFullName}"/>
-                                            <ui:HyperlinkButton Icon="{ui:SymbolIcon MoreCircle32}"
+                                            <!--<ui:HyperlinkButton Icon="{ui:SymbolIcon MoreCircle32}"
                                                         Command="{Binding ClientDetailsCommand}" 
                                                         Grid.Column="1"
                                                         Padding="1"
@@ -215,7 +215,7 @@
                                                 <TextBlock>
                                                 Подробнее об абоненте
                                                 </TextBlock>
-                                            </ui:HyperlinkButton>
+                                            </ui:HyperlinkButton>-->
                                         </StackPanel>
                                     </Grid>
                                 </ListBoxItem>

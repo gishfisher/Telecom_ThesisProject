@@ -361,8 +361,7 @@ namespace Telecom_ThesisProject.Services
             ArgumentNullException.ThrowIfNull(mp);
             using (var db = new TelecomDbContext())
             {
-                var existing = db.MountingPoints.FirstOrDefault(m => m.Id == mp.Id)
-                    ?? throw new Exception("Точка монтажа не найдена");
+                var existing = db.MountingPoints.FirstOrDefault(m => m.Id == mp.Id) ?? throw new Exception("Точка монтажа не найдена");
                 existing.PointTypeId = mp.PointTypeId;
                 existing.LocationDescription = mp.LocationDescription;
                 existing.AddressId = mp.AddressId;
@@ -378,8 +377,7 @@ namespace Telecom_ThesisProject.Services
             {
                 var existing = db.MountingPoints
                     .Include(m => m.NetworkDevices)
-                    .FirstOrDefault(m => m.Id == mp.Id)
-                    ?? throw new Exception("Точка монтажа не найдена");
+                    .FirstOrDefault(m => m.Id == mp.Id) ?? throw new Exception("Точка монтажа не найдена");
 
                 foreach (var device in existing.NetworkDevices)
                     device.MountingPointId = null;

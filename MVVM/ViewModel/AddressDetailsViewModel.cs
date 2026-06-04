@@ -130,12 +130,12 @@ public class AddressDetailsViewModel : ObservableObject
         try
         {
            if (device != null)
-            {
+           {
                 device.MountingPointId = null;
                 device.InstallationDate = null;
                 _deviceService.EditDevice(device);
-            }
-            LoadData();
+           }
+           LoadData();
         }
         catch (Exception ex) 
         { 

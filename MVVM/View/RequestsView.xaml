@@ -46,25 +46,27 @@
                 </StackPanel>
             </ui:Card>
 
-            <DataGrid ItemsSource="{Binding Requests}"
-                      SelectedItem="{Binding SelectedRequest, Mode=TwoWay}"
-                      AutoGenerateColumns="False"
-                      Grid.Row="2" 
-                      IsReadOnly="True">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                    <DataGridTextColumn Header="Дата создания" Binding="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy}}" Width="*"/>
-                    <DataGridTextColumn Header="Статус" Binding="{Binding Status.Name}" Width="*"/>
-                    <DataGridTextColumn Header="Тип" Binding="{Binding Type.Name}" Width="*"/>
-                    <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullNameIn}" Width="*"/>
-                    <DataGridTextColumn Header="Сотрудник" Binding="{Binding Employee.GetFullNameIn}" Width="*"/>
-                </DataGrid.Columns>
+            <ui:Card Grid.Row="2" VerticalAlignment="Top" Margin="0,5,0,0">
+                <DataGrid ItemsSource="{Binding Requests}"
+                          SelectedItem="{Binding SelectedRequest, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
 
-                <DataGrid.InputBindings>
-                    <MouseBinding Gesture="LeftDoubleClick"
-                                  Command="{Binding RequestDetailsCommand}" />
-                </DataGrid.InputBindings>
-            </DataGrid>
+                          IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
+                        <DataGridTextColumn Header="Дата создания" Binding="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy}}" Width="*"/>
+                        <DataGridTextColumn Header="Статус" Binding="{Binding Status.Name}" Width="*"/>
+                        <DataGridTextColumn Header="Тип" Binding="{Binding Type.Name}" Width="*"/>
+                        <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullNameIn}" Width="*"/>
+                        <DataGridTextColumn Header="Сотрудник" Binding="{Binding Employee.GetFullNameIn}" Width="*"/>
+                    </DataGrid.Columns>
+
+                    <DataGrid.InputBindings>
+                        <MouseBinding Gesture="LeftDoubleClick"
+                      Command="{Binding RequestDetailsCommand}" />
+                    </DataGrid.InputBindings>
+                </DataGrid>
+            </ui:Card>
         </Grid>
     </Border>
 </UserControl>

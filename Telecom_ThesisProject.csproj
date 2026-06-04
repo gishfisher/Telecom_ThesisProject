@@ -6,13 +6,16 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\logo_ic.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Assets\alt_logo.png" />
-    <None Remove="Assets\logo.ico" />
-    <None Remove="Assets\logo.png" />
     <None Remove="Assets\logo_ic.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\logo_ic.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,8 +38,6 @@
 
   <ItemGroup>
     <Resource Include="Assets\alt_logo.png" />
-    <Resource Include="Assets\logo.ico" />
-    <Resource Include="Assets\logo.png" />
     <Resource Include="Assets\logo_ic.png" />
   </ItemGroup>
 

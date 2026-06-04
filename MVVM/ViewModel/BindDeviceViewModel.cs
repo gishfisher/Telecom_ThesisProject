@@ -11,6 +11,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel;
 public class BindDeviceViewModel : ObservableObject
 {
     private readonly AddressService _addressService;
+    private readonly NetworkDeviceService _networkDeviceService;
     private readonly IMessageService _messageService;
     private readonly int _addressId;
 
@@ -46,6 +47,7 @@ public class BindDeviceViewModel : ObservableObject
     public BindDeviceViewModel(int addressId)
     {
         _addressService = new AddressService();
+        _networkDeviceService = new NetworkDeviceService();
         _messageService = new MessageService();
         _addressId = addressId;
 
@@ -57,37 +59,26 @@ public class BindDeviceViewModel : ObservableObject
 
     private void LoadData()
     {
-        using var db = new TelecomDbContext();
-
-        var addr = db.Addresses
-            .Include(a => a.MountingPoints).ThenInclude(mp => mp.PointType)
-            .FirstOrDefault(a => a.Id == _addressId);
-
-        if (addr != null)
+        var mp = _networkDeviceService
+            .GetMountingPointsByAddressId(_addressId);
+        MountingPoints.Clear();
+        foreach (var m in mp)
         {
-            foreach (var mp in addr.MountingPoints)
-            {
-                db.Entry(mp).State = EntityState.Detached;
-                if (mp.PointType != null) db.Entry(mp.PointType).State = EntityState.Detached;
-                MountingPoints.Add(mp);
-            }
+            MountingPoints.Add(m);
         }
 
-        var freeDevices = db.NetworkDevices
-            .Include(d => d.DeviceType)
-            .Where(d => d.MountingPointId == null)
-            .OrderBy(d => d.Name)
-            .ToList();
-
+        var freeDevices = _networkDeviceService
+            .GetDevicesWithoutMountingPoint();
+        FreeDevices.Clear();
         foreach (var d in freeDevices)
         {
-            db.Entry(d).State = EntityState.Detached;
-            if (d.DeviceType != null) db.Entry(d.DeviceType).State = EntityState.Detached;
             FreeDevices.Add(d);
         }
 
         if (MountingPoints.Count > 0)
+        {
             SelectedMountingPointId = MountingPoints[0].Id;
+        }
     }
 
     private void Bind()
@@ -100,22 +91,8 @@ public class BindDeviceViewModel : ObservableObject
 
         try
         {
-            using var db = new TelecomDbContext();
-            var device = db.NetworkDevices.FirstOrDefault(d => d.Id == SelectedDeviceId.Value);
-            if (device == null)
-            {
-                _messageService.Show("Устройство не найдено.");
-                return;
-            }
-            device.MountingPointId = SelectedMountingPointId;
-
-            if (device.MountingPointId.HasValue && !device.InstallationDate.HasValue)
-                if (device.MountingPointId.HasValue && !device.InstallationDate.HasValue)
-                    device.InstallationDate = DateOnly.FromDateTime(DateTime.Today);
-                else if (!device.MountingPointId.HasValue)
-                    device.InstallationDate = null;
-
-            db.SaveChanges();
+            _networkDeviceService
+                .BindDeviceToMountingPoint(SelectedDeviceId.Value, SelectedMountingPointId);
             GoBack?.Invoke();
         }
         catch (Exception ex)

@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="../Telecom_ThesisProject.UnitTests/Telecom_ThesisProject.UnitTests.csproj" Id="5612b710-4c9e-47ee-8821-ad20ff87da53" />
+  <Project Path="../Telecom_ThesisProject.UnitTests/Telecom_ThesisProject.UnitTests.csproj" />
   <Project Path="Telecom_ThesisProject.csproj" />
 </Solution>

@@ -82,14 +82,38 @@ class NetworkDeviceService
 
             bool hasActiveClients = existing.DevicePorts
                 .Any(p => p.Connection != null);
-            if (hasActiveClients)
-                throw new InvalidOperationException("Нельзя удалить устройство: на нем есть активные подключения клиентов!");
+            if (hasActiveClients) throw new InvalidOperationException("Нельзя удалить устройство: на нем есть активные подключения клиентов!");
 
             var children = db.NetworkDevices.Where(d => d.ParentDeviceId == existing.Id).ToList();
             foreach (var c in children)
                 c.ParentDeviceId = null;
 
             db.NetworkDevices.Remove(existing);
+            db.SaveChanges();
+        }
+    }
+
+    // Назначить устройство на точку монтажа
+
+    public void BindDeviceToMountingPoint(int deviceId, int mountingPointId)
+    {
+        using (var db = new TelecomDbContext())
+        {
+            var device = db.NetworkDevices
+                .Include(d => d.MountingPoint)
+                .FirstOrDefault(d => d.Id == deviceId) ?? throw new Exception("Устройство не найдено");
+            device.MountingPointId = mountingPointId;
+
+            if (device.MountingPointId.HasValue && !device.InstallationDate.HasValue)
+            {
+                if (device.MountingPointId.HasValue && !device.InstallationDate.HasValue)
+                    device.InstallationDate = DateOnly.FromDateTime(DateTime.Today);
+            }
+            else if (!device.MountingPointId.HasValue)
+            {
+                device.InstallationDate = null;
+            }
+
             db.SaveChanges();
         }
     }
@@ -168,11 +192,42 @@ class NetworkDeviceService
         using (var db = new TelecomDbContext())
         {
             return db.MountingPoints
+                .AsNoTracking()
                 .Include(m => m.Address)
-                .ThenInclude(a => a.Street)
-                .ThenInclude(s => s.City)
+                    .ThenInclude(a => a.Street)
+                         .ThenInclude(s => s.City)
                 .Include(m => m.PointType)
                 .OrderBy(m => m.Id)
+                .ToList();
+        }
+    }
+
+    public List<MountingPoint> GetMountingPointsByAddressId(int addressId)
+    {
+        using (var db = new TelecomDbContext())
+        {
+            return db.MountingPoints
+                .AsNoTracking()
+                .Where(m => m.AddressId == addressId)
+                .Include(m => m.Address)
+                    .ThenInclude(a => a.Street)
+                         .ThenInclude(s => s.City)
+                .Include(m => m.PointType)
+                .OrderBy(m => m.Id)
+                .ToList();
+        }
+    }
+
+    // Получить свободные от точки монтажа устройства
+
+    public List<NetworkDevice> GetDevicesWithoutMountingPoint()
+    {
+        using (var db = new TelecomDbContext())
+        {
+            return db.NetworkDevices
+                .Where(d => d.MountingPointId == null)
+                .Include(d => d.DeviceType)
+                .OrderBy(d => d.Name)
                 .ToList();
         }
     }

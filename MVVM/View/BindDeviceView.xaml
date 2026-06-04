@@ -72,24 +72,17 @@
 
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
-
-                                        <StackPanel Orientation="Horizontal">
-
-                                            <ui:TextBlock Text="{Binding PointType.Name}"/>
-
-                                            <ui:TextBlock Text=" — "
-                                                          Margin="5,0"/>
-
-                                            <ui:TextBlock Text="{Binding LocationDescription}"
-                                                          Appearance="Secondary"/>
-
-                                        </StackPanel>
-
+                                        <ui:TextBlock>
+                                            <ui:TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} - {1}">
+                                                    <Binding Path="PointType.Name"/>
+                                                    <Binding Path="LocationDescription"/>
+                                                </MultiBinding>
+                                            </ui:TextBlock.Text>
+                                        </ui:TextBlock>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
-
                             </ComboBox>
-
                         </Grid>
 
                     </ui:CardExpander>
@@ -100,16 +93,9 @@
 
                         <ui:CardExpander.Header>
                             <StackPanel>
-
                                 <ui:TextBlock FontTypography="BodyStrong">
                                     Свободное оборудование
                                 </ui:TextBlock>
-
-                                <ui:TextBlock FontTypography="Caption"
-                                              Appearance="Secondary">
-                                    Устройства без привязки к точке монтажа
-                                </ui:TextBlock>
-
                             </StackPanel>
                         </ui:CardExpander.Header>
 
@@ -130,18 +116,16 @@
                                 
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <ui:TextBlock Text="{Binding Name}"/>
-                                            <ui:TextBlock Text=" — "
-                                                          Margin="5,0"/>
-                                            <ui:TextBlock Text="{Binding IpAddress}"
-                                                          Appearance="Secondary"/>
-                                            <ui:TextBlock Text=" ("
-                                                          Margin="5,0,0,0"/>
-                                            <ui:TextBlock Text="{Binding DeviceType.TypeName}"
-                                                          Appearance="Secondary"/>
-                                            <ui:TextBlock Text=")"/>
-                                        </StackPanel>
+
+                                        <ui:TextBlock>
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} - {1} ({2})">
+                                                    <Binding Path="Name"/>
+                                                    <Binding Path="IpAddress"/>
+                                                    <Binding Path="DeviceType.TypeName"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </ui:TextBlock>
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>

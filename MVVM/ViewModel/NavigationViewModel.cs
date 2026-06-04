@@ -709,11 +709,12 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         private bool CloseSession()
         {
-            _messageService.Confirm("Вы действительно хотите выйти? Текущая сессия будет закрыта.");
+            if (_messageService.Confirm("Вы действительно хотите выйти? Текущая сессия будет закрыта."))
             {
                 CurrentSession.Logout();
                 return true;
             }
+            return false;
         }
 
         public bool IsAuthenticated => CurrentSession.IsAuthenticated;

@@ -110,13 +110,13 @@
                                       SelectedValue="{Binding Request.ClientId, Mode=TwoWay}"
                                       Margin="0,0,5,0"/>
                             
-                            <ui:Button Grid.Column="1" Grid.Row="1"
+                            <!--<ui:Button Grid.Column="1" Grid.Row="1"
                                        Command="{Binding AddSnmpProfileCommand}"
                                        Padding="9">
                                 <ui:Button.Icon>
                                     <ui:SymbolIcon Symbol="Add24" Foreground="Green"/>
                                 </ui:Button.Icon>
-                            </ui:Button>
+                            </ui:Button>-->
                         </Grid>
                         
                     </StackPanel>
