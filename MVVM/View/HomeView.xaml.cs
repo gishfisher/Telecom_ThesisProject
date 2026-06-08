@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Telecom_ThesisProject.Data;
+using Telecom_ThesisProject.Services;
 
 namespace Telecom_ThesisProject.MVVM.View
 {
@@ -20,9 +22,28 @@ namespace Telecom_ThesisProject.MVVM.View
     /// </summary>
     public partial class HomeView : UserControl
     {
+        private TariffService _tariffService;
+
         public HomeView()
         {
             InitializeComponent();
+            _tariffService = new TariffService();
+            Loaded += (s, e) => LoadTariffChart();
+        }
+
+        private void LoadTariffChart()
+        {
+            var tariffs = _tariffService.GetTariffStats();
+
+            var series = TariffChart.Series["Tariffs"];
+            series.Points.Clear();
+
+            foreach (var t in tariffs)
+            {
+                var point = series.Points.Add(t.Value);
+                point.LegendText = t.Key;
+                point.Label = $"{t.Key}\n{t.Value}";
+            }
         }
     }
 }

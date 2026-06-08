@@ -13,38 +13,40 @@
             CornerRadius="10"
             Background="White">
 
-        <ScrollViewer VerticalScrollBarVisibility="Hidden"
-                      HorizontalScrollBarVisibility="Disabled">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0"
-                            Orientation="Horizontal"
-                            Margin="0,0,0,10">
+            <StackPanel Grid.Row="0"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,10">
 
-                    <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}"
-                               Command="{Binding CancelCommand}"
-                               Padding="10"
-                               Margin="0,0,5,0"
-                               ToolTip="Назад"/>
+                <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}"
+                           Command="{Binding CancelCommand}"
+                           Padding="10"
+                           Margin="0,0,5,0"
+                           ToolTip="Назад"/>
 
-                    <ui:Button Icon="{ui:SymbolIcon Save20}"
-                               Command="{Binding SaveCommand}"
-                               CommandParameter="{Binding ElementName=PasswordInput}"
-                               Padding="10"
-                               ToolTip="Сохранить" Appearance="Primary"/>
+                <ui:Button Icon="{ui:SymbolIcon Save20}"
+                           Command="{Binding SaveCommand}"
+                           CommandParameter="{Binding ElementName=PasswordInput}"
+                           Padding="10"
+                           ToolTip="Сохранить"
+                           Appearance="Primary"/>
 
-                    <Separator Margin="10,2"/>
+                <Separator Margin="10,2"/>
 
-                    <ui:TextBlock Text="{Binding Title, FallbackValue=Сотрудник}"
-                                  VerticalAlignment="Center"
-                                  FontTypography="Subtitle"/>
-                </StackPanel>
-
-                <StackPanel Grid.Row="1">
+                <ui:TextBlock Text="{Binding Title, FallbackValue=Сотрудник}"
+                              VerticalAlignment="Center"
+                              FontTypography="Subtitle"/>
+            </StackPanel>
+            
+            <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
 
                     <ui:CardExpander IsExpanded="True"
                                      Padding="10">
@@ -56,13 +58,11 @@
                         </ui:CardExpander.Header>
 
                         <Grid Margin="0,10,0,0">
-
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="220"/>
                                 <ColumnDefinition Width="*"/>
@@ -70,7 +70,6 @@
 
                             <ui:TextBlock Text="Фамилия"
                                           VerticalAlignment="Center"/>
-
                             <ui:TextBox Grid.Column="1"
                                         Text="{Binding Employee.LastName, UpdateSourceTrigger=PropertyChanged}"
                                         PlaceholderText="Введите фамилию"/>
@@ -79,9 +78,7 @@
                                           Text="Имя"
                                           Margin="0,12,0,0"
                                           VerticalAlignment="Center"/>
-
-                            <ui:TextBox Grid.Row="1"
-                                        Grid.Column="1"
+                            <ui:TextBox Grid.Row="1" Grid.Column="1"
                                         Margin="0,12,0,0"
                                         Text="{Binding Employee.FirstName, UpdateSourceTrigger=PropertyChanged}"
                                         PlaceholderText="Введите имя"/>
@@ -90,15 +87,11 @@
                                           Text="Отчество"
                                           Margin="0,12,0,0"
                                           VerticalAlignment="Center"/>
-
-                            <ui:TextBox Grid.Row="2"
-                                        Grid.Column="1"
+                            <ui:TextBox Grid.Row="2" Grid.Column="1"
                                         Margin="0,12,0,0"
                                         Text="{Binding Employee.MiddleName, UpdateSourceTrigger=PropertyChanged}"
                                         PlaceholderText="Введите отчество"/>
-
                         </Grid>
-
                     </ui:CardExpander>
 
                     <ui:CardExpander Margin="0,10,0,0"
@@ -112,14 +105,12 @@
                         </ui:CardExpander.Header>
 
                         <Grid Margin="0,10,0,0">
-
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="220"/>
                                 <ColumnDefinition Width="*"/>
@@ -127,7 +118,6 @@
 
                             <ui:TextBlock Text="Логин"
                                           VerticalAlignment="Center"/>
-
                             <ui:TextBox Grid.Column="1"
                                         Text="{Binding Employee.User.Login, UpdateSourceTrigger=PropertyChanged}"
                                         PlaceholderText="Введите логин"/>
@@ -136,9 +126,7 @@
                                           Text="Пароль"
                                           Margin="0,12,0,0"
                                           VerticalAlignment="Center"/>
-
-                            <ui:PasswordBox Grid.Row="1"
-                                            Grid.Column="1"
+                            <ui:PasswordBox Grid.Row="1" Grid.Column="1"
                                             x:Name="PasswordInput"
                                             Margin="0,12,0,0"
                                             PlaceholderText="Введите пароль"
@@ -148,25 +136,22 @@
                                           Text="Роль"
                                           Margin="0,12,0,0"
                                           VerticalAlignment="Center"/>
-
-                            <ComboBox Grid.Row="2"
-                                      Grid.Column="1"
+                            <ComboBox Grid.Row="2" Grid.Column="1"
                                       Margin="0,12,0,0"
                                       ItemsSource="{Binding Roles}"
                                       DisplayMemberPath="Name"
                                       SelectedValuePath="Id"
                                       SelectedValue="{Binding Employee.User.RoleId, Mode=TwoWay}"/>
 
-                            <CheckBox Grid.Row="3"
-                                      Grid.Column="1"
+                            <CheckBox Grid.Row="3" Grid.Column="1"
                                       Margin="0,14,0,0"
                                       Content="Активный пользователь"
                                       IsChecked="{Binding Employee.User.IsActive}"/>
-
                         </Grid>
                     </ui:CardExpander>
+
                 </StackPanel>
-            </Grid>
-        </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
     </Border>
 </UserControl>

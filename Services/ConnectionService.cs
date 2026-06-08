@@ -106,5 +106,13 @@ namespace Telecom_ThesisProject.Services
                 return existing;
             }
         }
+        public int GetConnetctionsCount()
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Connections.Count();
+            }
+        }
+
     }
 }

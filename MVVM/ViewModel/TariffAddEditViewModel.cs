@@ -37,6 +37,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         public Action? GoBack { get; set; }
 
+        public string Title => Tariff.Id == 0 ? "Добавление тарифа" : $"Редактирование тарифа №{Tariff.Id:D4}, {Tariff.Name}";
+
         private string _errorMessage = string.Empty;
         public string ErrorMessage
         {

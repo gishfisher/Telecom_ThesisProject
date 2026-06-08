@@ -79,5 +79,16 @@ namespace Telecom_ThesisProject.Services
                     .ToList();
             }
         }
+
+        public Dictionary<string, int> GetTariffStats()
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Connections
+                    .Include(c => c.Tariff)
+                    .GroupBy(c => c.Tariff.Name)
+                    .ToDictionary(g => g.Key, g => g.Count());
+            }
+        }
     }
 }

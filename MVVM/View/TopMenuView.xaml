@@ -14,7 +14,7 @@
                   PreviewMouseWheel="MenuScrollViewer_PreviewMouseWheel">
         <DockPanel Grid.Row="1" Grid.ColumnSpan="2" 
                    Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
-
+            
             <RadioButton Height="50" 
                          Foreground="#FFFFFF"
                          FontSize="14pt"
@@ -24,7 +24,7 @@
 
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <!--<ui:SymbolIcon Symbol="Home24" Margin="0,0,5,0"/>-->
+                        <ui:SymbolIcon Symbol="Home24" Margin="0,0,5,0"/>
                         <ui:TextBlock>
                             Главное
                         </ui:TextBlock>
@@ -40,7 +40,7 @@
                          Command="{Binding ClientViewCommand}">
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <!--<ui:SymbolIcon Symbol="ContactCard24" Margin="0,0,5,0"/>-->
+                        <ui:SymbolIcon Symbol="ContactCard24" Margin="0,0,5,0"/>
                         <ui:TextBlock>
                             Клиенты
                         </ui:TextBlock>
@@ -55,7 +55,7 @@
                          Command="{Binding RequestViewCommand}">
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <!--<ui:SymbolIcon Symbol="ClipboardTask24" Margin="0,0,5,0"/>-->
+                        <ui:SymbolIcon Symbol="ClipboardTask24" Margin="0,0,5,0"/>
                         <ui:TextBlock>
                             Заявки
                         </ui:TextBlock>
@@ -71,7 +71,7 @@
                          Visibility="{Binding CanSeeAdminMenu, Converter={StaticResource BoolToVisibilityConverter}}">
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <!--<ui:SymbolIcon Symbol="PersonStar24" Margin="0,0,5,0"/>-->
+                        <ui:SymbolIcon Symbol="PersonStar24" Margin="0,0,5,0"/>
                         <ui:TextBlock>
                             Сотрудники
                         </ui:TextBlock>
@@ -86,7 +86,7 @@
                          Command="{Binding TariffViewCommand}">
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <!--<ui:SymbolIcon Symbol="Archive24" Margin="0,0,5,0"/>-->
+                        <ui:SymbolIcon Symbol="Archive24" Margin="0,0,5,0"/>
                         <ui:TextBlock>
                             Тарифы
                         </ui:TextBlock>
@@ -101,7 +101,7 @@
                          Command="{Binding ServiceViewCommand}">
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <!--<ui:SymbolIcon Symbol="Handshake24" Margin="0,0,5,0"/>-->
+                        <ui:SymbolIcon Symbol="Handshake24" Margin="0,0,5,0"/>
                         <ui:TextBlock>
                             Услуги
                         </ui:TextBlock>
@@ -116,7 +116,7 @@
                          Command="{Binding ConnectionsViewCommand}">
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <!--<ui:SymbolIcon Symbol="Connector24" Margin="0,0,5,0"/>-->
+                        <ui:SymbolIcon Symbol="Connector24" Margin="0,0,5,0"/>
                         <ui:TextBlock>
                             Журнал подключений
                         </ui:TextBlock>
@@ -131,7 +131,7 @@
                          Command="{Binding AddressTreeViewCommand}">
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <!--<ui:SymbolIcon Symbol="Location24" Margin="0,0,5,0"/>-->
+                        <ui:SymbolIcon Symbol="Location24" Margin="0,0,5,0"/>
                         <ui:TextBlock>
                             Журнал адресов
                         </ui:TextBlock>
@@ -148,7 +148,7 @@
                             Converter={StaticResource BoolToVisibilityConverter}}">
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <!--<ui:SymbolIcon Symbol="Router24" Margin="0,0,5,0"/>-->
+                        <ui:SymbolIcon Symbol="Router24" Margin="0,0,5,0"/>
                         <ui:TextBlock>
                             Оборудование
                         </ui:TextBlock>

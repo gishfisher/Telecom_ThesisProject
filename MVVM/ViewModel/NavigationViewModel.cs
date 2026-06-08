@@ -674,12 +674,12 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             LoginViewModel.OnLoginSuccess = user =>
             {
                 CurrentSession.Login(user);
-                _messageService.Show($"Добро пожаловать, {CurrentSession.CurrentUser?.Employee?.GetFullNameIn ?? "Пользователь"}");
+                _messageService.Show($"Добро пожаловать, {CurrentSession.CurrentUser?.Employee?.GetFullNameInitials ?? "Пользователь"}");
                 CurrentView = HomeViewModel;
             };
 
             HomeViewCommand = new RelayCommand(
-                o => CurrentView = HomeViewModel,
+                o => { HomeViewModel.Refresh(); CurrentView = HomeViewModel; },
                 o => IsAuthenticated);
 
             LogoutCommand = new RelayCommand(

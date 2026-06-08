@@ -39,6 +39,7 @@ namespace Telecom_ThesisProject.Services
                 existingRequest.ClientId = request.ClientId == 0 ? existingRequest.ClientId : request.ClientId;
                 existingRequest.EmployeeId = request.EmployeeId ?? existingRequest.EmployeeId;
                 existingRequest.StatusId = request.StatusId ?? existingRequest.StatusId;
+                existingRequest.TypeId = request.TypeId == 0 ? existingRequest.TypeId : request.TypeId;
 
                 db.SaveChanges();
             }
@@ -59,6 +60,22 @@ namespace Telecom_ThesisProject.Services
         }
 
         // === Getters === 
+
+        public int GetActiveRequestsCount()
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Requests.Include(r => r.Status).Count(r => r.Status!.Name == "В работе");
+            }
+        }
+
+        public int GetRequestsCount()
+        {
+            using (var db = new TelecomDbContext())
+            {
+                return db.Requests.Count();
+            }
+        }
 
         public List<MVVM.Model.Request> GetAll()
         {
@@ -157,7 +174,7 @@ namespace Telecom_ThesisProject.Services
                     .AsNoTracking()
                     .Include(c => c.CreatedByNavigation)
                         .ThenInclude(c => c.User)
-                            .ThenInclude(c => c.Role)
+                            .ThenInclude(c => c!.Role)
                     .Where(r => r.RequestId == requestId).ToList();
             }
         }
@@ -170,7 +187,7 @@ namespace Telecom_ThesisProject.Services
                     .AsNoTracking()
                     .Include(c => c.CreatedByNavigation)
                         .ThenInclude(c => c.User)
-                            .ThenInclude(c => c.Role)
+                            .ThenInclude(c => c!.Role)
                     .FirstOrDefault(r => r.Id == commentId);
             }
         }

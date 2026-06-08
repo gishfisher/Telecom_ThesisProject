@@ -18,6 +18,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         public Action? GoBack { get; set; }
 
+        public string Title => Service.Id == 0 ? "Добавление услуги" : $"Редактирование услуги №{Service.Id:D4}, {Service.Name}";
+
         private string _errorMessage = string.Empty;
         public string ErrorMessage
         {

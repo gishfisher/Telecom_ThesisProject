@@ -120,6 +120,14 @@ class NetworkDeviceService
 
     // === Getters ===
 
+    public int GetDevicesCount()
+    {
+        using (var db = new TelecomDbContext())
+        {
+            return db.NetworkDevices.Count();
+        }
+    }
+
     // Получить устройство по ID
     public NetworkDevice? GetDeviceById(int id)
     {

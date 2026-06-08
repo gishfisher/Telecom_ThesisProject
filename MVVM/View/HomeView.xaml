@@ -4,14 +4,198 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Telecom_ThesisProject.MVVM.View"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:wf="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=WinForms.DataVisualization"
+             xmlns:wfh="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" 
-             Background="White">
-    <Grid>
-            <TextBlock Text="Добро пожаловать!" 
-                       FontSize="24pt" 
-                       Foreground="#1E293B" 
-                       HorizontalAlignment="Center" 
-                       VerticalAlignment="Center"/>
-    </Grid>
+             d:DesignHeight="620" d:DesignWidth="1050">
+
+    <Border Padding="10"
+            CornerRadius="10"
+            Background="White">
+
+        <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                
+                <Border Background="#F8FAFC"
+                        CornerRadius="10"
+                        Padding="20,15"
+                        Margin="0,0,0,15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0"
+                                Width="48" Height="48"
+                                CornerRadius="24"
+                                Background="{DynamicResource AccentFillColorDefaultBrush}"
+                                Margin="0,0,15,0">
+                            <ui:SymbolIcon Symbol="Person24"
+                                           Foreground="White"
+                                           FontSize="22"/>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <ui:TextBlock Text="{Binding WelcomeMessage, FallbackValue='Добро пожаловать!'}"
+                                          FontTypography="Subtitle"/>
+                            <ui:TextBlock Text="{Binding CurrentUserRole, FallbackValue='Администратор'}"
+                                          FontTypography="Caption"
+                                          Appearance="Secondary"
+                                          Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <ui:TextBlock Text="{Binding CurrentDateTime, FallbackValue='08 июня 2026'}"
+                                          FontTypography="Caption"
+                                          Appearance="Secondary"
+                                          HorizontalAlignment="Right"/>
+                            <ui:TextBlock Text="{Binding CurrentTime, FallbackValue='14:32'}"
+                                          FontTypography="BodyStrong"
+                                          HorizontalAlignment="Right"
+                                          Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <UniformGrid Rows="1" Columns="4" Margin="0,0,0,15">
+
+                    <Border Margin="0,0,8,0"
+                            CornerRadius="10"
+                            Padding="15"
+                            Background="#EFF6FF"
+                            BorderBrush="#BFDBFE"
+                            BorderThickness="1">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Border Width="36" Height="36"
+                                        CornerRadius="8"
+                                        Background="#3B82F6">
+                                    <ui:SymbolIcon Symbol="NetworkCheck24"
+                                                   Foreground="White"/>
+                                </Border>
+                            </StackPanel>
+                            <ui:TextBlock Text="{Binding ConnectionsCount, FallbackValue='-'}"
+                                          FontTypography="Title"
+                                          Foreground="#1D4ED8"/>
+                            <ui:TextBlock Text="Подключения"
+                                          FontTypography="Caption"
+                                          Appearance="Secondary"
+                                          Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="4,0,4,0"
+                            CornerRadius="10"
+                            Padding="15"
+                            Background="#F0FDF4"
+                            BorderBrush="#BBF7D0"
+                            BorderThickness="1">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Border Width="36" Height="36"
+                                        CornerRadius="8"
+                                        Background="#22C55E">
+                                    <ui:SymbolIcon Symbol="Server24"
+                                                   Foreground="White"/>
+                                </Border>
+                            </StackPanel>
+                            <ui:TextBlock Text="{Binding DevicesCount, FallbackValue='-'}"
+                                          FontTypography="Title"
+                                          Foreground="#15803D"/>
+                            <ui:TextBlock Text="Оборудование"
+                                          FontTypography="Caption"
+                                          Appearance="Secondary"
+                                          Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="4,0,4,0"
+                            CornerRadius="10"
+                            Padding="15"
+                            Background="#FFFBEB"
+                            BorderBrush="#FDE68A"
+                            BorderThickness="1">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Border Width="36" Height="36"
+                                        CornerRadius="8"
+                                        Background="#F59E0B">
+                                    <ui:SymbolIcon Symbol="ClipboardTask24"
+                                                   Foreground="White"/>
+                                </Border>
+                            </StackPanel>
+                            <ui:TextBlock Text="{Binding RequestsCount, FallbackValue='-'}"
+                                          FontTypography="Title"
+                                          Foreground="#B45309"/>
+                            <ui:TextBlock Text="Заявки"
+                                          FontTypography="Caption"
+                                          Appearance="Secondary"
+                                          Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="8,0,0,0"
+                            CornerRadius="10"
+                            Padding="15"
+                            Background="#FFF1F2"
+                            BorderBrush="#FECDD3"
+                            BorderThickness="1">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Border Width="36" Height="36"
+                                        CornerRadius="8"
+                                        Background="#EF4444">
+                                    <ui:SymbolIcon Symbol="AlertUrgent24"
+                                                   Foreground="White"/>
+                                </Border>
+                            </StackPanel>
+                            <ui:TextBlock Text="{Binding ActiveRequestsCount, FallbackValue='-'}"
+                                          FontTypography="Title"
+                                          Foreground="#B91C1C"/>
+                            <ui:TextBlock Text="В работе"
+                                          FontTypography="Caption"
+                                          Appearance="Secondary"
+                                          Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <Border CornerRadius="10"
+                        Background="#F8FAFC"
+                        BorderBrush="#E2E8F0"
+                        BorderThickness="1"
+                        Padding="15"
+                        Margin="0,0,0,15">
+                    <StackPanel>
+                        <ui:TextBlock Text="Подключённые тарифы"
+                                      FontTypography="Subtitle"
+                                      Margin="0,0,0,10"/>
+
+                        <wfh:WindowsFormsHost Height="300" x:Name="ChartHost">
+                            <wf:Chart x:Name="TariffChart">
+                                <wf:Chart.ChartAreas>
+                                    <wf:ChartArea Name="MainArea"/>
+                                </wf:Chart.ChartAreas>
+                                <wf:Chart.Legends>
+                                    <wf:Legend Name="MainLegend" Docking="Bottom"/>
+                                </wf:Chart.Legends>
+                                <wf:Chart.Series>
+                                    <wf:Series Name="Tariffs"
+                                               ChartType="Pie"
+                                               ChartArea="MainArea"
+                                               Legend="MainLegend"
+                                               IsValueShownAsLabel="True"
+                                               LabelFormat="{}{0}%"/>
+                                </wf:Chart.Series>
+                            </wf:Chart>
+                        </wfh:WindowsFormsHost>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
 </UserControl>

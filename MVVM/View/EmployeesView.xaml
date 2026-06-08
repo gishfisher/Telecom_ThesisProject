@@ -51,7 +51,7 @@
                           IsReadOnly="True">
                     <ui:DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="100"/>
-                        <DataGridTextColumn Header="ФИО" Binding="{Binding GetFullNameIn}" Width="*"/>
+                        <DataGridTextColumn Header="ФИО" Binding="{Binding GetFullNameInitials}" Width="*"/>
                         <DataGridTextColumn Header="Роль" Binding="{Binding User.Role.Name}" Width="0.8*"/>
                         <DataGridTextColumn Header="Имя пользователя" Binding="{Binding User.Login}" Width="1.25*"/>
                         <DataGridTextColumn Header="Дата создания" Binding="{Binding User.CreatedAt}" Width="*"/>

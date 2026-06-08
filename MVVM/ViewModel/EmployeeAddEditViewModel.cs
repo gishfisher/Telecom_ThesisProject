@@ -28,6 +28,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
 
         public Action GoBack { get; set; }
 
+        public string Title => Employee.Id == 0 ? "Добавление сотрудника" : $"Редактирование сотрудника №{Employee.Id:D4}, {Employee.GetFullNameInitials}";
+
         private string _errorMessage;
         public string ErrorMessage
         {

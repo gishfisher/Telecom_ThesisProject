@@ -58,7 +58,7 @@
                         <DataGridTextColumn Header="Статус" Binding="{Binding Status.Name}" Width="*"/>
                         <DataGridTextColumn Header="Тип" Binding="{Binding Type.Name}" Width="*"/>
                         <DataGridTextColumn Header="Клиент" Binding="{Binding Client.GetFullNameIn}" Width="*"/>
-                        <DataGridTextColumn Header="Сотрудник" Binding="{Binding Employee.GetFullNameIn}" Width="*"/>
+                        <DataGridTextColumn Header="Сотрудник" Binding="{Binding Employee.GetFullNameInitials}" Width="*"/>
                     </DataGrid.Columns>
 
                     <DataGrid.InputBindings>

@@ -16,8 +16,8 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
                         <Border x:Name="InnerBorder" 
-                        Background="Transparent" 
-                        Padding="5">
+                                Background="Transparent" 
+                                Padding="5">
                             <ContentPresenter/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -29,6 +29,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
         <Style x:Key="StatusIndicatorStyle" TargetType="Ellipse">
             <Setter Property="Width" Value="8"/>
             <Setter Property="Height" Value="8"/>
@@ -71,362 +72,288 @@
         </Style>
     </UserControl.Resources>
 
-    <Border Padding="10" 
-            CornerRadius="10" 
-            Background="White">
+    <Border Padding="10" CornerRadius="10" Background="White">
 
-        <ScrollViewer VerticalScrollBarVisibility="Hidden"
-                      HorizontalScrollBarVisibility="Disabled">
         <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-            
-               <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}"
+                       Command="{Binding GoBackCommand}"
+                       Padding="10" Margin="0,0,5,0"
+                       ToolTip="Назад"/>
+                <ui:Button Icon="{ui:SymbolIcon Edit24}"
+                       Command="{Binding EditCommand}"
+                       Padding="10" Margin="0,0,5,0"
+                       ToolTip="Редактировать"
+                       Appearance="Primary"/>
+                <Separator Margin="5,2"/>
+                <ui:TextBlock Text="{Binding PageTitle, FallbackValue=Информация о заявке}"
+                          VerticalAlignment="Center"
+                          FontTypography="Subtitle"/>
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
                     
-                   <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}" Command="{Binding GoBackCommand}"
-                              Padding="10" Margin="0,0,5,0" ToolTip="Назад"/>
-                   
-                   <ui:Button Icon="{ui:SymbolIcon Edit24}" Command="{Binding EditCommand}"
-                              Padding="10" Margin="0,0,5,0" ToolTip="Редактировать"
-                              Appearance="Primary"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Separator Margin="5,2" Grid.Column="1"/>
-                   
-                    <ui:TextBlock Text="{Binding PageTitle, FallbackValue=Информация о заявке}" 
-                                  VerticalAlignment="Center" 
-                                  FontTypography="Subtitle"/>
-                </StackPanel>
-
-                <Grid Grid.Row="1">
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <ui:CardExpander Grid.Column="0" VerticalAlignment="Top"
-                             IsExpanded="True" Padding="10">
-
-                        <ui:CardExpander.Header>
-                            <ui:TextBlock FontTypography="BodyStrong">
-                                Общая информация
-                            </ui:TextBlock>
-                        </ui:CardExpander.Header>
-
-                        <ListBox Background="Transparent" 
+                        <ui:CardExpander Grid.Column="0" VerticalAlignment="Top"
+                                     IsExpanded="True" Padding="10">
+                            <ui:CardExpander.Header>
+                                <ui:TextBlock FontTypography="BodyStrong">Общая информация</ui:TextBlock>
+                            </ui:CardExpander.Header>
+                            <ListBox Background="Transparent"
                                  BorderThickness="0"
                                  AlternationCount="2"
                                  ItemContainerStyle="{StaticResource ZebraStyle}"
                                  HorizontalContentAlignment="Stretch"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.Items>
 
-                            <ListBox.Items>
+                                    <ListBoxItem>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="200"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Статус"/>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <Ellipse Style="{StaticResource StatusIndicatorStyle}"/>
+                                                <ui:TextBlock Text="{Binding Request.Status.Name}">
+                                                    <ui:TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="TextAlignment" Value="Left"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Request.Status.Name}" Value="Новая">
+                                                                    <Setter Property="Foreground" Value="#FF0090FF"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Request.Status.Name}" Value="В работе">
+                                                                    <Setter Property="Foreground" Value="#F1C40F"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Request.Status.Name}" Value="Завершена">
+                                                                    <Setter Property="Foreground" Value="#2ECC71"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Request.Status.Name}" Value="Отменена">
+                                                                    <Setter Property="Foreground" Value="#EF4444"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ui:TextBlock.Style>
+                                                </ui:TextBlock>
+                                            </StackPanel>
+                                        </Grid>
+                                    </ListBoxItem>
 
-                                <ListBoxItem>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="200"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
+                                    <ListBoxItem>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="200"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ui:TextBlock FontTypography="Body" Text="Тип заявки"/>
+                                            <ui:TextBlock FontTypography="Body" Grid.Column="1"
+                                                      Text="{Binding Request.Type.Name}"/>
+                                        </Grid>
+                                    </ListBoxItem>
 
-                                        <TextBlock Text="Статус"/>
+                                    <ListBoxItem>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="200"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Назначенный сотрудник"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Request.Employee.GetFullName}"/>
+                                        </Grid>
+                                    </ListBoxItem>
 
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                            <Ellipse Style="{StaticResource StatusIndicatorStyle}"/>
-                                            <ui:TextBlock Text="{Binding Request.Status.Name}">
-                                                <ui:TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="TextAlignment" Value="Left"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Request.Status.Name}" Value="Новая">
-                                                                <Setter Property="Foreground" Value="#FF0090FF"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Request.Status.Name}" Value="В работе">
-                                                                <Setter Property="Foreground" Value="#F1C40F"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Request.Status.Name}" Value="Завершена">
-                                                                <Setter Property="Foreground" Value="#2ECC71"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Request.Status.Name}" Value="Отменена">
-                                                                <Setter Property="Foreground" Value="#EF4444"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </ui:TextBlock.Style>
-                                            </ui:TextBlock>
-                                        </StackPanel>
-                                    </Grid>
-                                </ListBoxItem>
+                                    <ListBoxItem>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="200"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Дата создания"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Request.CreatedAt}"/>
+                                        </Grid>
+                                    </ListBoxItem>
 
-                                <ListBoxItem>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="200"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <ui:TextBlock FontTypography="Body" Text="Тип заявки"/>
-                                        <ui:TextBlock FontTypography="Body" Grid.Column="1" 
-                                              Text="{Binding Request.Type.Name}"/>
-                                    </Grid>
-                                </ListBoxItem>
+                                    <ListBoxItem>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="200"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Контактное лицо"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Request.Client.GetFullName}"/>
+                                        </Grid>
+                                    </ListBoxItem>
 
-                                <ListBoxItem>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="200"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Назначенный сотрудник"/>
-                                        <TextBlock Grid.Column="1" 
-                                           Text="{Binding Request.Employee.GetFullName}"/>
-                                    </Grid>
-                                </ListBoxItem>
+                                    <ListBoxItem>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="200"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Контактная информация"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Request.Client.FormattedPhone}"/>
+                                        </Grid>
+                                    </ListBoxItem>
 
-                                <ListBoxItem>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="200"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Дата создания"/>
-                                        <TextBlock Grid.Column="1" 
-                                           Text="{Binding Request.CreatedAt}"/>
-                                    </Grid>
-                                </ListBoxItem>
-
-                                <ListBoxItem>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="200"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Контактное лицо"/>
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Request.Client.GetFullName}"/>
-                                            <!--<ui:HyperlinkButton Icon="{ui:SymbolIcon MoreCircle32}"
-                                                        Command="{Binding ClientDetailsCommand}" 
-                                                        Grid.Column="1"
-                                                        Padding="1"
-                                                        Margin="10,0">
-                                                <TextBlock>
-                                                Подробнее об абоненте
-                                                </TextBlock>
-                                            </ui:HyperlinkButton>-->
-                                        </StackPanel>
-                                    </Grid>
-                                </ListBoxItem>
-
-                                <ListBoxItem>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="200"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Контактная ифнормация"/>
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Request.Client.FormattedPhone}"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </ListBoxItem>
-
-                                <ListBoxItem>
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-
-                                        <ui:TextBlock Text="Дополнительная информация"/>
-
-                                        <Border Background="#FAFAFA"
+                                    <ListBoxItem>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <ui:TextBlock Text="Дополнительная информация"/>
+                                            <Border Grid.Row="1"
+                                                Background="#FAFAFA"
                                                 BorderBrush="#EEEEEE"
                                                 BorderThickness="1"
                                                 CornerRadius="5"
-                                                Padding="10"
-                                                Grid.Row="1">
+                                                Padding="10">
+                                                <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                                                          HorizontalScrollBarVisibility="Disabled"
+                                                          MaxHeight="120">
+                                                    <ui:TextBlock Text="{Binding Request.Description}"
+                                                              TextWrapping="Wrap"/>
+                                                </ScrollViewer>
+                                            </Border>
+                                        </Grid>
+                                    </ListBoxItem>
 
-                                            <ScrollViewer VerticalScrollBarVisibility="Hidden"
-                                                      HorizontalScrollBarVisibility="Disabled"
-                                                      MaxHeight="120">
+                                </ListBox.Items>
+                            </ListBox>
+                        </ui:CardExpander>
 
-                                                <ui:TextBlock Text="{Binding Request.Description}"
-                                                          TextWrapping="Wrap"/>
-                                            </ScrollViewer>
-
-                                        </Border>
-                                    </Grid>
-                                </ListBoxItem>
-
-                            </ListBox.Items>
-                        </ListBox>
-                    </ui:CardExpander>
-
-                    <ui:CardExpander Grid.Column="1" VerticalAlignment="Top"
-                                     IsExpanded="True" Padding="10" Margin="10,0,0,0"
-                                     MinWidth="350">
-
-                        <ui:CardExpander.Header>
-                            <ui:TextBlock FontTypography="BodyStrong">
-                                Управление заявкой
-                            </ui:TextBlock>
-                        </ui:CardExpander.Header>
-
-                        <StackPanel>
-                            <StackPanel Margin="0,0,0,15">
-                                <ui:TextBlock Text="Изменить статус" 
-                                              FontTypography="Caption" 
+                        <ui:CardExpander Grid.Column="1" VerticalAlignment="Top"
+                                     IsExpanded="True" Padding="10"
+                                     Margin="10,0,0,0" MinWidth="350">
+                            <ui:CardExpander.Header>
+                                <ui:TextBlock FontTypography="BodyStrong">Управление заявкой</ui:TextBlock>
+                            </ui:CardExpander.Header>
+                            <StackPanel>
+                                <StackPanel Margin="0,0,0,15">
+                                    <ui:TextBlock Text="Изменить статус"
+                                              FontTypography="Caption"
                                               Appearance="Secondary"
                                               Margin="0,0,0,5"/>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <ComboBox ItemsSource="{Binding RequestStatuses}"
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox ItemsSource="{Binding RequestStatuses}"
                                               DisplayMemberPath="Name"
                                               SelectedValuePath="Id"
                                               SelectedValue="{Binding SelectedStatusId}"
                                               HorizontalAlignment="Stretch"/>
-
-                                    <ui:Button Grid.Column="1" 
-                                               Icon="{ui:SymbolIcon CheckmarkCircle24}" 
+                                        <ui:Button Grid.Column="1"
+                                               Icon="{ui:SymbolIcon CheckmarkCircle24}"
                                                Appearance="Primary"
                                                Margin="10,0,0,0"
                                                Padding="9"
-                                               ToolTip="Завершить заявку"
+                                               ToolTip="Применить статус"
                                                Command="{Binding SetRequestStatusCommand}"/>
-                                </Grid>
-                            </StackPanel>
-
-
-                            <!--<UniformGrid Columns="2">
-                                <ui:Button Content="Отменить" 
-                                           Appearance="Secondary"
-                                           Foreground="#EF4444"
-                                           Icon="{ui:SymbolIcon Dismiss24}"
+                                    </Grid>
+                                </StackPanel>
+                                <UniformGrid Columns="2">
+                                    <ui:Button Content="Назначить себя"
                                            HorizontalAlignment="Stretch"
-                                           Margin="0,0,5,0"
-                                           Command="{Binding CancelRequestCommand}"/>
-
-                                <ui:Button Content="Завершить" 
-                                           Appearance="Primary"
-                                           Icon="{ui:SymbolIcon Checkmark24}"
-                                           HorizontalAlignment="Stretch"
-                                           Margin="5,0,0,0"
-                                           Command="{Binding CompleteRequestCommand}"/>
-                            </UniformGrid>-->
-
-                            <UniformGrid Columns="2">
-                                <ui:Button Content="Назначить себя" 
-                                           HorizontalAlignment="Stretch" 
                                            Margin="0,0,5,0"
                                            Icon="{ui:SymbolIcon PersonAvailable24}"
                                            Command="{Binding AssignedToRequestCommand}"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </ui:CardExpander>
+                    </Grid>
 
-                                <!--<ui:Button Content="Печать акта" 
-                                           HorizontalAlignment="Stretch" 
-                                           Margin="5,0,0,0"
-                                           Icon="{ui:SymbolIcon Print24}"
-                                           Command="{Binding PrintDocumentCommand}"/>-->
-                            </UniformGrid>
-                        </StackPanel>
-                    </ui:CardExpander>
-                </Grid>
-            
-            <ui:CardExpander Grid.Row="2" Margin="0,10,0,0"
-                             IsExpanded="True" Padding="10">
-
-                <ui:CardExpander.Header>
-                    <ui:TextBlock FontTypography="BodyStrong"> 
-                        Внутренние комментариии
-                    </ui:TextBlock>
-                </ui:CardExpander.Header>
-
-                    <ui:ListView ItemsSource="{Binding RequestComments}" 
+                    <ui:CardExpander Margin="0,10,0,0" IsExpanded="True" Padding="10">
+                        <ui:CardExpander.Header>
+                            <ui:TextBlock FontTypography="BodyStrong">Внутренние комментарии</ui:TextBlock>
+                        </ui:CardExpander.Header>
+                        <ui:ListView ItemsSource="{Binding RequestComments}"
                                  SelectedItem="{Binding SelectedRequestComment}"
                                  BorderThickness="0"
                                  SelectionMode="Single"
                                  HorizontalContentAlignment="Stretch"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-
-                        <ui:ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="10,0,0,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <ui:TextBlock Text="{Binding CreatedByNavigation.GetShortNameWithRole, FallbackValue='Администратор'}"
+                            <ui:ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="10,0,0,0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <ui:TextBlock Grid.Row="0"
+                                                  Text="{Binding CreatedByNavigation.GetShortNameWithRole, FallbackValue='Администратор'}"
                                                   FontWeight="SemiBold"
                                                   FontTypography="BodyStrong"/>
-
-                                    <ui:TextBlock Grid.Row="1"
+                                        <ui:TextBlock Grid.Row="1"
                                                   Text="{Binding CreatedAt, StringFormat='{}{0:d MMMM} в {0:HH:mm}', FallbackValue='6 мая в 13:03'}"
                                                   FontTypography="Caption"
                                                   Appearance="Secondary"/>
-
-                                    <ui:TextBlock Grid.Row="2"
+                                        <ui:TextBlock Grid.Row="2"
                                                   Text="{Binding Comment, FallbackValue='Создал заявку'}"
                                                   FontTypography="Body"
                                                   TextWrapping="Wrap"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ui:ListView.ItemTemplate>
-                    </ui:ListView>
-                </ui:CardExpander>
+                                    </Grid>
+                                </DataTemplate>
+                            </ui:ListView.ItemTemplate>
+                        </ui:ListView>
+                    </ui:CardExpander>
 
-                <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Margin="0,10,0,0">
+                    <Grid Margin="0,10,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <ui:TextBox Grid.Row="0" Grid.ColumnSpan="2" TextWrapping="Wrap"
+                        <ui:TextBox Grid.Row="0" Grid.ColumnSpan="2"
+                                TextWrapping="Wrap"
                                 Text="{Binding CommentText}"
                                 PlaceholderText="Текст комментария..."
                                 Height="80"/>
-                        
-                    <ui:TextBlock Grid.Row="1"
+
+                        <ui:TextBlock Grid.Row="1" Grid.Column="0"
                                   FontTypography="Caption"
                                   Appearance="Secondary"
-                                  VerticalAlignment="Top"
-                                  Text="{Binding CommentTitle}" Margin="10,10,0,0"/>
+                                  VerticalAlignment="Center"
+                                  Text="{Binding CommentTitle}"
+                                  Margin="0,8,0,0"/>
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1" 
-                                HorizontalAlignment="Right" Margin="0,10,0,0">
-                        <!--<ui:Button Icon="{ui:SymbolIcon Pen24}"
-                                   Command="{Binding EditCommentCommand}"
-                                   Margin="0,0,10,0"
-                                   Padding="10">
-                        </ui:Button>-->
-
-                        <ui:Button Icon="{ui:SymbolIcon Delete24}"
+                        <StackPanel Grid.Row="1" Grid.Column="1"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Margin="0,8,0,0">
+                            <ui:Button Icon="{ui:SymbolIcon Delete24}"
                                    Command="{Binding RemoveCommentCommand}"
                                    Margin="0,0,10,0"
-                                   Padding="10">
-                        </ui:Button>
-
-
-                        <ui:Button Content="Написать"
-                                   Command="{Binding AddCommentCommand}" 
+                                   Padding="10"/>
+                            <ui:Button Content="Написать"
+                                   Command="{Binding AddCommentCommand}"
                                    Icon="{ui:SymbolIcon Add24}"
                                    Padding="9"/>
-                    </StackPanel>
-
-                </Grid>
-            </Grid>
-        </ScrollViewer>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Border>
 </UserControl>

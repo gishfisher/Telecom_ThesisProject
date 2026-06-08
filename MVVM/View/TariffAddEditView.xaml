@@ -13,39 +13,40 @@
             CornerRadius="10"
             Background="White">
 
-        <ScrollViewer VerticalScrollBarVisibility="Hidden"
-                      HorizontalScrollBarVisibility="Disabled">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,10">
 
-                <StackPanel Grid.Row="0"
-                            Orientation="Horizontal"
-                            Margin="0,0,0,10">
+                <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}"
+                           Command="{Binding CancelCommand}"
+                           Padding="10"
+                           Margin="0,0,5,0"
+                           ToolTip="Назад"/>
 
-                    <ui:Button Icon="{ui:SymbolIcon ArrowLeft20}"
-                               Command="{Binding CancelCommand}"
-                               Padding="10"
-                               Margin="0,0,5,0"
-                               ToolTip="Назад"/>
+                <ui:Button Icon="{ui:SymbolIcon Save20}"
+                           Command="{Binding SaveCommand}"
+                           Padding="10"
+                           ToolTip="Сохранить"
+                           Appearance="Primary"/>
 
-                    <ui:Button Icon="{ui:SymbolIcon Save20}"
-                               Command="{Binding SaveCommand}"
-                               Padding="10"
-                               ToolTip="Сохранить" Appearance="Primary"/>
+                <Separator Margin="10,2"/>
 
-                    <Separator Margin="10,2"/>
+                <ui:TextBlock Text="{Binding Title, FallbackValue=Тариф}"
+                              VerticalAlignment="Center"
+                              FontTypography="Subtitle"/>
+            </StackPanel>
 
-                    <ui:TextBlock Text="{Binding Title, FallbackValue=Тариф}"
-                                  VerticalAlignment="Center"
-                                  FontTypography="Subtitle"/>
-                </StackPanel>
-                
-                <StackPanel Grid.Row="1">
-                    
+            <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+
                     <ui:CardExpander IsExpanded="True"
                                      Padding="10">
 
@@ -56,32 +57,26 @@
                         </ui:CardExpander.Header>
 
                         <Grid Margin="0,10,0,0">
-
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="240"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            
+
                             <ui:TextBlock Text="Наименование тарифа"
                                           VerticalAlignment="Center"/>
-
                             <ui:TextBox Grid.Column="1"
                                         Text="{Binding Tariff.Name, UpdateSourceTrigger=PropertyChanged}"
                                         PlaceholderText="Введите название тарифа"/>
-                            
+
                             <ui:TextBlock Grid.Row="1"
                                           Text="Абонентская плата"
                                           Margin="0,12,0,0"
                                           VerticalAlignment="Center"/>
-
-                            <ui:TextBox Grid.Row="1"
-                                        Grid.Column="1"
+                            <ui:TextBox Grid.Row="1" Grid.Column="1"
                                         Margin="0,12,0,0"
                                         Text="{Binding Tariff.MonthlyFee,
                                                        UpdateSourceTrigger=PropertyChanged,
@@ -97,11 +92,7 @@
                         <ui:CardExpander.Header>
                             <StackPanel>
                                 <ui:TextBlock FontTypography="BodyStrong">
-                                    Дополнительные услуги
-                                </ui:TextBlock>
-                                <ui:TextBlock FontTypography="Caption"
-                                              Appearance="Secondary">
-                                    Управление услугами тарифа
+                                    Состав тарифа
                                 </ui:TextBlock>
                             </StackPanel>
                         </ui:CardExpander.Header>
@@ -119,22 +110,20 @@
 
                                 <Label Content="Услуги"/>
 
-                                <ComboBox Grid.Column="0"
-                                          Grid.Row="1"
+                                <ComboBox Grid.Column="0" Grid.Row="1"
                                           Height="35"
                                           ItemsSource="{Binding AvailableServices}"
                                           SelectedItem="{Binding SelectedServiceToAdd}"
                                           DisplayMemberPath="Name"/>
 
-                                <ui:Button Grid.Column="1"
-                                           Grid.Row="1"
+                                <ui:Button Grid.Column="1" Grid.Row="1"
                                            Margin="10,0,0,0"
                                            Padding="10,5"
                                            Icon="{ui:SymbolIcon Add24}"
                                            Content="Добавить"
                                            Command="{Binding AddServiceCommand}"/>
                             </Grid>
-                            
+
                             <ui:DataGrid Margin="0,12,0,0"
                                          ItemsSource="{Binding SelectedServices}"
                                          AutoGenerateColumns="False"
@@ -147,7 +136,6 @@
                                     <DataGridTextColumn Header="Наименование"
                                                         Width="*"
                                                         Binding="{Binding Name}">
-
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Margin" Value="10,0"/>
@@ -163,9 +151,8 @@
                                                            Padding="6,2"
                                                            Foreground="#EF4444"
                                                            Command="{Binding DataContext.RemoveServiceCommand,
-                                                                            RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                                             RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                            CommandParameter="{Binding}"/>
-
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -174,20 +161,8 @@
                         </StackPanel>
                     </ui:CardExpander>
 
-                    <!--<StackPanel Orientation="Horizontal"
-                                Margin="0,12,0,0">
-
-                        <ui:SymbolIcon Symbol="ErrorCircle24"
-                                       Foreground="#EF4444"
-                                       Margin="0,0,8,0"/>
-
-                        <ui:TextBlock Text="{Binding ErrorMessage}"
-                                      Foreground="#EF4444"
-                                      TextWrapping="Wrap"/>
-                    </StackPanel>-->
-                    
                 </StackPanel>
-            </Grid>
-        </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
     </Border>
 </UserControl>
