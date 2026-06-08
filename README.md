@@ -36,9 +36,9 @@ database\02_seed_data.sql         - заполняет справочники и
 
 ```json
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=ИМЯ_СЕРВЕРА;Database=TelecomDB;Integrated Security=True;TrustServerCertificate=True;"
-  }
+    "ConnectionStrings": {
+        "DefaultConnection": "Server=ИМЯ_СЕРВЕРА;Database=TelecomDataBase;Integrated Security=True;TrustServerCertificate=True;"
+    }
 }
 ```
 
