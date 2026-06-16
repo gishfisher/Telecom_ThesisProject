@@ -179,7 +179,7 @@
 
                                 <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                     <Label Content="Порт"/>
-                                    <ComboBox ItemsSource="{Binding DevicePorts}"
+                                    <ComboBox ItemsSource="{Binding DevicePortsForSelection}"
                                               DisplayMemberPath="PortName"
                                               SelectedValue="{Binding SelectedDevicePortId}"
                                               SelectedValuePath="Id"/>
@@ -201,16 +201,17 @@
                                                             Width="100"/>
 
                                         <DataGridTextColumn Header="Есть подключения"
-                                                            Binding="{Binding HasConnection}"
                                                             Width="200">
                                             <DataGridTextColumn.ElementStyle>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="TextAlignment" Value="Center"/>
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding HasConnection}" Value="True">
+                                                            <Setter Property="Text" Value="Занят"/>
                                                             <Setter Property="Foreground" Value="#EF4444"/>
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding HasConnection}" Value="False">
+                                                            <Setter Property="Text" Value="Свободен"/>
                                                             <Setter Property="Foreground" Value="#10B981"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>

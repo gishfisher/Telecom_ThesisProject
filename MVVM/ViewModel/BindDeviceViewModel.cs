@@ -85,7 +85,7 @@ public class BindDeviceViewModel : ObservableObject
     {
         if (SelectedMountingPointId <= 0 || !SelectedDeviceId.HasValue)
         {
-            _messageService.Show("Выберите точку монтажа и устройство.");
+            _messageService.ShowError("Выберите точку монтажа и устройство.");
             return;
         }
 
@@ -97,7 +97,7 @@ public class BindDeviceViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _messageService.Show(ex.Message);
+            _messageService.ShowError(ex.Message);
         }
     }
 }

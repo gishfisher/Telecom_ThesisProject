@@ -19,6 +19,10 @@ class NetworkDeviceService
 
         using var db = new TelecomDbContext();
 
+        var IsIpAddressExist = db.NetworkDevices
+            .Any(nd => nd.IpAddress == device.IpAddress && nd.Id != device.Id);
+        if (IsIpAddressExist) throw new Exception("Ip-адресс занят");
+
         db.NetworkDevices.Add(device);
         db.SaveChanges();
     }
@@ -34,6 +38,10 @@ class NetworkDeviceService
             .Include(t => t.DevicePorts)
             .FirstOrDefault(d => d.Id == device.Id)
             ?? throw new Exception("Устройство не найдено");
+
+        var IsIpAddressExist = db.NetworkDevices
+            .Any(nd => nd.IpAddress == device.IpAddress && nd.Id != device.Id);
+        if (IsIpAddressExist) throw new Exception("Ip-адресс занят");
 
         existing.Name = device.Name;
         existing.DeviceTypeId = device.DeviceTypeId;
@@ -60,7 +68,6 @@ class NetworkDeviceService
                 if (existingPort == null) continue;
                 
                 existingPort.PortName = port.PortName;
-                //existingPort.VlanId = port.VlanId;
                 existingPort.IsUplink = port.IsUplink;
             }
         }
@@ -260,22 +267,10 @@ class NetworkDeviceService
         using (var db = new TelecomDbContext())
         {
             return db.DevicePorts
-                .Where(p => p.DeviceId == deviceId)
-                .OrderBy(p => p.Id)
-                .ToList();
-        }
-    }
-
-    // Получить список портов с подключениями по ID устройства
-    public List<DevicePort> GetDevicePortsWithConnections(int deviceId)
-    {
-        using (var db = new TelecomDbContext())
-        {
-            return db.DevicePorts
                 .AsNoTracking()
+                    .Include(d => d.Device)
+                    .Include(c => c.Connection)
                 .Where(p => p.DeviceId == deviceId)
-                .Include(p => p.Connection)
-                    .ThenInclude(c => c.Client)
                 .OrderBy(p => p.Id)
                 .ToList();
         }

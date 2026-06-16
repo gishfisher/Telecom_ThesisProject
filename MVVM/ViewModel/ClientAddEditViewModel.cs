@@ -79,7 +79,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             }
             catch (Exception ex)
             {
-                _messageService.Show(ex.Message);
+                _messageService.ShowError(ex.Message);
             }
         }
 

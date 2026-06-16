@@ -285,8 +285,8 @@
 
                                 <ui:DataGrid ItemsSource="{Binding DevicePorts}"
                                              AutoGenerateColumns="False"
-                                             IsReadOnly="True"
                                              HeadersVisibility="Column"
+                                             IsReadOnly="True"
                                              GridLinesVisibility="Horizontal">
 
                                     <ui:DataGrid.Columns>
@@ -300,7 +300,7 @@
 
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <CheckBox IsChecked="{Binding IsUplink}"
+                                                    <CheckBox IsChecked="{Binding IsUplink, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                               HorizontalAlignment="Center"
                                                               VerticalAlignment="Center"/>
                                                 </DataTemplate>

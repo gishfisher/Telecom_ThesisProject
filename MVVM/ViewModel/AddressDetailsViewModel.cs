@@ -116,7 +116,7 @@ public class AddressDetailsViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _messageService.Show(ex.Message);
+            _messageService.ShowError(ex.Message);
         }
     }
 
@@ -139,7 +139,7 @@ public class AddressDetailsViewModel : ObservableObject
         }
         catch (Exception ex) 
         { 
-            _messageService.Show(ex.Message); 
+            _messageService.ShowError(ex.Message); 
         }
     }
 

@@ -115,6 +115,8 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             }
         }
 
+        private bool _suppressPortReset = false;
+
         private int? _selectedDeviceId;
         public int? SelectedDeviceId
         {
@@ -122,10 +124,13 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             set
             {
                 _selectedDeviceId = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(SelectedDeviceId));
 
-                SelectedDevicePortId = null;
-                DevicePorts.Clear();
+                if (!_suppressPortReset)
+                {
+                    _selectedDevicePortId = null;
+                    OnPropertyChanged(nameof(SelectedDevicePortId));
+                }
 
                 if (value.HasValue)
                     LoadPorts();
@@ -164,6 +169,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         public ObservableCollection<City> Cities { get; } = new();
         public ObservableCollection<Client> Clients { get; } = new();
         public ObservableCollection<NetworkDevice> Devices { get; } = new();
+        public ObservableCollection<DevicePort> DevicePortsForSelection { get; } = new();
         public ObservableCollection<DevicePortDto> DevicePorts { get; } = new();
         public ObservableCollection<Tariff> Tariffs { get; } = new();
 
@@ -239,14 +245,6 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                         PortId = SelectedDevicePortId!.Value,
                         CreatedAt = DateTime.Now
                     };
-
-                    //var existingDevicePort = _networkDeviceService.GetDevicePortById(newConnection.PortId);
-                    //var hasMountingPoint = existingDevicePort?.Device.MountingPoint != null;
-                    //if (!hasMountingPoint)
-                    //{
-                    //    _messageService.ShowError("Прежде чем добавлять подключениие необходимо смонтировать оборудование");
-                    //    return;
-                    //}
 
                     _connectionService.AddConnection(newConnection);
                     _messageService.Show($"Новое подключение успешно добавлено!");
@@ -331,7 +329,7 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         {
             if (SelectedDeviceId == null) return;
 
-            var ports = _networkDeviceService.GetDevicePortsWithConnections(SelectedDeviceId.Value);
+            var ports = _networkDeviceService.GetDevicePorts(SelectedDeviceId.Value);
             if (ports == null) return;
 
             DevicePorts.Clear();
@@ -344,6 +342,15 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                     HasConnection = port?.Connection != null || port?.IsUplink == true,
                     Connection = port?.Connection
                 });
+            }
+
+            DevicePortsForSelection.Clear();
+            var filterPorts = ports
+                .Where(p => (p.Connection == null && !p.IsUplink) || p.Id == SelectedDevicePortId)
+                .OrderBy(p => p.PortName);
+            foreach (var filterPort in filterPorts)
+            {
+                DevicePortsForSelection.Add(filterPort);
             }
         }
 
@@ -390,8 +397,13 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             SelectedAddressId = Connection.Apartment?.AddressId;
             SelectedApartmentId = Connection.Apartment?.Id;
             SelectedClientId = Connection.ClientId;
+
+            _selectedDevicePortId = Connection.PortId;
+            OnPropertyChanged(nameof(SelectedDevicePortId));
+
+            _suppressPortReset = true;
             SelectedDeviceId = Connection.Port?.DeviceId;
-            SelectedDevicePortId = Connection.PortId;
+            _suppressPortReset = false;
         }
 
         // Получение или создание квартиры

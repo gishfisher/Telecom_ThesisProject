@@ -20,7 +20,8 @@ namespace Telecom_ThesisProject.Services
 
             using var db = new TelecomDbContext();
             return db.Users
-                .Include(e => e.Role).Include(e => e.Employee)
+                .Include(e => e.Role)
+                .Include(e => e.Employee)
                 .FirstOrDefault(e => e.Login == login && e.PasswordHash == hashedPassword);
         }
     }

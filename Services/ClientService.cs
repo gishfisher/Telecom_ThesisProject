@@ -15,6 +15,10 @@ namespace Telecom_ThesisProject.Services
 
             using (var db = new TelecomDbContext())
             {
+                var IsPhoneNumberExist = db.Clients
+                    .Any(c => c.PhoneNumber == client.PhoneNumber);
+                if (IsPhoneNumberExist) throw new Exception("Номер телефона уже существует");
+
                 db.Clients.Add(client);
                 db.SaveChanges();
             }
@@ -29,9 +33,14 @@ namespace Telecom_ThesisProject.Services
                 var existing = db.Clients
                     .FirstOrDefault(c => c.Id == client.Id) ?? throw new Exception("Клиент не найден");
 
+                var IsPhoneNumberExist = db.Clients
+                    .Any(c => c.PhoneNumber == client.PhoneNumber && c.Id != client.Id);
+                if (IsPhoneNumberExist) throw new Exception("Номер телефона уже существует");
+
                 existing.FirstName = client.FirstName;
                 existing.LastName = client.LastName;
                 existing.MiddleName = client.MiddleName;
+                existing.PhoneNumber = client.PhoneNumber;
 
                 db.SaveChanges();
             }

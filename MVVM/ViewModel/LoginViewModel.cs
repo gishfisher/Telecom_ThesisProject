@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using Telecom.Utilities;
 using Telecom_ThesisProject.Core;
@@ -18,20 +13,20 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
         private readonly AuthService _authService;
         private readonly IMessageService _messageService;
 
-        public Action<User> OnLoginSuccess { get; set; }
+        public Action<User>? OnLoginSuccess { get; set; }
 
         public RelayCommand LoginCommand { get; }
 
-        private string _login;
-        private string _errorMessage;
+        private string? _login;
+        private string? _errorMessage;
 
-        public string Login
+        public string? Login
         {
             get => _login;
             set { _login = value; OnPropertyChanged(); }
         }
 
-        public string ErrorMessage
+        public string? ErrorMessage
         {
             get => _errorMessage;
             set { _errorMessage = value; OnPropertyChanged(); }
@@ -45,9 +40,9 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
             LoginCommand = new RelayCommand(o => ExecuteLogin(o));
         }
 
-        private void ExecuteLogin(object parameter)
+        private void ExecuteLogin(object? parameter)
         {
-            string password = null;
+            string? password = null;
 
             if (parameter is PasswordBox pb) password = pb.Password;
             else if (parameter != null)
@@ -63,17 +58,23 @@ namespace Telecom_ThesisProject.MVVM.ViewModel
                 return;
             }
 
-            var user = _authService.Authenticate(Login, password);
+            var user = _authService.Authenticate(Login ?? string.Empty, password);
 
-            if (user != null)
-            {
-                OnLoginSuccess?.Invoke(user);
-            }
-            else
+            if (user == null)
             {
                 ErrorMessage = "Неверный логин или пароль!";
                 _messageService.ShowError(ErrorMessage);
+                return;
             }
+
+            if (!user.IsActive)
+            {
+                ErrorMessage = "Авторизация недоступна. Обратитесь к администратору.";
+                _messageService.ShowError(ErrorMessage);
+                return;
+            }
+
+            OnLoginSuccess?.Invoke(user);
         }
     }
 }

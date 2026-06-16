@@ -109,7 +109,20 @@ class NetworkDeviceAddEditViewModel : ObservableObject
             GetPortsCommand.RaiseCanExecuteChanged();
         }
     }
-    
+
+    private bool _isUplink;
+
+    public bool IsUplink
+    {
+        get => _isUplink;
+        set 
+        { 
+            if (_isUplink == value) return;
+            _isUplink = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string DeviceTitle => Device.Id == 0 ? "Добавление устройства" : $"Редактирование устройства «{Device.Name}»";
 
     #endregion
@@ -181,6 +194,7 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         SelectedSnmpProfile = SnmpProfiles.FirstOrDefault(p => p.Id == Device?.SnmpProfileId);
         SelectedMountingPoint = MountingPoints.FirstOrDefault(mp => mp.Id == Device?.MountingPointId);
 
+        LoadData();
         UpdateInstallDateAndMountingPoint();
 
         SaveCommand = new RelayCommand(_ => Save());
@@ -233,7 +247,7 @@ class NetworkDeviceAddEditViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message.ToString();
+           _messageService.ShowError(ex.Message.ToString());
         }
     }
 
@@ -381,6 +395,27 @@ class NetworkDeviceAddEditViewModel : ObservableObject
             SnmpProfiles.Add(profile); 
 
         SelectedSnmpProfile = SnmpProfiles.FirstOrDefault(p => p.Id == Device?.SnmpProfileId);
+
+        var dbPorts = _networkDeviceService.GetDevicePorts(Device.Id);
+        var finalPorts = new List<DevicePortDto>();
+
+        foreach (var dbPort in dbPorts)
+        {
+            if (dbPort != null)
+            {
+                finalPorts.Add(new DevicePortDto
+                {
+                    Id = dbPort.Id,
+                    DeviceId = Device.Id,
+                    PortName = dbPort.PortName ?? "Порт",
+                    IsUplink = dbPort.IsUplink,
+                    OperationalStatus = "Неизвестно",
+                    StatusRawValue = 0
+                });
+            }
+        }
+
+        DevicePorts = new ObservableCollection<DevicePortDto>(finalPorts);
     }
 
     // Создает новый экземпляр NetworkDevice на основе переданного, для редактирования

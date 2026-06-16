@@ -19,6 +19,16 @@ namespace Telecom_ThesisProject.Services
                 throw new ArgumentNullException(nameof(employee));
             }
 
+            if (employee.User == null)
+            {
+                throw new ArgumentException("Необходимо указать данные о сотруднике.", nameof(employee));
+            }
+
+            if (string.IsNullOrWhiteSpace(employee.User.Login))
+            {
+                throw new ArgumentException("Логин пользователя не может быть пустым.", nameof(employee));
+            }
+
             using (var db = new TelecomDbContext())
             {
                 if (db.Users.Any(u => u.Login == employee.User.Login))
@@ -39,6 +49,15 @@ namespace Telecom_ThesisProject.Services
         public void EditEmployee(Employee employee, string? newPassword)
         {
             ArgumentNullException.ThrowIfNull(employee);
+            if (employee.User == null)
+            {
+                throw new ArgumentException("Необходимо указать данные о сотруднике.", nameof(employee));
+            }
+
+            if (string.IsNullOrWhiteSpace(employee.User.Login))
+            {
+                throw new ArgumentException("Логин пользователя не может быть пустым.", nameof(employee));
+            }
 
             using (var db = new TelecomDbContext())
             {
@@ -46,9 +65,11 @@ namespace Telecom_ThesisProject.Services
                     .Include(e => e.User)
                     .FirstOrDefault(e => e.Id == employee.Id) ?? throw new Exception("Сотрудник не найден");
 
+                var existingUser = existingEmployee.User ?? throw new Exception("У сотрудника отсутствует связанный пользователь");
+
                 if (db.Users.Any(u =>
                     u.Login == employee.User.Login &&
-                    u.Id != existingEmployee.User.Id))
+                    u.Id != existingUser.Id))
                 {
                     throw new Exception("Логин уже занят");
                 }
@@ -57,13 +78,13 @@ namespace Telecom_ThesisProject.Services
                 existingEmployee.LastName = employee.LastName;
                 existingEmployee.MiddleName = employee.MiddleName;
 
-                existingEmployee.User.IsActive = employee.User.IsActive;
-                existingEmployee.User.Login = employee.User.Login;
-                existingEmployee.User.RoleId = employee.User.RoleId;
+                existingUser.IsActive = employee.User.IsActive;
+                existingUser.Login = employee.User.Login;
+                existingUser.RoleId = employee.User.RoleId;
 
                 if (!string.IsNullOrWhiteSpace(newPassword))
                 {
-                    existingEmployee.User.PasswordHash =
+                    existingUser.PasswordHash =
                         MD5Hasher.HashPassword(newPassword);
                 }
 
@@ -73,6 +94,8 @@ namespace Telecom_ThesisProject.Services
 
         public void DeleteEmployee(Employee employee)
         {
+            ArgumentNullException.ThrowIfNull(employee);
+
             using (var db = new TelecomDbContext())
             {
                 var employeeForDelete = db.Employees

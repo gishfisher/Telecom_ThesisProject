@@ -349,6 +349,7 @@ public class NetworkDevicePoller : INetworkDevicePoller
             return NetworkDevicePollResult.PingFail($"{ex.Message}");
         }
     }
+
     // Асинхронная версия метода для проверки доступности SSH-порта
     public async Task<NetworkDevicePollResult> ProbeSshPortAsync(NetworkDevice device)
     {

@@ -277,10 +277,7 @@ public class NetworkDeviceDetailsViewModel : ObservableObject
             }
         }
 
-        ErrorMessage = "Данные успешно обновлены.";
-
-        await Task.Delay(3000);
-        ErrorMessage = string.Empty;
+        ErrorMessage = "Данные актуальны.";
     }
 
     private void OpenSsh()
